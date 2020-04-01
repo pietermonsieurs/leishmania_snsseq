@@ -33,7 +33,7 @@ done
 # percentage is .68. Seed is 10. ==> s 10.68
 # samtools view -bs 10.68 $BAM_DIR/1_S1.bam > $BAM_DIR/1_S1.subsample.bam
 # samtools view -bs 10.49 $BAM_DIR/2_S2.bam > $BAM_DIR/2_S2.subsample.bam
-samtools view -bs 10.18 $BAM_DIR/3_S3.bam > $BAM_DIR/3_S3.subsample.bam
+# samtools view -bs 10.18 $BAM_DIR/3_S3.bam > $BAM_DIR/3_S3.subsample.bam
 # ln -s $BAM_DIR/4_S4.bam $BAM_DIR/4_S4.subsample.bam
 
 

@@ -107,7 +107,8 @@ The final aim is to find peaks in the third condition (S3) that cannot be found 
         * Same as the middle figure, but negative values have been corrected to 0. 
 
 
-
+## full pictures of sequencing data
+* request to visualize full sequencing data set. First run depth for all 4 samples, then subtract with the corresponding background. 
 
     
 
