@@ -107,11 +107,17 @@ The final aim is to find peaks in the third condition (S3) that cannot be found 
         * Same as the middle figure, but negative values have been corrected to 0. 
 
 
-## full pictures of sequencing data
-* request to visualize full sequencing data set. First run depth for all 4 samples, then subtract with the corresponding background. 
+### SWEMBL
+export PATH=/Users/pmonsieurs/programming/software/SWEMBL/:/Users/pmonsieurs/programming/software/samtools-1.9:$PATH
 
+SWEMBL -m 500 -f 150 -R 0.0025 -F -i 1_S1.subsample.bam -a 2_S2.subsample.bam
+
+
+### in-house developed tool
+Start from the samtools depth output generated from [samtools_depth.sh](samtools_depth.sh) and use the core of the [chromosome_peaks.py](chromosome_peaks.py) script to calculate the difference. On this difference, and easy-to-use peak detection algorithm can be applied. 
     
 
+#
 
 
 
