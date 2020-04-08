@@ -10,6 +10,10 @@
     * Compare the peaks of subtracted 1 and 3 samples (Are the peaks all the same or there are some differences between subtracted 1 and 3 samples).
     * Mapping of different peaks (origins of replication) between subtracted samples 1 and 3.
 
+* check the length of the reads, as many very small / narrow peaks have been detected using these input fastq files. 
+  * gunzip 1_S1_L001_R1_001.fastq.gz
+  * awk 'NR%4 == 2 {lengths[length($0)]++} END {for (l in lengths) {print l, lengths[l]}}' 1_S1_L001_R1_001.fastq
+  * visualization of the read lengths: [readlenght_stats.R](readlenght_stats.R)
 
 * do subsampling to bring all samples to the same average read depth. Subsampling can be done using the samtools implementation. Recalculating based on the flagstat statistics mentioned below. 
     * option 1:
@@ -127,15 +131,31 @@ The final aim is to find peaks in the third condition (S3) that cannot be found 
         * Left: sequencing depth for the peak + 200 bp flanking windows on both sides
         * Middle: coverage of S1 and S3 when subtracted from their corresponding control (S2 or S4 respectively). This might result in negative values, in case the control has a higher coverage for a position in the genome than the actual sample.
         * Same as the middle figure, but negative values have been corrected to 0. 
+* step 4: convert MACS output files to bigwig files
+    * cp S1_peaks.csv S1_peaks.copy
+    * sed '/^#/ d' S1_peaks.csv > S1_peaks.wig
+    * awk '{print $1"\t"$2"\t"$3"\t"$4}' S1_peaks.wig > S1_peak.bigwig
+    
 
 
+### SWEMBL
+export PATH=/Users/pmonsieurs/programming/software/SWEMBL/:/Users/pmonsieurs/programming/software/samtools-1.9:$PATH
+
+SWEMBL -m 500 -f 150 -R 0.0025 -F -i 1_S1.subsample.bam -a 2_S2.subsample.bam
+
+<<<<<<< HEAD
 ## full pictures of sequencing data
 * request to visualize full sequencing data set. First run depth for all 4 samples, then subtract with the corresponding background, and do the visualization of S1 on top (bg-corrected with S2), and S3 below (bg-corrected with S4): [chromosome_peaks.py](chromosome_peaks.py)
 
 
+=======
+>>>>>>> 8a1d69a36b4b4728b3ad7c0b5eaebea4a3d73005
 
+### in-house developed tool
+Start from the samtools depth output generated from [samtools_depth.sh](samtools_depth.sh) and use the core of the [chromosome_peaks.py](chromosome_peaks.py) script to calculate the difference. On this difference, and easy-to-use peak detection algorithm can be applied. 
     
 
+#
 
 
 
