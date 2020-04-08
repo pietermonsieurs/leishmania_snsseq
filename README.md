@@ -21,6 +21,10 @@
 | S3     | 250365416 | 18%        | 139939427 | 20%        | 134851818       | 20%        |
 | S4     | 44428519  | 100%       | 28233444  | 100%       | 27518060        | 100%       |
 
+* check the length of the reads, as many very small / narrow peaks have been detected using these input fastq files. 
+  * gunzip 1_S1_L001_R1_001.fastq.gz
+  * awk 'NR%4 == 2 {lengths[length($0)]++} END {for (l in lengths) {print l, lengths[l]}}' 1_S1_L001_R1_001.fastq
+  * visualization of the read lengths: [readlenght_stats.R](readlenght_stats.R)
 
 
 * do indexing on all the bam-files using samtools
@@ -105,6 +109,11 @@ The final aim is to find peaks in the third condition (S3) that cannot be found 
         * Left: sequencing depth for the peak + 200 bp flanking windows on both sides
         * Middle: coverage of S1 and S3 when subtracted from their corresponding control (S2 or S4 respectively). This might result in negative values, in case the control has a higher coverage for a position in the genome than the actual sample.
         * Same as the middle figure, but negative values have been corrected to 0. 
+* step 4: convert MACS output files to bigwig files
+    * cp S1_peaks.csv S1_peaks.copy
+    * sed '/^#/ d' S1_peaks.csv > S1_peaks.wig
+    * awk '{print $1"\t"$2"\t"$3"\t"$4}' S1_peaks.wig > S1_peak.bigwig
+    
 
 
 ### SWEMBL
