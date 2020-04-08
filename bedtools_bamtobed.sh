@@ -17,7 +17,10 @@ export BAM_DIR=/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/bw
 
 cd $BAM_DIR
 
-bedtools bamtobed -i 1_S1.subsample.bam > 1_S1.subsample.bed
-bedtools bamtobed -i 2_S2.subsample.bam > 2_S2.subsample.bed
-bedtools bamtobed -i 3_S3.subsample.bam > 3_S3.subsample.bed
-bedtools bamtobed -i 4_S4.subsample.bam > 4_S4.subsample.bed
+bedtools bamtobed -i 1_S1.proper_paired.subsample.bam > 1_S1.proper_paired.subsample.bed
+
+bedtools bamtobed -i 2_S2.proper_paired.subsample.bam > 2_S2.proper_paired.subsample.bed
+
+bedtools bamtobed -i 3_S3.proper_paired.subsample.bam > 3_S3.proper_paired.subsample.bed
+
+bedtools bamtobed -i 4_S4.proper_paired.subsample.bam > 4_S4.proper_paired.subsample.bed

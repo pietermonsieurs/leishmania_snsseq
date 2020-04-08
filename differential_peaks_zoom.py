@@ -11,9 +11,9 @@ macs_dir = results_dir + 'macs/'
 # figure_dir = macs_dir + "figures/"
 bam_dir = results_dir + 'bwa/'
 
-# diff_type = 'only_present_in_S3'
+diff_type = 'only_present_in_S3'
 # diff_type = 'only_present_in_S1'
-diff_type = 'only_present_in_S3_broad'
+# diff_type = 'only_present_in_S3_broad'
 # diff_type = 'only_present_in_S1_broad'
 
 

@@ -2,6 +2,7 @@
 
 ## Input data
 * reference genome: downloaded from TriTrypDB. Used version indicated with 2018 (release data december 2018). The other file of T. brucei lister is from 2010. https://tritrypdb.org/common/downloads/Current_Release/TbruceiLister427_2018/fasta/data/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta. Total genome size is 42.25Mbp
+* After a first analyis, it was noticed that the fastq file contained very short reads, based on the trimming done by the sequencing company 
 * Four different input data sets (8 fastq-files) that should be aligned using BWA: [bwa_createcommands.py](bwa_createcommands.py)
 * Two different conditions, each with their own control: 
     * Normalize and subtract sample 2 (background control) from sample 1 (SNS non-induced). Call peaks in non-induced sample.
@@ -11,24 +12,42 @@
 
 
 * do subsampling to bring all samples to the same average read depth. Subsampling can be done using the samtools implementation. Recalculating based on the flagstat statistics mentioned below. 
-    * S4 is the smallest sample, everything is calculated relatively versus this one. 
-    * different stats can be used (all reads, mapped reads or proper pairs - see below)
-    * for now, percentage are calculated based on the  total amount of reads
-| Sample | All_reads | Percentage | Mapped    | Percentage | Properly paired | Percentage |
-|--------|-----------|------------|-----------|------------|-----------------|------------|
-| S1     | 65364709  | 68%        | 45203712  | 62%        | 43630068        | 63%        |
-| S2     | 91426202  | 49%        | 64394674  | 44%        | 62964564        | 44%        |
-| S3     | 250365416 | 18%        | 139939427 | 20%        | 134851818       | 20%        |
-| S4     | 44428519  | 100%       | 28233444  | 100%       | 27518060        | 100%       |
-
+    * option 1:
+        * S4 is the smallest sample, everything is calculated relatively versus this one. 
+        * different stats can be used (all reads, mapped reads or proper pairs - see below)
+        * for now, percentage are calculated based on the  total amount of reads
+            | Sample | All_reads | Percentage | Mapped    | Percentage | Properly paired | Percentage |
+            |--------|-----------|------------|-----------|------------|-----------------|------------|
+            | S1     | 65364709  | 68%        | 45203712  | 62%        | 43630068        | 63%        |
+            | S2     | 91426202  | 49%        | 64394674  | 44%        | 62964564        | 44%        |
+            | S3     | 250365416 | 18%        | 139939427 | 20%        | 134851818       | 20%        |
+            | S4     | 44428519  | 100%       | 28233444  | 100%       | 27518060        | 100%       |
+    * option 2:
+        * first select properly paired reads, and only continue with them:
+            * samtools view -bf 0x2 1_S1.bam > 1_S1.proper_paired.bam 
+            * samtools view -bf 0x2 2_S2.bam > 2_S2.proper_paired.bam 
+            * samtools view -bf 0x2 3_S3.bam > 3_S3.proper_paired.bam
+            * samtools view -bf 0x2 4_S4.bam > 4_S4.proper_paired.bam 
+        * check flagstat again for all four bam-files, and do recalculation for doing subsampling. Now, the bam files are only based on fastq-file with reads with sufficient length (length > 100nt) and where only proper paired reads are selected. This should further refine the peaks
+        * overview table
+            | Sample | All\_reads | Percentage |
+            |--------|------------|------------|
+            | S1     | 20163824   | 83%        |
+            | S2     | 19440774   | 86%        |
+            | S3     | 16652744   | 100%       |
+            | S4     | 18672428   | 89%        |
+        * running subsampling: [subsampling.sh](subsampling.sh) to subsample all bam-file to the same amount of reads. Output looks like: 4_S4.proper_paired.subsample.bam
 
 
 * do indexing on all the bam-files using samtools
-    * ~/programming/software/samtools-1.9/samtools index 1_S1.subsample.bam
-    * ~/programming/software/samtools-1.9/samtools index 2_S2.subsample.bam
-    * ~/programming/software/samtools-1.9/samtools index 3_S3.subsample.bam
-    * ~/programming/software/samtools-1.9/samtools index 4_S4.subsample.bam
-* convert bam-file to .bed files using the bedtools samtobed command.  
+    * ~/programming/software/samtools-1.9/samtools index 1_S1.proper_paired.subsample.bam
+    * ~/programming/software/samtools-1.9/samtools index 2_S2.proper_paired.subsample.bam
+    * ~/programming/software/samtools-1.9/samtools index 3_S3.proper_paired.subsample.bam
+    * ~/programming/software/samtools-1.9/samtools index 4_S4.proper_pairedqqq.subsample.bam
+* convert bam-file to .bed files using the bedtools samtobed command. 
+    * [bedtools_bamtobed.sh](bedtools_bamtobed.sh) !! this step is *not* needed if you want to run MACS, only if you want to run SICER2.
+    * afterwards copy-paste bed file to laptop for peak detection.
+
 
 ## Peak detection
 
@@ -88,6 +107,9 @@ The final aim is to find peaks in the third condition (S3) that cannot be found 
         * default: 
             * S1 vs S2: `macs2 callpeak -f BAM -g 38e6 -n S1 -t ../bwa/1_S1.subsample.bam -c ../bwa/2_S2.subsample.bam`
             * S3 vs S4: `macs2 callpeak -f BAM -g 38e6 -n S3 -t ../bwa/3_S3.subsample.bam -c ../bwa/4_S4.subsample.bam`
+        * update after filtering: 
+            * S1 vs S2: `macs2 callpeak -f BAM -g 38e6 -n S1 -t ../bwa/1_S1.proper_paired.subsample.bam -c ../bwa/2_S2.proper_paired.subsample.bam`
+            * S3 vs S4: `macs2 callpeak -f BAM -g 38e6 -n S3 -t ../bwa/3_S3.proper_paired.subsample.bam -c ../bwa/4_S4.proper_paired.subsample.bam`
         * broad peaks
             * S1 vs S2: `macs2 callpeak -f BAM -g 38e6 -n S1_broad --broad -t ../bwa/1_S1.subsample.bam -c ../bwa/2_S2.subsample.bam`
             * S3 vs S4: `macs2 callpeak -f BAM -g 38e6 -n S3_broad --broad -t ../bwa/3_S3.subsample.bam -c ../bwa/4_S4.subsample.bam`
@@ -108,7 +130,9 @@ The final aim is to find peaks in the third condition (S3) that cannot be found 
 
 
 ## full pictures of sequencing data
-* request to visualize full sequencing data set. First run depth for all 4 samples, then subtract with the corresponding background. 
+* request to visualize full sequencing data set. First run depth for all 4 samples, then subtract with the corresponding background, and do the visualization of S1 on top (bg-corrected with S2), and S3 below (bg-corrected with S4): [chromosome_peaks.py](chromosome_peaks.py)
+
+
 
     
 

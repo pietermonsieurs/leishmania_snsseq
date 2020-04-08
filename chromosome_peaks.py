@@ -28,9 +28,11 @@ df_list = {}
 counter = 0
 
 for chrom in chrom_list:
-
     print(chrom)
     counter = counter + 1
+
+    if counter < 259:
+        continue
     
     # define line types and colors
     line_styles = ['-', ':', '-', ':']
@@ -60,7 +62,7 @@ for chrom in chrom_list:
     y_max = max(diff_S1.max(), diff_S3.max())
     y_min = min(diff_S1.min(), diff_S3.min())
     y_max = y_max*1.05
-    print(f"min y {y_min} -- max y {y_max}")
+    # print(f"min y {y_min} -- max y {y_max}")
 
     
     # upper plot = depth of sample S1 (bg corrected)
@@ -86,10 +88,12 @@ for chrom in chrom_list:
     plt.savefig(figure_file)
     plt.close()
 
-    if counter > 10:
-        break
-    else:
-        continue
+    # if counter > 10:
+    #     break
+    # else:
+    #     continue
+
+    continue
 
     for index in range(0,len(samples)):
         sample = samples[index]

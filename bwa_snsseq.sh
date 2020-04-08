@@ -3,19 +3,82 @@
 ### needed time still to be estimated. Run with different commands
 ### so if interrupt, start againg from last file.
 ### now set to 2:00:00 but probably need much less
-### update: job killed after 2:00:00
+### update: job killed after 2:00:00. 5:00:00 is enough for
+### running BWA
+### update2: split over different process. Adapt timing accordingly
+### depending on task
 #########################################################
-#PBS -l walltime=3:00:00
-#PBS -L tasks=1:lprocs=20
+#PBS -l walltime=5:00:00
+#PBS -L tasks=1:lprocs=28
 
 module load BWA/0.7.17-GCCcore-8.3.0
 module load SAMtools/1.9-intel-2019b
 
+### STEP 0: set somy variables
+export DATA_DIR=/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/
+export BIN_DIR=/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/bin/
+export BWA_DIR=/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/bwa/
+export MIN_L=100
+export THREADS=28
+
+### STEP 1: filter out short reads ###
+# reads_filtering_on_length.sh: this script is based on the idea 
+# suggested here: http://seqanswers.com/forums/showthread.php?t=31845 
+# and write all line number of *paired* data and next filters them
+# adpated so that lines are written to unqiue file instaed of a 
+# generic file
+# $BIN_DIR/reads_filtering_on_length.sh $DATA_DIR/1_S1_L001_R1_001.fastq $DATA_DIR/1_S1_L001_R2_001.fastq $MIN_L
+
+# $BIN_DIR/reads_filtering_on_length.sh $DATA_DIR/2_S2_L001_R1_001.fastq $DATA_DIR/2_S2_L001_R2_001.fastq $MIN_L
+
+# $BIN_DIR/reads_filtering_on_length.sh $DATA_DIR/3_S3_L001_R1_001.fastq $DATA_DIR/3_S3_L001_R2_001.fastq $MIN_L
+
+# $BIN_DIR/reads_filtering_on_length.sh $DATA_DIR/4_S4_L001_R1_001.fastq $DATA_DIR/4_S4_L001_R2_001.fastq $MIN_L
+
+### STEP 2: rename and gzip ###
+# rename all fastq-files and gzip them 
+# mv $DATA_DIR/1_S1_L001_R1_001.fastq.100 $DATA_DIR/1_S1_L001_R1_001.filter.fastq 
+# mv $DATA_DIR/1_S1_L001_R2_001.fastq.100 $DATA_DIR/1_S1_L001_R2_001.filter.fastq 
+# mv $DATA_DIR/2_S2_L001_R1_001.fastq.100 $DATA_DIR/2_S2_L001_R1_001.filter.fastq 
+# mv $DATA_DIR/2_S2_L001_R2_001.fastq.100 $DATA_DIR/2_S2_L001_R2_001.filter.fastq 
+# mv $DATA_DIR/3_S3_L001_R1_001.fastq.100 $DATA_DIR/3_S3_L001_R1_001.filter.fastq 
+# mv $DATA_DIR/3_S3_L001_R2_001.fastq.100 $DATA_DIR/3_S3_L001_R2_001.filter.fastq 
+# mv $DATA_DIR/4_S4_L001_R1_001.fastq.100 $DATA_DIR/4_S4_L001_R1_001.filter.fastq 
+# mv $DATA_DIR/4_S4_L001_R2_001.fastq.100 $DATA_DIR/4_S4_L001_R2_001.filter.fastq 
+
+# # if needed, first do gzip of the fastq files
+# gzip $DATA_DIR/1_S1_L001_R1_001.filter.fastq 
+# gzip $DATA_DIR/1_S1_L001_R2_001.filter.fastq 
+# gzip $DATA_DIR/2_S2_L001_R1_001.filter.fastq 
+# gzip $DATA_DIR/2_S2_L001_R2_001.filter.fastq 
+# gzip $DATA_DIR/3_S3_L001_R1_001.filter.fastq 
+# gzip $DATA_DIR/3_S3_L001_R2_001.filter.fastq 
+# gzip $DATA_DIR/4_S4_L001_R1_001.filter.fastq 
+# gzip $DATA_DIR/4_S4_L001_R2_001.filter.fastq 
+
+
+
+
+#### STEP 3: run BWA #### 
+
 # run indexing on the genome
 # bwa index /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta
 
-# run BWA on different fastq files
+# # run BWA on different fastq files
+bwa mem -t $THREADS $DATA_DIR/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta $DATA_DIR/1_S1_L001_R1_001.filter.fastq.gz $DATA_DIR/1_S1_L001_R2_001.filter.fastq.gz | samtools sort -@$THREADS -o $BWA_DIR/1_S1.bam -
+
+bwa mem -t $THREADS $DATA_DIR/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta $DATA_DIR/2_S2_L001_R1_001.filter.fastq.gz $DATA_DIR/2_S2_L001_R2_001.filter.fastq.gz | samtools sort -@$THREADS -o $BWA_DIR/2_S2.bam -
+
+bwa mem -t $THREADS $DATA_DIR/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta $DATA_DIR/3_S3_L001_R1_001.filter.fastq.gz $DATA_DIR/3_S3_L001_R2_001.filter.fastq.gz | samtools sort -@$THREADS -o $BWA_DIR/3_S3.bam -
+
+bwa mem -t $THREADS $DATA_DIR/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta $DATA_DIR/4_S4_L001_R1_001.filter.fastq.gz $DATA_DIR/4_S4_L001_R2_001.filter.fastq.gz | samtools sort -@$THREADS -o $BWA_DIR/4_S4.bam -
+
+
+
+
+#### OLD COMMANDS ###
+
 # bwa mem -t 20 /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/3_S3_L001_R1_001.fastq.gz /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/3_S3_L001_R2_001.fastq.gz | samtools sort -@20 -o /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/bwa/3_S3.bam -
 # bwa mem -t 20 /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/1_S1_L001_R1_001.fastq.gz /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/1_S1_L001_R2_001.fastq.gz | samtools sort -@20 -o /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/bwa/1_S1.bam -
 # bwa mem -t 20 /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/4_S4_L001_R1_001.fastq.gz /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/4_S4_L001_R2_001.fastq.gz | samtools sort -@20 -o /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/bwa/4_S4.bam -
-bwa mem -t 20 /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/2_S2_L001_R1_001.fastq.gz /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/2_S2_L001_R2_001.fastq.gz | samtools sort -@20 -o /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/bwa/2_S2.bam -
+# bwa mem -t 20 /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/2_S2_L001_R1_001.fastq.gz /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/2_S2_L001_R2_001.fastq.gz | samtools sort -@20 -o /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/bwa/2_S2.bam -
