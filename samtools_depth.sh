@@ -23,7 +23,7 @@ cd $DEPTH_DIR/
 # export sample=1
 # export chrom=Chr11_3B_Tb427v10
 
-samtools depth -a -r $chrom $BAM_DIR/${sample}_S${sample}.subsample.bam > $DEPTH_DIR/${sample}_S${sample}.chrom_${chrom}.subsample.depth.csv
+samtools depth -a -r $chrom $BAM_DIR/${sample}_S${sample}.proper_paired.subsample.bam > $DEPTH_DIR/${sample}_S${sample}.chrom_${chrom}.subsample.depth.csv
 
 
 # wsub commands

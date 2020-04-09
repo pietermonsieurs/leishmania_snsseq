@@ -9,7 +9,7 @@
 ### depending on task
 #########################################################
 #PBS -l walltime=5:00:00
-#PBS -L tasks=1:lprocs=28
+#PBS -L tasks=1:lprocs=20
 
 module load BWA/0.7.17-GCCcore-8.3.0
 module load SAMtools/1.9-intel-2019b
@@ -65,13 +65,13 @@ export THREADS=28
 # bwa index /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta
 
 # # run BWA on different fastq files
-bwa mem -t $THREADS $DATA_DIR/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta $DATA_DIR/1_S1_L001_R1_001.filter.fastq.gz $DATA_DIR/1_S1_L001_R2_001.filter.fastq.gz | samtools sort -@$THREADS -o $BWA_DIR/1_S1.bam -
+bwa mem -t $THREADS -k 100 $DATA_DIR/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta $DATA_DIR/1_S1_L001_R1_001.filter.fastq.gz $DATA_DIR/1_S1_L001_R2_001.filter.fastq.gz | samtools sort -@$THREADS -o $BWA_DIR/1_S1.bam -
 
-bwa mem -t $THREADS $DATA_DIR/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta $DATA_DIR/2_S2_L001_R1_001.filter.fastq.gz $DATA_DIR/2_S2_L001_R2_001.filter.fastq.gz | samtools sort -@$THREADS -o $BWA_DIR/2_S2.bam -
+bwa mem -t $THREADS -k 100 $DATA_DIR/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta $DATA_DIR/2_S2_L001_R1_001.filter.fastq.gz $DATA_DIR/2_S2_L001_R2_001.filter.fastq.gz | samtools sort -@$THREADS -o $BWA_DIR/2_S2.bam -
 
-bwa mem -t $THREADS $DATA_DIR/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta $DATA_DIR/3_S3_L001_R1_001.filter.fastq.gz $DATA_DIR/3_S3_L001_R2_001.filter.fastq.gz | samtools sort -@$THREADS -o $BWA_DIR/3_S3.bam -
+bwa mem -t $THREADS -k 100 $DATA_DIR/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta $DATA_DIR/3_S3_L001_R1_001.filter.fastq.gz $DATA_DIR/3_S3_L001_R2_001.filter.fastq.gz | samtools sort -@$THREADS -o $BWA_DIR/3_S3.bam -
 
-bwa mem -t $THREADS $DATA_DIR/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta $DATA_DIR/4_S4_L001_R1_001.filter.fastq.gz $DATA_DIR/4_S4_L001_R2_001.filter.fastq.gz | samtools sort -@$THREADS -o $BWA_DIR/4_S4.bam -
+bwa mem -t $THREADS -k 100 $DATA_DIR/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta $DATA_DIR/4_S4_L001_R1_001.filter.fastq.gz $DATA_DIR/4_S4_L001_R2_001.filter.fastq.gz | samtools sort -@$THREADS -o $BWA_DIR/4_S4.bam -
 
 
 
