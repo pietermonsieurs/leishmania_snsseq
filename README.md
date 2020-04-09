@@ -4,6 +4,8 @@
 * reference genome: downloaded from TriTrypDB. Used version indicated with 2018 (release data december 2018). The other file of T. brucei lister is from 2010. https://tritrypdb.org/common/downloads/Current_Release/TbruceiLister427_2018/fasta/data/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta. Total genome size is 42.25Mbp
 * After a first analyis, it was noticed that the fastq file contained very short reads, based on the trimming done by the sequencing company 
 * Four different input data sets (8 fastq-files) that should be aligned using BWA: [bwa_createcommands.py](bwa_createcommands.py)
+    * many short peaks are detected with only a length of 19nt. This corresponds perfectly with the default seed lengths of the BWA algorithm. No idea why, but apparently 19nt seed is enough to be reported
+    * redo the analysis and set the minimum seed length to 100 (-k 100) when running BWA
 * Two different conditions, each with their own control: 
     * Normalize and subtract sample 2 (background control) from sample 1 (SNS non-induced). Call peaks in non-induced sample.
     * Normalize and subtract sample 4 (background control) from sample 3 (SNS induced RNAi Mlp1). Call peaks in induced RNAi Mlp1 mutant sample.
@@ -33,15 +35,17 @@
             * samtools view -bf 0x2 3_S3.bam > 3_S3.proper_paired.bam
             * samtools view -bf 0x2 4_S4.bam > 4_S4.proper_paired.bam 
         * check flagstat again for all four bam-files, and do recalculation for doing subsampling. Now, the bam files are only based on fastq-file with reads with sufficient length (length > 100nt) and where only proper paired reads are selected. This should further refine the peaks
-        * overview table
-            | Sample | All\_reads | Percentage |
-            |--------|------------|------------|
-            | S1     | 20163824   | 83%        |
-            | S2     | 19440774   | 86%        |
-            | S3     | 16652744   | 100%       |
-            | S4     | 18672428   | 89%        |
+        * overview tables
+            * without increasing the seed length
+                | Sample | All\_reads | Percentage |
+                |--------|------------|------------|
+                | S1     | 20163824   | 83%        |
+                | S2     | 19440774   | 86%        |
+                | S3     | 16652744   | 100%       |
+                | S4     | 18672428   | 89%        |
+            * with increasing the seed length to 100 (-k 100)
+                
         * running subsampling: [subsampling.sh](subsampling.sh) to subsample all bam-file to the same amount of reads. Output looks like: 4_S4.proper_paired.subsample.bam
-
 
 * do indexing on all the bam-files using samtools
     * ~/programming/software/samtools-1.9/samtools index 1_S1.proper_paired.subsample.bam

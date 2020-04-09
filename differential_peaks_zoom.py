@@ -11,8 +11,8 @@ macs_dir = results_dir + 'macs/'
 # figure_dir = macs_dir + "figures/"
 bam_dir = results_dir + 'bwa/'
 
-diff_type = 'only_present_in_S3'
-# diff_type = 'only_present_in_S1'
+# diff_type = 'only_present_in_S3'
+diff_type = 'only_present_in_S1'
 # diff_type = 'only_present_in_S3_broad'
 # diff_type = 'only_present_in_S1_broad'
 
@@ -66,7 +66,7 @@ for index, row in data.iterrows():
         line_style = line_styles[index]
         line_color = line_colors[index]
 
-        bam_file = bam_dir + sample + ".subsample.bam"
+        bam_file = bam_dir + sample + ".proper_paired.subsample.bam"
         depth_command = f"{samtools_bin} depth -a -r {chrom}:{start_region}-{stop_region} {bam_file} > {temp_depth_file}"
         my_debug and print(depth_command)
         os.system(depth_command)
