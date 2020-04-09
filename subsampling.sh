@@ -3,7 +3,7 @@
 # do subsampling using samtools. First do the 
 # flagstat option 
 
-#PBS -l walltime=2:00:00
+#PBS -l walltime=0:59:00
 #PBS -L tasks=1:lprocs=20
 
 
@@ -46,14 +46,24 @@ done
 # | S3     | 16652744   | 100%       |
 # | S4     | 18672428   | 89%        |
 
+# Redo analysis where short reads are filtered out in fastq files, and only
+# the properly paired reads are retained, and the minimal seed length within
+# # bwa is set to 100
+# | Sample | All\_reads | Percentage |
+# |--------|------------|------------|
+# | S1     | 15434734   | 80%        |
+# | S2     | 15430228   | 80%        |
+# | S3     | 12395674   | 100%       |
+# | S4     | 14800620   | 84%        |
+
 # percentage is .83. Seed is 10. ==> s 10.83
-samtools view -bs 10.83 $BAM_DIR/1_S1.proper_paired.bam > $BAM_DIR/1_S1.proper_paired.subsample.bam
+samtools view -bs 10.80 $BAM_DIR/1_S1.proper_paired.bam > $BAM_DIR/1_S1.proper_paired.subsample.bam
 
-samtools view -bs 10.86 $BAM_DIR/2_S2.proper_paired.bam > $BAM_DIR/2_S2.proper_paired.subsample.bam
+samtools view -bs 10.80 $BAM_DIR/2_S2.proper_paired.bam > $BAM_DIR/2_S2.proper_paired.subsample.bam
 
-ln -s $BAM_DIR/3_S3.proper_paired.bam $BAM_DIR/3_S3.proper_paired.subsample.bam
+# ln -s $BAM_DIR/3_S3.proper_paired.bam $BAM_DIR/3_S3.proper_paired.subsample.bam
 
-samtools view -bs 10.89 $BAM_DIR/4_S4.proper_paired.bam > $BAM_DIR/4_S4.proper_paired.subsample.bam
+samtools view -bs 10.84 $BAM_DIR/4_S4.proper_paired.bam > $BAM_DIR/4_S4.proper_paired.subsample.bam
 
 
 

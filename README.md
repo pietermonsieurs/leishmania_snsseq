@@ -44,6 +44,12 @@
                 | S3     | 16652744   | 100%       |
                 | S4     | 18672428   | 89%        |
             * with increasing the seed length to 100 (-k 100)
+                | Sample | All\_reads | Percentage |
+                |--------|------------|------------|
+                | S1     | 15434734   | 80%        |
+                | S2     | 15430228   | 80%        |
+                | S3     | 12395674   | 100%       |
+                | S4     | 14800620   | 84%        |
                 
         * running subsampling: [subsampling.sh](subsampling.sh) to subsample all bam-file to the same amount of reads. Output looks like: 4_S4.proper_paired.subsample.bam
 
