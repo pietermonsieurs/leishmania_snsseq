@@ -153,13 +153,9 @@ export PATH=/Users/pmonsieurs/programming/software/SWEMBL/:/Users/pmonsieurs/pro
 
 SWEMBL -m 500 -f 150 -R 0.0025 -F -i 1_S1.subsample.bam -a 2_S2.subsample.bam
 
-<<<<<<< HEAD
 ## full pictures of sequencing data
 * request to visualize full sequencing data set. First run depth for all 4 samples, then subtract with the corresponding background, and do the visualization of S1 on top (bg-corrected with S2), and S3 below (bg-corrected with S4): [chromosome_peaks.py](chromosome_peaks.py)
 
-
-=======
->>>>>>> 8a1d69a36b4b4728b3ad7c0b5eaebea4a3d73005
 
 ### in-house developed tool
 Start from the samtools depth output generated from [samtools_depth.sh](samtools_depth.sh) and use the core of the [chromosome_peaks.py](chromosome_peaks.py) script to calculate the difference. On this difference, and easy-to-use peak detection algorithm can be applied. 

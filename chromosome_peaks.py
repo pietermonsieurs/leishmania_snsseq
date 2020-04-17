@@ -31,8 +31,8 @@ for chrom in chrom_list:
     print(chrom)
     counter = counter + 1
 
-    # if counter < 259:
-    #     continue
+    if counter < 259:
+         continue
     
     # define line types and colors
     line_styles = ['-', ':', '-', ':']
