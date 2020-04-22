@@ -137,7 +137,13 @@ The final aim is to find peaks in the third condition (S3) that cannot be found 
         * broad - only in S3: `~/programming/software/bedtools2-master/bin/bedtools intersect -v -f 1e-6 -F 1e-6 -b S1_broad_peaks.broadPeak -a S3_broad_peaks.broadPeak > only_present_in_S3_broad.csv`
         * broad - only in S1: `~/programming/software/bedtools2-master/bin/bedtools intersect -v -f 1e-6 -F 1e-6 -a S1_broad_peaks.broadPeak -b S3_broad_peaks.broadPeak > only_present_in_S1_broad.csv`
 * step 3: visualization of the peaks to detect aberrations from what is expected. Using matplotlib in combnation with samtools depth to make coverage depth plots. 
-    * make sure to run samtools depth with -a option. Otherwise position with zero depth will not be reported and all data frames will not have the same length.
+    * make sure to run samtools depth with -a option. Otherwise position with zero depth will not be reported and all data frames will not have the same length. Script has to be run on the supercomputer for each contig separately. 
+        * depth directory contains list of all chromosomes / contigs 
+        * bash script: [samtools_depth.sh](samtools_depth.sh)
+    * perform filtering on the peaks that are detected, for example by only selecting the one with the highest coverage (example for S3):
+        * `mv only_present_in_S3.csv only_present_in_S3.all.csv`
+        * `awk '$5 > 100' only_present_in_S3.all.csv > only_present_in_S3.csv`
+
     * [differential_peaks_zoom.py](differential_peaks_zoom.py): creates per peak a plot with the sequencing coverage for a peak in either of the 4 samples (S1 to S4):
         * Left: sequencing depth for the peak + 200 bp flanking windows on both sides
         * Middle: coverage of S1 and S3 when subtracted from their corresponding control (S2 or S4 respectively). This might result in negative values, in case the control has a higher coverage for a position in the genome than the actual sample.
