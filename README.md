@@ -89,6 +89,7 @@ Sicer for broad peak detection - no sharp peaks:
     * add output of previous script to corresponding configuration file of sicer2 --> /Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/sicer/lib/GenomeData.py
 * run Sicer with differential peak detection, including controls:
     * output file does not have to be specified. Sicer create its own names for output. Output directory might be beneficial to keep overview
+    * sicer_df -t 3_S3.proper_paired.subsample.bed 1_S1.proper_paired.subsample.bed -c 4_S4.proper_paired.subsample.bed 2_S2.proper_paired.subsample.bed -s tbruc -o ./sicer/
     * sicer_df -t 3_S3.subsample.bed 1_S1.subsample.bed -c 4_S4.subsample.bed 2_S2.subsample.bed -s tbruc -o ./sicer/
     * Sicer2 tool gives always errors when running. Not clear where this comes from.
 * Use older version of SICER (version 1.1)
@@ -151,10 +152,14 @@ The final aim is to find peaks in the third condition (S3) that cannot be found 
 ### SWEMBL
 export PATH=/Users/pmonsieurs/programming/software/SWEMBL/:/Users/pmonsieurs/programming/software/samtools-1.9:$PATH
 
-SWEMBL -m 500 -f 150 -R 0.0025 -F -i 1_S1.subsample.bam -a 2_S2.subsample.bam
+SWEMBL -m 500 -f 150 -R 0.0025 -F -i 1_S1.proper_paired.subsample.bam -a 2_S2.proper_paired.subsample.bam
+
+Update: swembl is giving a segmentation fault. 
 
 ## full pictures of sequencing data
-* request to visualize full sequencing data set. First run depth for all 4 samples, then subtract with the corresponding background, and do the visualization of S1 on top (bg-corrected with S2), and S3 below (bg-corrected with S4): [chromosome_peaks.py](chromosome_peaks.py)
+* request to visualize full sequencing data set. First run depth for all 4 samples, then subtract with the corresponding background, and do the visualization of S1 on top (bg-corrected with S2), and S3 below (bg-corrected with S4): [chromosome_peaks.py](chromosome_peaks.py). Additionally, include the raw data on top of the plot for each of the 4 samples. 
+    * update script to work with window of 50kb (or any other user specified window)
+
 
 
 ### in-house developed tool
