@@ -70,6 +70,7 @@ for chrom in chrom_list:
     # background corrected samples. 
     diff_S1 = depth_S1.iloc[:,2] - depth_S2.iloc[:,2]
     diff_S3 = depth_S3.iloc[:,2] - depth_S4.iloc[:,2]
+    diff_S3_S1 = diff_S3 - diff_S1
 
 
     # define line types and colors. Not always needed (obsolet after 
@@ -86,8 +87,8 @@ for chrom in chrom_list:
         end = start + window
 
         # create matplotlib figures / 6 plots
-        fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(nrows=6, ncols=1, 
-                                    figsize=(60, 48))
+        fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(nrows=7, ncols=1, 
+                                    figsize=(60, 60))
 
         # first four plots are the raw read counts for each sample
         # separately
@@ -129,9 +130,13 @@ for chrom in chrom_list:
         ax6 = make_plot(ax6, depth_S3.iloc[start:end,1], diff_S3.values[start:end], "coverage S3 - bg correct", 'red')
         ax6.set_ylim(y_min, y_max)
 
+        ax7 = make_plot(ax7, depth_S3.iloc[start:end,1], diff_S3_S1.values[start:end]
+
         figure_file = figure_dir + chrom + "." + str(start) + "_" + str(end) + ".png"
         plt.savefig(figure_file)
         plt.close()
+
+
 
 
         start = end

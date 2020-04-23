@@ -13,7 +13,7 @@ src_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/'
 # is certainly corresponding with the final bed output 
 bwa_dir = src_dir + 'results/bwa/'
 # bam_file = bwa_dir + '1_S1.subsample.bam'
-bwa_dir = src_dir + '1_S1.proper_paired.subsample.bam'
+bam_file = bwa_dir + '1_S1.proper_paired.subsample.bam'
 
 # bin file for samtools
 samtools = '/Users/pmonsieurs/programming/software/samtools-1.9/samtools'
