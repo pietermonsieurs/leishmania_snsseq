@@ -14,12 +14,12 @@ bam_dir = results_dir + 'bwa/'
 
 # set window size: how big (base pairs) should the window be
 window = 50000
-plt.rcParams.update({'font.size': 22})
+plt.rcParams.update({'font.size': 50})
 
 
 # file with all chromosome names / contigs:
 chrom_file = depth_dir + 'list_of_chromosomes.csv'
-chrom_data = pd.read_csv(chrom_file, sep="\t", header=None, usecols=[0])
+chrom_data = pd.read_csv(chrom_file, sep="\t", header=None, usecols=[0], comment='#')
 chrom_list = chrom_data[0].to_list()
 chrom_list = chrom_list[:-1]
 my_debug and print(chrom_list)
@@ -36,7 +36,9 @@ def make_plot (ax, position, depth, title, color):
     ax.plot(position, depth, label=title, color=color)
     # , label=sample, linestyle=line_style, color=line_color)
     ax.set_xlabel('Position in Genome')
-    ax.set_ylabel('Coverage')  
+    # ax.set_ylabel('Coverage')  
+    ax.set_ylabel(title)  
+    # ax.set_title(title)
     ax.grid(which="both")
     ax.fill_between(position, depth, color=color, alpha=0.50)
     # ax1.set_ylim(y_min, y_max)
@@ -87,15 +89,14 @@ for chrom in chrom_list:
         end = start + window
 
         # create matplotlib figures / 6 plots
-        fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(nrows=7, ncols=1, 
-                                    figsize=(60, 60))
+        fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7) = plt.subplots(nrows=7, ncols=1,    figsize=(60, 60))
 
         # first four plots are the raw read counts for each sample
         # separately
-        ax1 = make_plot(ax1, depth_S1.iloc[start:end,1], depth_S1.iloc[start:end,2], "coverage S1", 'purple')
-        ax2 = make_plot(ax2, depth_S2.iloc[start:end,1], depth_S2.iloc[start:end,2], "coverage S2", 'blue')
-        ax3 = make_plot(ax3, depth_S3.iloc[start:end,1], depth_S3.iloc[start:end,2], "coverage S3", 'red')
-        ax4 = make_plot(ax4, depth_S4.iloc[start:end,1], depth_S4.iloc[start:end,2], "coverage S4", 'orange')
+        ax1 = make_plot(ax1, depth_S1.iloc[start:end,1], depth_S1.iloc[start:end,2], "cov S1", 'purple')
+        ax2 = make_plot(ax2, depth_S2.iloc[start:end,1], depth_S2.iloc[start:end,2], "cov S2", 'blue')
+        ax3 = make_plot(ax3, depth_S3.iloc[start:end,1], depth_S3.iloc[start:end,2], "cov S3", 'red')
+        ax4 = make_plot(ax4, depth_S4.iloc[start:end,1], depth_S4.iloc[start:end,2], "cov S4", 'orange')
 
 
 
@@ -114,7 +115,7 @@ for chrom in chrom_list:
         # ax5.set_ylabel('Background corrected coverage S1')  
         # ax5.grid(which="both")
 
-        ax5 = make_plot(ax5, depth_S1.iloc[start:end,1], diff_S1.values[start:end], "coverage S1 - bg correct", 'purple')
+        ax5 = make_plot(ax5, depth_S1.iloc[start:end,1], diff_S1.values[start:end], "cov S1 - bg S2", 'purple')
         ax5.set_ylim(y_min, y_max)
         # ax1.legend()
 
@@ -127,10 +128,10 @@ for chrom in chrom_list:
         # ax6.set_ylabel('Background corrected coverage S3')  
         # ax6.grid(which="both")
 
-        ax6 = make_plot(ax6, depth_S3.iloc[start:end,1], diff_S3.values[start:end], "coverage S3 - bg correct", 'red')
+        ax6 = make_plot(ax6, depth_S3.iloc[start:end,1], diff_S3.values[start:end], "cov S3 - bg S4", 'red')
         ax6.set_ylim(y_min, y_max)
 
-        ax7 = make_plot(ax7, depth_S3.iloc[start:end,1], diff_S3_S1.values[start:end]
+        ax7 = make_plot(ax7, depth_S3.iloc[start:end,1], diff_S3_S1.values[start:end], "cov S3 min S1", 'black')
 
         figure_file = figure_dir + chrom + "." + str(start) + "_" + str(end) + ".png"
         plt.savefig(figure_file)
