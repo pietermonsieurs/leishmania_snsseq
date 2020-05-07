@@ -1,21 +1,28 @@
 # Leishmania SNS-seq
 
-## Input data
-* reference genome: downloaded from TriTrypDB. Used version indicated with 2018 (release data december 2018). The other file of T. brucei lister is from 2010. https://tritrypdb.org/common/downloads/Current_Release/TbruceiLister427_2018/fasta/data/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta. Total genome size is 42.25Mbp
-* After a first analyis, it was noticed that the fastq file contained very short reads, based on the trimming done by the sequencing company 
-* Four different input data sets (8 fastq-files) that should be aligned using BWA: [bwa_createcommands.py](bwa_createcommands.py)
-    * many short peaks are detected with only a length of 19nt. This corresponds perfectly with the default seed lengths of the BWA algorithm. No idea why, but apparently 19nt seed is enough to be reported
-    * redo the analysis and set the minimum seed length to 100 (-k 100) when running BWA
+## Input data & alignment
 * Two different conditions, each with their own control: 
     * Normalize and subtract sample 2 (background control) from sample 1 (SNS non-induced). Call peaks in non-induced sample.
     * Normalize and subtract sample 4 (background control) from sample 3 (SNS induced RNAi Mlp1). Call peaks in induced RNAi Mlp1 mutant sample.
     * Compare the peaks of subtracted 1 and 3 samples (Are the peaks all the same or there are some differences between subtracted 1 and 3 samples).
     * Mapping of different peaks (origins of replication) between subtracted samples 1 and 3.
+* reference genome: downloaded from TriTrypDB. Used version indicated with 2018 (release data december 2018). The other file of T. brucei lister is from 2010. https://tritrypdb.org/common/downloads/Current_Release/TbruceiLister427_2018/fasta/data/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta. Total genome size is 42.25Mbp
 
-* check the length of the reads, as many very small / narrow peaks have been detected using these input fastq files. 
+## Alignment
+* After a first analyis, it was noticed that the fastq file contained very short reads, based on the trimming done by the sequencing company ==> check the length of the reads, as many very small / narrow peaks have been detected using these input fastq files. 
   * gunzip 1_S1_L001_R1_001.fastq.gz
   * awk 'NR%4 == 2 {lengths[length($0)]++} END {for (l in lengths) {print l, lengths[l]}}' 1_S1_L001_R1_001.fastq
   * visualization of the read lengths: [readlenght_stats.R](readlenght_stats.R)
+  * Reads are now filtered on length using the script: [reads_filtering_on_length.sh](reads_filtering_on_length.sh), which is integrated in the BWA bash script (see further below)
+* Run alignment, which includeds also the filtering of the input file bases on the read length. Overall bash script is [bwa_snsseq.sh](bwa_snsseq.sh)
+    * Four different input data sets (8 fastq-files) that should be aligned using BWA: [bwa_createcommands.py](bwa_createcommands.py). Those commands are inserted in the bash script mentioned above. 
+        * many short peaks are detected with only a length of 19nt. This corresponds perfectly with the default seed lengths of the BWA algorithm. No idea why, but apparently 19nt seed is enough to be reported. Therefore, minimum seed length is now set to 100: redo the analysis and set the minimum seed length to 100 (-k 100) when running BWA.
+        * alternative could be to use Bowtie. However, the publication of Lombrana (2016) is using bowtie version 1 instead of bowtie2, and the parameter settings mentioned there are not available anymore in bowtie2
+    * remove duplicate alignments from the bam-file: included the Picard MarkDuplicates command into the bwa bash script, with the option activated to directly remove the duplicates. Between 13% and 35% of the alignments are removed from the bam-files.
+
+
+
+
 
 * do subsampling to bring all samples to the same average read depth. Subsampling can be done using the samtools implementation. Recalculating based on the flagstat statistics mentioned below. 
     * option 1:
@@ -50,8 +57,15 @@
                 | S2     | 15430228   | 80%        |
                 | S3     | 12395674   | 100%       |
                 | S4     | 14800620   | 84%        |
-                
-        * running subsampling: [subsampling.sh](subsampling.sh) to subsample all bam-file to the same amount of reads. Output looks like: 4_S4.proper_paired.subsample.bam
+    * option 3: 
+        * duplicate reads have been remove. Check flagstats again to see the percentage of proper paired reads. 
+        * select proper paired reads: 
+            * samtools view -bf 0x2 1_S1.removedups.bam > 1_S1.removedups.proper_paired.bam 
+            * samtools view -bf 0x2 2_S2.removedups.bam > 2_S2.removedups.proper_paired.bam 
+            * samtools view -bf 0x2 3_S3.removedups.bam > 3_S3.removedups.proper_paired.bam
+            * samtools view -bf 0x2 4_S4.removedups.bam > 4_S4.removedups.proper_paired.bam 
+
+    * running subsampling: [subsampling.sh](subsampling.sh) to subsample all bam-file to the same amount of reads. Output looks like: 4_S4.proper_paired.subsample.bam
 
 * do indexing on all the bam-files using samtools
     * ~/programming/software/samtools-1.9/samtools index 1_S1.proper_paired.subsample.bam
@@ -160,7 +174,10 @@ export PATH=/Users/pmonsieurs/programming/software/SWEMBL/:/Users/pmonsieurs/pro
 
 SWEMBL -m 500 -f 150 -R 0.0025 -F -i 1_S1.proper_paired.subsample.bam -a 2_S2.proper_paired.subsample.bam
 
-Update: swembl is giving a segmentation fault. 
+Update: swembl is giving a segmentation fault. Might be related to the bam-file which is corrupt. The segementation fault is not there when running a bam-file from the archive (~/programming/leishmania_snsseq/results/bwa/archive/2_S2.subsample.bam)
+
+Docs:
+http://www.bioconductor.org/help/course-materials/2010/EMBL2010/Chip-seq.SWEMBL.pdf
 
 ## full pictures of sequencing data
 * request to visualize full sequencing data set. First run depth for all 4 samples, then subtract with the corresponding background, and do the visualization of S1 on top (bg-corrected with S2), and S3 below (bg-corrected with S4): [chromosome_peaks.py](chromosome_peaks.py). Additionally, include the raw data on top of the plot for each of the 4 samples. 
