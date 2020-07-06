@@ -4,8 +4,8 @@
 # with many contigs (> 200), only a few minutes. q1h should
 # be sufficient
 
-#PBS -l walltime=0:59:00
-#PBS -L tasks=1:lprocs=20
+#PBS -l walltime=0:20:00
+#PBS -L tasks=20:lprocs=1
 
 # load necessary modules
 module load SAMtools/1.9-intel-2019b
@@ -23,7 +23,12 @@ cd $DEPTH_DIR/
 # export sample=1
 # export chrom=Chr11_3B_Tb427v10
 
-samtools depth -a -r $chrom $BAM_DIR/${sample}_S${sample}.proper_paired.subsample.bam > $DEPTH_DIR/${sample}_S${sample}.chrom_${chrom}.subsample.depth.csv
+# samtools depth -a -r $chrom $BAM_DIR/${sample}_S${sample}.proper_paired.subsample.bam > $DEPTH_DIR/${sample}_S${sample}.chrom_${chrom}.subsample.depth.csv
+
+samtools index $chrom $BAM_DIR/${sample}_S${sample}.mapq30.removedups.proper_paired.subsample.bam
+
+samtools depth -a -r $chrom $BAM_DIR/${sample}_S${sample}.mapq30.removedups.proper_paired.subsample.bam > $DEPTH_DIR/${sample}_S${sample}.chrom_${chrom}.subsample.depth.csv
+
 
 
 # wsub commands

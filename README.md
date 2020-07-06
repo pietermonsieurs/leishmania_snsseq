@@ -20,10 +20,6 @@
         * alternative could be to use Bowtie. However, the publication of Lombrana (2016) is using bowtie version 1 instead of bowtie2, and the parameter settings mentioned there are not available anymore in bowtie2
     * remove duplicate alignments from the bam-file: included the Picard MarkDuplicates command into the bwa bash script, with the option activated to directly remove the duplicates. Between 13% and 35% of the alignments are removed from the bam-files.
 
-
-
-
-
 * do subsampling to bring all samples to the same average read depth. Subsampling can be done using the samtools implementation. Recalculating based on the flagstat statistics mentioned below. 
     * option 1:
         * S4 is the smallest sample, everything is calculated relatively versus this one. 
@@ -65,16 +61,19 @@
             * samtools view -bf 0x2 3_S3.removedups.bam > 3_S3.removedups.proper_paired.bam
             * samtools view -bf 0x2 4_S4.removedups.bam > 4_S4.removedups.proper_paired.bam 
 
-    * running subsampling: [subsampling.sh](subsampling.sh) to subsample all bam-file to the same amount of reads. Output looks like: 4_S4.proper_paired.subsample.bam
+    * option 4: Most stringent filtering. Redo the analysis with different filtering steps implemented, most if them are implemented in the bash script [bwa_snsseq.sh](bwa_snsseq.sh)
+        * check on length of the reads (see also above: [reads_filtering_on_length.sh](reads_filtering_on_length.sh))
+        * BWA: with seed parameter of 100 = very stringent
+        * samtools view: remove the alignments with a mapping quality lower than 30
+        * Picard: remove duplicates with the option REMOVE_DUPLICATES=TRUE
+        * samtools view: select only proper paired reads. 
+        * subsampling now integrated in the bwa_snsseq.sh script
+    * running subsampling: [subsampling.sh](subsampling.sh) to subsample all bam-file to the same amount of reads. Output looks like: 4_S4.proper_paired.subsample.bam --> ! Update: this step is now also integrated in [bwa_snsseq.sh](bwa_snsseq.sh)
 
 * do indexing on all the bam-files using samtools
-    * ~/programming/software/samtools-1.9/samtools index 1_S1.proper_paired.subsample.bam
-    * ~/programming/software/samtools-1.9/samtools index 2_S2.proper_paired.subsample.bam
-    * ~/programming/software/samtools-1.9/samtools index 3_S3.proper_paired.subsample.bam
-    * ~/programming/software/samtools-1.9/samtools index 4_S4.proper_pairedqqq.subsample.bam
 * convert bam-file to .bed files using the bedtools samtobed command. 
     * [bedtools_bamtobed.sh](bedtools_bamtobed.sh) !! this step is *not* needed if you want to run MACS, only if you want to run SICER2.
-    * afterwards copy-paste bed file to laptop for peak detection.
+    * afterwards copy-paste bed file to laptop for peak detection. !! Update: Sicer2 now also installed on the calcua cluster, see further below. 
 
 
 ## Peak detection
@@ -97,7 +96,10 @@ Sicer for broad peak detection - no sharp peaks:
         * sicer_df -t 3_S3.subsample.head10k.bed 1_S1.subsample.head10k.bed -c 4_S4.subsample.head10k.bed 2_S2.subsample.head10k.bed -s tbruc  > sicer_df.head10k.out
         * sicer_df -t 3_S3.subsample.head1M.bed 1_S1.subsample.head1M.bed -c 4_S4.subsample.head1M.bed 2_S2.subsample.head1M.bed -s tbruc  > sicer_df.head1M.out
 
+
 ### SICER2
+Summary: SICER2 was initially not running on MacBook, which forced us to use SICER1.1 After mailing with authors, this seems to give the same output as SICER 2. The authors updated the SICER package, and now SICER 2 is running on MacBook (March2020). Later, the SICER2 pacakges was also installed locally on the CalcUA cluster (see further below), so it can be run on multiple clusters. Initially (when running on MacBook), the *sicer_df* package was used where in one command all differential peaks were predicted (i.e. integrating information from S1 until S4). However, in a second step, we want to use two or more prediction tools, and look for overlapping peaks either detected in S1 or detected in S3. Therefore, we will run separatley for the two conditions using the *sicer* package. 
+
 * Sicer can only work with genomes which are integrated into the system. It needs to know all the chromosome IDs and the corresponding lengths.
     * For T. brucei, only a contig assembly is available. Adding all these contigs done in an automized way: [sicer_addorganism.py](sicer_addorganism.py)
     * add output of previous script to corresponding configuration file of sicer2 --> /Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/sicer/lib/GenomeData.py
@@ -123,10 +125,43 @@ Sicer for broad peak detection - no sharp peaks:
         * /home/smrtanalysis/snsseq/software/SICER_V1.1/SICER/SICER-df.sh  3_S3.subsample.bed 4_S4.subsample.bed 1_S1.subsample.bed 2_S2.subsample.bed 200 600 0.05 0.05
         * End results is a list of differential peaks between both background corrected samples
         * important! only differential peaks when they were identified in peaks when comparing with their background. No peak detected = not included in the differential analysis!
+
+* Run sicer (not sicer_df) on S1 and S3 respectively to identify peaks. This can be run on CalcUA now. 
+    * Run SICERInstallation of SICER2 on CalcUA: see mail of Franky Backeljauw 20200304:
+        * install in python-lib of software directory: /user/antwerpen/205/vsc20587/software/python_lib/lib/python3.7/site-packages
+        * export PYTHONPATH=/user/antwerpen/205/vsc20587/software/python_lib/lib/python3.7/site-packages/:$PYTHONPATH
+        * pip3 install --prefix="/user/antwerpen/205/vsc20587/software/python_lib/" sicer2
+        * pip3 show sicer2
+        * binaries are installed in /user/antwerpen/205/vsc20587/software/python_lib/bin
+        * copy-paste GenomeData.py (see above) from MacBook to /user/antwerpen/205/vsc20587/software/python_lib/lib/python3.7/site-packages/sicer/lib: this contains genome data for T. brucei
+    * Running sicer2 needs different input parameters: 
+        * the parameters set in the previous experiment with sicer_df is probably the same as now. But default settings look ok: --window_size 200 and --gap_size 600. False discovery rate is by default 0.01 (--false_discovery_rate) which seems more stringent than the 0.05 in previous setting
+        * run SICER for S1 and S3 with own control
+            * /user/antwerpen/205/vsc20587/software/python_lib/bin/sicer -t 1_S1.mapq30.removedups.proper_paired.subsample.bed -c 2_S2.mapq30.removedups.proper_paired.subsample.bed -o /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/sicer/ -s tbruc --cpu 20
+            * /user/antwerpen/205/vsc20587/software/python_lib/bin/sicer -t 3_S3.mapq30.removedups.proper_paired.subsample.bed -c 4_S4.mapq30.removedups.proper_paired.subsample.bed -o /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/sicer/ -s tbruc --cpu 20
+
+
+
+
     
 ### MACS
 The final aim is to find peaks in the third condition (S3) that cannot be found back in the first one (S1), and this after background correction.
 
+#### MACS on calcua
+* installation of MACS2 on CalcUA server. Use same approach as done for SICER2
+    * module load Python/3
+    * export PYTHONPATH=/user/antwerpen/205/vsc20587/software/python_lib/lib/python3.7/site-packages/:$PYTHONPATH
+    * pip install --prefix="/user/antwerpen/205/vsc20587/software/python_lib/" MACS2
+    * MACS2 is installed under: /user/antwerpen/205/vsc20587/software/python_lib/bin/ --> when running, first do PYTHONPATH and do load Python3 module
+* running peak detection
+    * macs2 is installed on calcua with approach above in `/user/antwerpen/205/vsc20587/software/python_lib/bin`
+    * add new parameters: --no-model
+    * callpeak: 
+        * /user/antwerpen/205/vsc20587/software/python_lib/bin/macs2 callpeak -f BAM -g 38e6 --nomodel --extsize 150 -n S1 -t ~/scratch/leishmania_snsseq/results/bwa/1_S1.mapq30.removedups.proper_paired.subsample.bam -c ~/scratch/leishmania_snsseq/results/bwa/2_S2.mapq30.removedups.proper_paired.subsample.bam
+        * /user/antwerpen/205/vsc20587/software/python_lib/bin/macs2 callpeak -f BAM -g 38e6 --nomodel --extsize 150  -n S3 -t ~/scratch/leishmania_snsseq/results/bwa/3_S3.mapq30.removedups.proper_paired.subsample.bam -c ~/scratch/leishmania_snsseq/results/bwa/4_S4.mapq30.removedups.proper_paired.subsample.bam
+
+
+#### approach only focussing on MACS, not using the SICER output
 * step 1: peak detection using MACS
     * installation of MACS via conda on laptop: `conda install -c bioconda macs2`. After installation, MACS can be run via macs2
     * MACS integrates background correction, so can be used to control S1 with S2 output, and S3 with S4.
@@ -165,7 +200,7 @@ The final aim is to find peaks in the third condition (S3) that cannot be found 
 * step 4: convert MACS output files to bigwig files
     * cp S1_peaks.csv S1_peaks.copy
     * sed '/^#/ d' S1_peaks.csv > S1_peaks.wig
-    * awk '{print $1"\t"$2"\t"$3"\t"$4}' S1_peaks.wig > S1_peak.bigwig
+    * awk '{print $1"\t"$2"\t"$3"\t"$4}' S1_peaks.wig > S1_peak.bigwig ! wrong!! need specialized script
     
 
 ### Stringent approach using MACS and SICER2
@@ -186,14 +221,37 @@ Update: swembl is giving a segmentation fault. Might be related to the bam-file 
 Docs:
 http://www.bioconductor.org/help/course-materials/2010/EMBL2010/Chip-seq.SWEMBL.pdf
 
+
+### Data Integration
+Integrating the peaks predicted by MACS and SICER2 (and in the future other tools like SWEMBL?), in order to only retain those peaks that are predicted with both methodologies, in order to have the highest confidence.
+* use the bedtools intersect command to look for overlap between both approaches. For MACS, we have to choose between narrow and broad peaks. Broad peaks are still relatively narrow compared to sicer, but return more peaks than narrow peak (= default MACS2 setting)
+    * first convert the peak / summit files of SICER and MACS into .bed-files of *only* three columns
+    * next run bedtools using the bedtools intersect -wa setting
+    * the default overlap fraction is 1e-9, which corresponds to 1nt with human genome. 
+    * see detailed commands in [bwa_snsseq.sh](bwa_snsseq.sh)
+* check the unique peaks either in S1 or S3 by using the -v option with bedtools intersect
+    * commands have been added to [bwa_snsseq.sh](bwa_snsseq.sh)
+
+
+
 ## full pictures of sequencing data
 * request to visualize full sequencing data set. First run depth for all 4 samples, then subtract with the corresponding background, and do the visualization of S1 on top (bg-corrected with S2), and S3 below (bg-corrected with S4): [chromosome_peaks.py](chromosome_peaks.py). Additionally, include the raw data on top of the plot for each of the 4 samples. 
-    * update script to work with window of 50kb (or any other user specified window)
+    * get the depth for all chromosomes and all samples (n=4)
+        * using samtools depth to get the depth for all chromosomes and all samples
+        * re-run only needed when something is changed on the .bam files (e.g. additional filterin step). The name of the corresponding bam-file needs to be adapted in the script. 
+    * create picture with sequencing depth for each of the differential peaks 
+        * software code [chromosome_peaks.py](chromosome_peaks.py) was now used for creating pictures of 50kb spanning the whole chromosome. This has to be adpated that 1) it works with a specified chromosome + start and end position, 2) that is does not work on all chromosomes combined, but takes one parameter setting by one
+        * new script is called: [differential_peaks.py](differential_peaks.py): takes as input three arguments: chrom, start, end
+        
 
 
 
 ### in-house developed tool
 Start from the samtools depth output generated from [samtools_depth.sh](samtools_depth.sh) and use the core of the [chromosome_peaks.py](chromosome_peaks.py) script to calculate the difference. On this difference, and easy-to-use peak detection algorithm can be applied. 
+
+
+
+
     
 
 #
