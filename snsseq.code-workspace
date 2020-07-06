@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "SSH FS - calcua_leishmania_snsneq",
+			"uri": "ssh://calcua_leishmania_snsneq/"
+		}
+	],
+	"settings": {}
+}

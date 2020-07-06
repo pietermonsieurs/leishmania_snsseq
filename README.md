@@ -168,6 +168,13 @@ The final aim is to find peaks in the third condition (S3) that cannot be found 
     * awk '{print $1"\t"$2"\t"$3"\t"$4}' S1_peaks.wig > S1_peak.bigwig
     
 
+### Stringent approach using MACS and SICER2
+Both algorithms have been run separately. Afterward, the peaks from MACS and SICER2 are combined, and only the peaks confirmed in both algorithms, are reported. Next, only the peaks uniquely predicted in S1 or uniquely predicted in S3 are reported.
+* all the different steps have been combined into on bash sript: [bwa_snsseq.sh](bwa_snsseq.sh)
+    * first different bwa alignment steps and filtering steps are performed
+    * next overlap between both algorithms is done --> only when confirmation using both approaches, the peaks are retained (separate procedure for narrow and broad peaks)
+    * select the unique peaks for either S1 or S3
+
 
 ### SWEMBL
 export PATH=/Users/pmonsieurs/programming/software/SWEMBL/:/Users/pmonsieurs/programming/software/samtools-1.9:$PATH
