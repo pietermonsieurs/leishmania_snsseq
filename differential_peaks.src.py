@@ -53,10 +53,10 @@ if __name__ == "__main__":
     sub_dir_suffix = args.subdir
 
     # create file names with depth data
-    depth_ctrl_file = depth_dir + "2_S2.chrom_" + chrom + ".subsample.depth.csv"
-    depth_ctrlbg_file = depth_dir + "1_S1.chrom_" + chrom + ".subsample.depth.csv"
-    depth_treat_file = depth_dir + "4_S4.chrom_" + chrom + ".subsample.depth.csv"
-    depth_treatbg_file = depth_dir + "3_S3.chrom_" + chrom + ".subsample.depth.csv"
+    depth_S1_file = depth_dir + "1_S1.chrom_" + chrom + ".subsample.depth.csv"
+    depth_S2_file = depth_dir + "2_S2.chrom_" + chrom + ".subsample.depth.csv"
+    depth_S3_file = depth_dir + "3_S3.chrom_" + chrom + ".subsample.depth.csv"
+    depth_S4_file = depth_dir + "4_S4.chrom_" + chrom + ".subsample.depth.csv"
 
     # create figure dir based on the type of analysis running e.g. S1_narrowPeak/
     figure_dir = depth_dir + sub_dir_suffix + "/"
@@ -69,20 +69,20 @@ if __name__ == "__main__":
     # check if file is empty for sample S1 (and assume that 
     # the same goes up for the oterh samples: if S1 is ok, 
     # everthing is ok)
-    if os.stat(depth_ctrl_file).st_size == 0:
-        print(f"File {depth_ctrl_file} is empty --> {os.stat(depth_S1_file).st_size}!!")
+    if os.stat(depth_S1_file).st_size == 0:
+        print(f"File {depth_S1_file} is empty --> {os.stat(depth_S1_file).st_size}!!")
         sys.exit()
     
-    depth_ctrl = pd.read_csv(depth_ctrl_file, sep="\t", header=None)
-    depth_ctrlbg = pd.read_csv(depth_ctrlbg_file, sep="\t", header=None)
-    depth_treat = pd.read_csv(depth_treat_file, sep="\t", header=None)
-    depth_treatbg = pd.read_csv(depth_treatbg_file, sep="\t", header=None)
+    depth_S1 = pd.read_csv(depth_S1_file, sep="\t", header=None)
+    depth_S2 = pd.read_csv(depth_S2_file, sep="\t", header=None)
+    depth_S3 = pd.read_csv(depth_S3_file, sep="\t", header=None)
+    depth_S4 = pd.read_csv(depth_S4_file, sep="\t", header=None)
 
     # calculate the difference between sample and corresponding control to have 
     # background corrected samples. 
-    diff_ctrl = depth_ctrl.iloc[:,2] - depth_ctrlbg.iloc[:,2]
-    diff_treat = depth_treat.iloc[:,2] - depth_treatbg.iloc[:,2]
-    diff_treat_ctrl = diff_treat - diff_ctrl
+    diff_S1 = depth_S1.iloc[:,2] - depth_S2.iloc[:,2]
+    diff_S3 = depth_S3.iloc[:,2] - depth_S4.iloc[:,2]
+    diff_S3_S1 = diff_S3 - diff_S1
 
 
     # define line types and colors. Not always needed (obsolet after 
@@ -95,17 +95,17 @@ if __name__ == "__main__":
 
     # first four plots are the raw read counts for each sample
     # separately
-    ax1 = make_plot(ax1, depth_ctrl.iloc[start:end,1], depth_ctrl.iloc[start:end,2], "cov ctrl", 'purple')
-    ax2 = make_plot(ax2, depth_ctrlbg.iloc[start:end,1], depth_ctrlbg.iloc[start:end,2], "cov ctrl bg", 'blue')
-    ax3 = make_plot(ax3, depth_treat.iloc[start:end,1], depth_treat.iloc[start:end,2], "cov treat", 'red')
-    ax4 = make_plot(ax4, depth_treatbg.iloc[start:end,1], depth_treatbg.iloc[start:end,2], "cov treat bg", 'orange')
+    ax1 = make_plot(ax1, depth_S1.iloc[start:end,1], depth_S1.iloc[start:end,2], "cov S1", 'purple')
+    ax2 = make_plot(ax2, depth_S2.iloc[start:end,1], depth_S2.iloc[start:end,2], "cov S2", 'blue')
+    ax3 = make_plot(ax3, depth_S3.iloc[start:end,1], depth_S3.iloc[start:end,2], "cov S3", 'red')
+    ax4 = make_plot(ax4, depth_S4.iloc[start:end,1], depth_S4.iloc[start:end,2], "cov S4", 'orange')
 
 
 
     # get minimum and maximum values to set those values in the plots, so that
     # the upper and lower graph have the same extreme values.
-    y_max = max(diff_ctrl[start:end].max(), diff_treat[start:end].max())
-    y_min = min(diff_ctrl[start:end].min(), diff_treat[start:end].min())
+    y_max = max(diff_S1[start:end].max(), diff_S3[start:end].max())
+    y_min = min(diff_S1[start:end].min(), diff_S3[start:end].min())
     y_max = y_max*1.05
     my_debug and print(f"min y {y_min} -- max y {y_max}")
 
@@ -117,7 +117,7 @@ if __name__ == "__main__":
     # ax5.set_ylabel('Background corrected coverage S1')  
     # ax5.grid(which="both")
 
-    ax5 = make_plot(ax5, depth_ctrl.iloc[start:end,1], diff_ctrl.values[start:end], "cov ctrl - bg", 'purple')
+    ax5 = make_plot(ax5, depth_S1.iloc[start:end,1], diff_S1.values[start:end], "cov S1 - bg S2", 'purple')
     ax5.set_ylim(y_min, y_max)
     # ax1.legend()
 
@@ -130,10 +130,10 @@ if __name__ == "__main__":
     # ax6.set_ylabel('Background corrected coverage S3')  
     # ax6.grid(which="both")
 
-    ax6 = make_plot(ax6, depth_treat.iloc[start:end,1], diff_treat.values[start:end], "cov treat - bg", 'red')
+    ax6 = make_plot(ax6, depth_S3.iloc[start:end,1], diff_S3.values[start:end], "cov S3 - bg S4", 'red')
     ax6.set_ylim(y_min, y_max)
 
-    ax7 = make_plot(ax7, depth_treat.iloc[start:end,1], diff_treat_ctrl.values[start:end], "treat vs ctrl", 'black')
+    ax7 = make_plot(ax7, depth_S3.iloc[start:end,1], diff_S3_S1.values[start:end], "cov S3 min S1", 'black')
 
     figure_file = figure_dir + chrom + "." + str(start) + "_" + str(end) + ".png"
     plt.savefig(figure_file)
