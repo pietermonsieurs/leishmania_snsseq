@@ -9,7 +9,7 @@
 ### depending on task
 #########################################################
 #PBS -l walltime=0:59:00
-#PBS -L tasks=1:lprocs=28
+#PBS -L tasks=1:lprocs=20
 
 module load BWA/0.7.17-GCCcore-8.3.0
 module load SAMtools/1.9-intel-2019b
@@ -27,7 +27,7 @@ export OVERLAP_DIR=/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/result
 export PICARD_JAR=/user/antwerpen/205/vsc20587/software/picard/picard.jar
 export PICARD_BIN="java -jar ${PICARD_JAR}"
 export MIN_L=100
-export THREADS=28
+export THREADS=20
 export SEED=100
 export mapq_cutoff=30
 
@@ -131,27 +131,27 @@ export mapq_cutoff=30
 ## 7.2 run subsampling
 # first do calculations before you can do subsampling. Those fractions should
 # be taken from the excel file. Should be optimized in a later stage, where all
-# bam files are normalized. 
+# # bam files are normalized. 
 
-# sample S1
-ln -s $BWA_DIR/1_S1.mapq${mapq_cutoff}.removedups.proper_paired.bam $BWA_DIR/1_S1.mapq${mapq_cutoff}.removedups.proper_paired.subsample.bam
+# # sample S1
+# ln -s $BWA_DIR/1_S1.mapq${mapq_cutoff}.removedups.proper_paired.bam $BWA_DIR/1_S1.mapq${mapq_cutoff}.removedups.proper_paired.subsample.bam
 
-# sample S2
-samtools view -@$THREADS -bs 10.4927 $BWA_DIR/2_S2.mapq${mapq_cutoff}.removedups.proper_paired.bam > $BWA_DIR/2_S2.mapq${mapq_cutoff}.removedups.proper_paired.subsample.bam
+# # sample S2
+# samtools view -@$THREADS -bs 10.4927 $BWA_DIR/2_S2.mapq${mapq_cutoff}.removedups.proper_paired.bam > $BWA_DIR/2_S2.mapq${mapq_cutoff}.removedups.proper_paired.subsample.bam
 
-# sample S3
-samtools view -@$THREADS -bs 10.7776 $BWA_DIR/3_S3.mapq${mapq_cutoff}.removedups.proper_paired.bam > $BWA_DIR/3_S3.mapq${mapq_cutoff}.removedups.proper_paired.subsample.bam
+# # sample S3
+# samtools view -@$THREADS -bs 10.7776 $BWA_DIR/3_S3.mapq${mapq_cutoff}.removedups.proper_paired.bam > $BWA_DIR/3_S3.mapq${mapq_cutoff}.removedups.proper_paired.subsample.bam
 
-# sample S4
-samtools view -@$THREADS -bs 10.7493 $BWA_DIR/4_S4.mapq${mapq_cutoff}.removedups.proper_paired.bam > $BWA_DIR/4_S4.mapq${mapq_cutoff}.removedups.proper_paired.subsample.bam
+# # sample S4
+# samtools view -@$THREADS -bs 10.7493 $BWA_DIR/4_S4.mapq${mapq_cutoff}.removedups.proper_paired.bam > $BWA_DIR/4_S4.mapq${mapq_cutoff}.removedups.proper_paired.subsample.bam
 
-samtools index $BWA_DIR/1_S1.mapq${mapq_cutoff}.removedups.proper_paired.subsample.bam
+# samtools index $BWA_DIR/1_S1.mapq${mapq_cutoff}.removedups.proper_paired.subsample.bam
 
-samtools index $BWA_DIR/2_S2.mapq${mapq_cutoff}.removedups.proper_paired.subsample.bam
+# samtools index $BWA_DIR/2_S2.mapq${mapq_cutoff}.removedups.proper_paired.subsample.bam
 
-samtools index $BWA_DIR/3_S3.mapq${mapq_cutoff}.removedups.proper_paired.subsample.bam
+# samtools index $BWA_DIR/3_S3.mapq${mapq_cutoff}.removedups.proper_paired.subsample.bam
 
-samtools index $BWA_DIR/4_S4.mapq${mapq_cutoff}.removedups.proper_paired.subsample.bam
+# samtools index $BWA_DIR/4_S4.mapq${mapq_cutoff}.removedups.proper_paired.subsample.bam
 
 #### STEP 8: peak detection
 

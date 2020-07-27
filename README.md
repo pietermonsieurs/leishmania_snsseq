@@ -201,7 +201,12 @@ The final aim is to find peaks in the third condition (S3) that cannot be found 
     * cp S1_peaks.csv S1_peaks.copy
     * sed '/^#/ d' S1_peaks.csv > S1_peaks.wig
     * awk '{print $1"\t"$2"\t"$3"\t"$4}' S1_peaks.wig > S1_peak.bigwig ! wrong!! need specialized script
-    
+
+
+#### updated MACS2 with switched samples [July 2020]
+Samples might have been switched. S1 and S2 might be switched, as well as S3 and S4. This has been changed in the bwa_snsseq.sh script and renamed to [bwa_snsseq_sampleswitch.sh](bwa_snsseq_sampleswitch.sh)
+* S1 is now control and S2 is the treatment sample. Same for S3 (control) and S4 (treatment)
+* also adapt the visualization script []   
 
 
 
@@ -217,7 +222,12 @@ Docs:
 http://www.bioconductor.org/help/course-materials/2010/EMBL2010/Chip-seq.SWEMBL.pdf
 
 
-### Data Integration
+
+
+## Combining MACS and SICER2 [May 2020]
+This part was used to get the most stringent conditions. Those conditions seem to be too stringent, so now switched back (temporary?) to only use MACS. 
+
+### Data Integration [May 2020]
 Integrating the peaks predicted by MACS and SICER2 (and in the future other tools like SWEMBL?), in order to only retain those peaks that are predicted with both methodologies, in order to have the highest confidence.
 * use the bedtools intersect command to look for overlap between both approaches. For MACS, we have to choose between narrow and broad peaks. Broad peaks are still relatively narrow compared to sicer, but return more peaks than narrow peak (= default MACS2 setting)
     * first convert the peak / summit files of SICER and MACS into .bed-files of *only* three columns
@@ -227,12 +237,16 @@ Integrating the peaks predicted by MACS and SICER2 (and in the future other tool
 * check the unique peaks either in S1 or S3 by using the -v option with bedtools intersect
     * commands have been added to [bwa_snsseq.sh](bwa_snsseq.sh)
 
-### Stringent approach using MACS and SICER2 --- kind of duplicate of data integration ---- 
+### Stringent approach using MACS and SICER2 --- kind of duplicate of data integration ----  [May 2020]
 Both algorithms have been run separately. Afterward, the peaks from MACS and SICER2 are combined, and only the peaks confirmed in both algorithms, are reported. Next, only the peaks uniquely predicted in S1 or uniquely predicted in S3 are reported.
 * all the different steps have been combined into on bash sript: [bwa_snsseq.sh](bwa_snsseq.sh)
     * first different bwa alignment steps and filtering steps are performed
     * next overlap between both algorithms is done --> only when confirmation using both approaches, the peaks are retained (separate procedure for narrow and broad peaks)
     * select the unique peaks for either S1 or S3
+
+
+
+
 
 
 
