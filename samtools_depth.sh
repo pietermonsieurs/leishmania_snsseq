@@ -4,7 +4,7 @@
 # with many contigs (> 200), only a few minutes. q1h should
 # be sufficient
 
-#PBS -l walltime=0:20:00
+#PBS -l walltime=0:50:00
 #PBS -L tasks=20:lprocs=1
 
 # load necessary modules
@@ -36,4 +36,10 @@ samtools depth -a -r $chrom $BAM_DIR/${sample}_S${sample}.mapq30.removedups.prop
 # /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/depth/input_sns_samtools_depth.csv
 # module load worker
 # wsub -data /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/depth/input_sns_samtools_depth.csv -batch /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/bin/samtools_depth.sh
+
+### including wild type
+# create csv file in excel with all samples and all contigs
+# /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/depth/input_sns_samtools_depth_includingwildtype.csv
+# module load worker
+# wsub -data /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/depth/input_sns_samtools_depth_includingwildtype.csv -batch /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/bin/samtools_depth.sh
 

@@ -58,6 +58,12 @@ if __name__ == "__main__":
     depth_treat_file = depth_dir + "4_S4.chrom_" + chrom + ".subsample.depth.csv"
     depth_treatbg_file = depth_dir + "3_S3.chrom_" + chrom + ".subsample.depth.csv"
 
+    depth_ctrl_wt_file = depth_dir + "5_S5.chrom_" + chrom + ".subsample.depth.csv"
+    depth_ctrlbg_wt_file = depth_dir + "6_S6.chrom_" + chrom + ".subsample.depth.csv"
+    depth_treat_wt_file = depth_dir + "7_S7.chrom_" + chrom + ".subsample.depth.csv"
+    depth_treatbg_wt_file = depth_dir + "8_S8.chrom_" + chrom + ".subsample.depth.csv"
+
+
     # create figure dir based on the type of analysis running e.g. S1_narrowPeak/
     figure_dir = depth_dir + sub_dir_suffix + "/"
     if not os.path.exists(figure_dir):
@@ -78,34 +84,44 @@ if __name__ == "__main__":
     depth_treat = pd.read_csv(depth_treat_file, sep="\t", header=None)
     depth_treatbg = pd.read_csv(depth_treatbg_file, sep="\t", header=None)
 
+    depth_ctrl_wt = pd.read_csv(depth_ctrl_wt_file, sep="\t", header=None)
+    depth_ctrlbg_wt = pd.read_csv(depth_ctrlbg_wt_file, sep="\t", header=None)
+    depth_treat_wt = pd.read_csv(depth_treat_wt_file, sep="\t", header=None)
+    depth_treatbg_wt = pd.read_csv(depth_treatbg_wt_file, sep="\t", header=None)
+
     # calculate the difference between sample and corresponding control to have 
     # background corrected samples. 
     diff_ctrl = depth_ctrl.iloc[:,2] - depth_ctrlbg.iloc[:,2]
     diff_treat = depth_treat.iloc[:,2] - depth_treatbg.iloc[:,2]
-    diff_treat_ctrl = diff_treat - diff_ctrl
+    # diff_treat_ctrl = diff_treat - diff_ctrl
 
+    diff_ctrl_wt = depth_ctrl_wt.iloc[:,2] - depth_ctrlbg_wt.iloc[:,2]
+    diff_treat_wt = depth_treat_wt.iloc[:,2] - depth_treatbg_wt.iloc[:,2]
 
-    # define line types and colors. Not always needed (obsolet after 
-    # update to a six-pane figure)
-    line_styles = ['-', ':', '-', ':']
-    line_colors = ['blue', 'blue', 'red', 'red']
       
-    # create matplotlib figures / 6 plots
-    fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7) = plt.subplots(nrows=7, ncols=1,    figsize=(60, 60))
+    # create matplotlib figures / 4 plots
+    # fig, (ax1, ax2, ax3, ax4, ax5, ax6, ax7) = plt.subplots(nrows=7, ncols=1,    figsize=(60, 60))
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(nrows=4, ncols=1, figsize=(60, 40))
 
-    # first four plots are the raw read counts for each sample
-    # separately
-    ax1 = make_plot(ax1, depth_ctrl.iloc[start:end,1], depth_ctrl.iloc[start:end,2], "cov ctrl", 'purple')
-    ax2 = make_plot(ax2, depth_ctrlbg.iloc[start:end,1], depth_ctrlbg.iloc[start:end,2], "cov ctrl bg", 'blue')
-    ax3 = make_plot(ax3, depth_treat.iloc[start:end,1], depth_treat.iloc[start:end,2], "cov treat", 'red')
-    ax4 = make_plot(ax4, depth_treatbg.iloc[start:end,1], depth_treatbg.iloc[start:end,2], "cov treat bg", 'orange')
+    # # first four plots are the raw read counts for each sample
+    # # separately
+    ### ax1 = make_plot(ax1, depth_ctrl.iloc[start:end,1], depth_ctrl.iloc[start:end,2], "cov ctrl", 'purple')
+    ### ax2 = make_plot(ax2, depth_ctrlbg.iloc[start:end,1], depth_ctrlbg.iloc[start:end,2], "cov ctrl bg", 'blue')
+    ### ax3 = make_plot(ax3, depth_treat.iloc[start:end,1], depth_treat.iloc[start:end,2], "cov treat", 'red')
+    ### ax4 = make_plot(ax4, depth_treatbg.iloc[start:end,1], depth_treatbg.iloc[start:end,2], "cov treat bg", 'orange')
 
 
 
     # get minimum and maximum values to set those values in the plots, so that
     # the upper and lower graph have the same extreme values.
-    y_max = max(diff_ctrl[start:end].max(), diff_treat[start:end].max())
-    y_min = min(diff_ctrl[start:end].min(), diff_treat[start:end].min())
+    y_max = max(diff_ctrl[start:end].max(), 
+                diff_treat[start:end].max(),
+                diff_ctrl_wt[start:end].max(), 
+                diff_treat_wt[start:end].max())
+    y_min = min(diff_ctrl[start:end].min(), 
+                diff_treat[start:end].min(),
+                diff_ctrl_wt[start:end].min(), 
+                diff_treat_wt[start:end].min())
     y_max = y_max*1.05
     my_debug and print(f"min y {y_min} -- max y {y_max}")
 
@@ -117,107 +133,20 @@ if __name__ == "__main__":
     # ax5.set_ylabel('Background corrected coverage S1')  
     # ax5.grid(which="both")
 
-    ax5 = make_plot(ax5, depth_ctrl.iloc[start:end,1], diff_ctrl.values[start:end], "cov ctrl - bg", 'purple')
-    ax5.set_ylim(y_min, y_max)
-    # ax1.legend()
+    ax1 = make_plot(ax1, depth_ctrl.iloc[start:end,1], diff_ctrl.values[start:end], "S2 - S1", 'purple')
+    ax1.set_ylim(y_min, y_max)
 
+    ax2 = make_plot(ax2, depth_treat.iloc[start:end,1], diff_treat.values[start:end], "S4 - S3", 'red')
+    ax2.set_ylim(y_min, y_max)
 
-    # sixth plot = depth of sample S3 (bg corrected)
-    # plt.ylim(y_min, y_max*1.05)
-    # ax6.plot(depth_S3.iloc[start:end,1], diff_S3.values[start:end], color="red")
-    # # , label=sample, linestyle=line_style, color=line_color)
-    # ax6.set_xlabel('Position in Genome')
-    # ax6.set_ylabel('Background corrected coverage S3')  
-    # ax6.grid(which="both")
+    ax3 = make_plot(ax3, depth_ctrl_wt.iloc[start:end,1], diff_ctrl_wt.values[start:end], "S5 - S6", 'orange')
+    ax3.set_ylim(y_min, y_max)
 
-    ax6 = make_plot(ax6, depth_treat.iloc[start:end,1], diff_treat.values[start:end], "cov treat - bg", 'red')
-    ax6.set_ylim(y_min, y_max)
+    ax4 = make_plot(ax4, depth_treat_wt.iloc[start:end,1], diff_treat_wt.values[start:end], "S7R - S8R", 'blue')
+    ax4.set_ylim(y_min, y_max)
 
-    ax7 = make_plot(ax7, depth_treat.iloc[start:end,1], diff_treat_ctrl.values[start:end], "treat vs ctrl", 'black')
-
-    figure_file = figure_dir + chrom + "." + str(start) + "_" + str(end) + ".png"
+    figure_file = figure_dir + chrom + "." + str(start) + "_" + str(end) + ".including_wt.png"
     plt.savefig(figure_file)
     plt.close()
-
-
-
-
-        # start = end
-
-    # break
-
-    # if counter > 10:
-    #     break
-    # else:
-    #     continue
-
-    # continue
-
-    # for index in range(0,len(samples)):
-    #     sample = samples[index]
-    #     line_style = line_styles[index]
-    #     line_color = line_colors[index]
-
-    #     bam_file = bam_dir + sample + ".subsample.bam"
-    #     depth_command = f"{samtools_bin} depth -a -r {chrom}:{start_region}-{stop_region} {bam_file} > {temp_depth_file}"
-    #     my_debug and print(depth_command)
-    #     os.system(depth_command)
-    #     depth_data = pd.read_csv(temp_depth_file, sep="\t", header=None)
-    #     my_debug and print(depth_data.head)
-
-    #     df_list[sample] = depth_data
-
-    #     my_debug and print(depth_data.iloc[:,1])
-    #     ax1.plot(depth_data.iloc[:,1], depth_data.iloc[:,2], label=sample, linestyle=line_style, color=line_color)    
-    
-    # my_debug and print(df_list["1_S1"].shape)
-    # my_debug and print(df_list["2_S2"].shape)
-    # my_debug and print(df_list["3_S3"].shape)
-    # my_debug and print(df_list["4_S4"].shape)
-
-    # my_debug and print(df_list["1_S1"])
-    # my_debug and print(df_list["2_S2"])
-        
-
-    # S1_diff = df_list["1_S1"].iloc[:,2] - df_list["2_S2"].iloc[:,2]
-    # S3_diff = df_list["3_S3"].iloc[:,2] - df_list["4_S4"].iloc[:,2]
-
-    # S1_diff_positive = S1_diff.copy()
-    # S3_diff_positive = S3_diff.copy()
-
-    # S1_diff_positive[S1_diff_positive < 0 ] = 0
-    # S3_diff_positive[S3_diff_positive < 0 ] = 0
-
-    # my_debug and print(f"S1_diff ==> {S1_diff}\n")
-    # my_debug and print(f"S3_diff ==> {S3_diff}\n")
-    # my_debug and print(df_list["1_S1"].iloc[:,2])
-    
-
-
-    # ax1.set_xlabel('Position in Genome')
-    # ax1.set_ylabel('Depth of Coverage')  
-    # ax1.legend()      
-
-    # ax2.plot(df_list["1_S1"].iloc[:,1], S1_diff, label="S1_diff", color=line_colors[0])
-    # ax2.plot(df_list["1_S1"].iloc[:,1], S3_diff, label="S3_diff", color=line_colors[2])
-    # ax2.set_xlabel('Position in Genome')
-    # ax2.set_ylabel('Depth of Coverage')  
-    # ax2.legend()      
-
-    # ax3.plot(df_list["1_S1"].iloc[:,1], S1_diff_positive, label="S1_diff", color=line_colors[0])
-    # ax3.plot(df_list["1_S1"].iloc[:,1], S3_diff_positive, label="S3_diff", color=line_colors[2])
-    # ax3.set_xlabel('Position in Genome')
-    # ax3.set_ylabel('Depth of Coverage')  
-    # ax3.legend() 
-
-    # # plt.show()
-    # plt.savefig(figure_file)
-    # plt.close()
-
-    # #if counter > max_counter:
-    # #    break
-
-
-
 
 
