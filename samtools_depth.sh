@@ -13,9 +13,15 @@ module load SAMtools/1.9-intel-2019b
 # separate file made with all chromosome names and all 4 samples
 # in order to get the depth for the complete contigs. So the worker
 # module will loop over 2 variables (sample and chrom)
+# after update, now running over 8 samples instead of 4 (included
+# S5 until S8)
 
-export BAM_DIR=/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/bwa/
-export DEPTH_DIR=/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/depth/
+# export BAM_DIR=/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/bwa/
+# export DEPTH_DIR=/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/depth/
+
+export BAM_DIR=/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/bwa_lessstringent/
+export DEPTH_DIR=/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/depth_lessstringent/
+
 
 cd $DEPTH_DIR/
 
@@ -25,9 +31,11 @@ cd $DEPTH_DIR/
 
 # samtools depth -a -r $chrom $BAM_DIR/${sample}_S${sample}.proper_paired.subsample.bam > $DEPTH_DIR/${sample}_S${sample}.chrom_${chrom}.subsample.depth.csv
 
-samtools index $chrom $BAM_DIR/${sample}_S${sample}.mapq30.removedups.proper_paired.subsample.bam
+# samtools index $chrom $BAM_DIR/${sample}_S${sample}.mapq30.removedups.proper_paired.subsample.bam
 
-samtools depth -a -r $chrom $BAM_DIR/${sample}_S${sample}.mapq30.removedups.proper_paired.subsample.bam > $DEPTH_DIR/${sample}_S${sample}.chrom_${chrom}.subsample.depth.csv
+# samtools depth -a -r $chrom $BAM_DIR/${sample}_S${sample}.mapq30.removedups.proper_paired.subsample.bam > $DEPTH_DIR/${sample}_S${sample}.chrom_${chrom}.subsample.depth.csv
+
+samtools depth -a -r $chrom $BAM_DIR/${sample}_S${sample}.removedups.subsample.bam > $DEPTH_DIR/${sample}_S${sample}.chrom_${chrom}.subsample.depth.csv
 
 
 

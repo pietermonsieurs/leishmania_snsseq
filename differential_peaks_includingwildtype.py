@@ -10,7 +10,9 @@ import argparse
 my_debug = 1
 src_dir = '/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/'
 results_dir = src_dir + 'results/'
-depth_dir = results_dir + 'depth/'
+# depth_dir = results_dir + 'depth/'
+depth_dir = results_dir + 'depth_lessstringent/'
+
 
 plt.rcParams.update({'font.size': 50})
 
