@@ -147,7 +147,7 @@ export mapq_cutoff=30
 samtools view -@$THREADS -bs 10.7416 $BWA_DIR/5_S5.removedups.bam > $BWA_DIR/5_S5.removedups.subsample.bam
 
 # sample S6
-samtools view -@$THREADS -bs 10.6485 $BWA_DIR/6_S6.removedups.bam > $BWA_DIR/6_S6..removedups.subsample.bam
+samtools view -@$THREADS -bs 10.6485 $BWA_DIR/6_S6.removedups.bam > $BWA_DIR/6_S6.removedups.subsample.bam
 
 # sample S7
 ln -s $BWA_DIR/7_S7.removedups.bam $BWA_DIR/7_S7.removedups.subsample.bam
