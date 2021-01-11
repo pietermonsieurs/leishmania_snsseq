@@ -270,7 +270,23 @@ Start from the samtools depth output generated from [samtools_depth.sh](samtools
 
     
 
-#
+## New data
+
+### Input data
+New input data have been generated. More explanation on the biological background of the different samples can be found in the mail of Slavica on Jan 4th 17:09. In summary:
+* samples 9 until 14: SNS-seq for Procylic forms, i.e. three replicates each with their background
+* samples 15 until 20: SNS-seq for bloodstream forms, i.e. three replicates each with their background
+* samples 1 until 8: replication of previous experiment of Akila, with Mlp1 gene knock-out (with background + control without knock-out and it corresponding background)
+All those data have been stored in a new subdirectory: /user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/20210104
+
+### BWA alignment
+* BWA alignment is run via bash script [bwa_snsseq_newdata.sh](bwa_snsseq_newdata.sh), which is largely based on the general BWA protocol
+* creating the different qsub commands using the -v option can be done using the script [bwa_snsseq_newdata_create_qsub_commands.py](bwa_snsseq_newdata_create_qsub_commands.py)
+* data sent via belnet filesender
+
+
+
+
 
 
 

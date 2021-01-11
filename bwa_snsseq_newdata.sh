@@ -3,6 +3,9 @@
 #PBS -l walltime=08:00:00
 #PBS -L tasks=1:lprocs=28
 
+## time for all SNS seq data is varying between 15 and 45 mintues, 
+## could be put in the queue of 1h if needed. 
+
 # load modules
 module load BWA/0.7.17-GCCcore-8.3.0
 module load SAMtools/1.9-intel-2019b
