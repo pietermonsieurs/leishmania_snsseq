@@ -273,7 +273,7 @@ Start from the samtools depth output generated from [samtools_depth.sh](samtools
 ## New data
 
 ### Input data
-New input data have been generated. More explanation on the biological background of the different samples can be found in the mail of Slavica on Jan 4th 17:09. In summary:
+New input data have been generated. More explanation on the biological background of the different samples can be found in the mail of Slavica on Jan 4th 17:09 (docx file also stored in the "docs" directory of the project directory). The first sample is always the real sample, the second sample is the control (e.g. 1 = sample, 2=background). In summary:
 * samples 9 until 14: SNS-seq for Procylic forms, i.e. three replicates each with their background
 * samples 15 until 20: SNS-seq for bloodstream forms, i.e. three replicates each with their background
 * samples 1 until 8: replication of previous experiment of Akila, with Mlp1 gene knock-out (with background + control without knock-out and it corresponding background)
@@ -282,6 +282,13 @@ All those data have been stored in a new subdirectory: /user/antwerpen/205/vsc20
 ### BWA alignment
 * BWA alignment is run via bash script [bwa_snsseq_newdata.sh](bwa_snsseq_newdata.sh), which is largely based on the general BWA protocol
 * creating the different qsub commands using the -v option can be done using the script [bwa_snsseq_newdata_create_qsub_commands.py](bwa_snsseq_newdata_create_qsub_commands.py)
+* subsample the different paired control - sample bam files to the lowest number of reads
+    * for each pair of samples, the first one (e.g. 1) is the sample, the second one (e.g. 2) is the control or background
+    * calculate for each pair which one is the largest, and calculate ratio for subsampling: [subsample_bamfiles.py](subsample_bamfiles.py)
+    * output of this script are direct linux commands (inlcuding samtools commands) which can be used as basis for the qsub script
+        * add qsub header
+        * load the SAMtools
+        * for now stored in [subsample_bamfiles.sh](subsample_bamfiles.sh)
 * data sent via belnet filesender
 
 
