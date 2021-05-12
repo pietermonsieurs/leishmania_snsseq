@@ -291,6 +291,9 @@ All those data have been stored in a new subdirectory: /user/antwerpen/205/vsc20
         * for now stored in [subsample_bamfiles.sh](subsample_bamfiles.sh)
 * data sent via belnet filesender
 
+### Peak detection 
+Peak detection can be done using the MACS software, similarly as done before. 
+
 
 
 
