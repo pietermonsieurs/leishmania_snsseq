@@ -5,7 +5,8 @@ import os
 
 my_debug = 1
 src_dir = '/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/'
-data_dir = src_dir + 'data/20210104/'
+# data_dir = src_dir + 'data/20210104/'
+data_dir = src_dir + 'data/wt/'
 bin_dir = src_dir + 'bin/'
 bwa_bin = bin_dir + 'bwa_snsseq_newdata.sh'
 

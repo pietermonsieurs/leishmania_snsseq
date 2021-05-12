@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-#PBS -l walltime=08:00:00
+#PBS -l walltime=0:59:00
 #PBS -L tasks=1:lprocs=28
 
 ## time for all SNS seq data is varying between 15 and 45 mintues, 
@@ -15,7 +15,8 @@ module load Java
 export THREADS=28
 export SEED=100
 export mapq_cutoff=30
-export BWA_DIR=/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/bwa_newdata/
+# export BWA_DIR=/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/bwa_newdata/
+export BWA_DIR=/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/results/bwa/ # for sample S9 of previous batch
 export REF_GENOME=/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/data/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta
 export PICARD_JAR=/user/antwerpen/205/vsc20587/data/software/picard/picard.jar
 export PICARD_BIN="java -jar ${PICARD_JAR}"
@@ -27,15 +28,20 @@ echo $fastq_file_1
 
 
 ## first create the prefix to be used to create fastq_file R2
-file_prefix_full=${fastq_file_1%_L002_R1_001.fastq.gz}
-fastq_file_2=${file_prefix_full}_L002_R2_001.fastq.gz
+# file_prefix_full=${fastq_file_1%_L002_R1_001.fastq.gz}
+# fastq_file_2=${file_prefix_full}_L002_R2_001.fastq.gz
+
+# specific for sample S9!!
+file_prefix_full=${fastq_file_1%_L001_R1_001.fastq.gz}
+fastq_file_2=${file_prefix_full}_L001_R2_001.fastq.gz
+
 
 ## create bwa bam output file name
 file_prefix=${file_prefix_full##*/}
 bam_file_prefix=${BWA_DIR}/${file_prefix}
 
 ### index reference genomes
-# bwa index $REF_GENOME
+bwa index $REF_GENOME
 
 
 # run BWA aligner
