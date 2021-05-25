@@ -157,7 +157,8 @@ export mapq_cutoff=30
 
 
 # python path should be adapted to the local python library so that the MACS and SICER package can be found
-export PYTHONPATH=/user/antwerpen/205/vsc20587/software/python_lib/lib/python3.7/site-packages/:$PYTHONPATH
+# export PYTHONPATH=/user/antwerpen/205/vsc20587/software/python_lib/lib/python3.7/site-packages/:$PYTHONPATH
+export PYTHONPATH=/data/antwerpen/205/vsc20587/software_from_home/python_lib/lib/python3.7/site-packages/:$PYTHONPATH
 
 
 # 8.1 run MACS2 
