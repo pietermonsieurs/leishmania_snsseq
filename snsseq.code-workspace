@@ -5,7 +5,7 @@
 		},
 		{
 			"name": "SSH FS - calcua_leishmania_snsneq",
-			"uri": "ssh://calcua_leishmania_snsneq/"
+			"uri": "ssh://calcua_leishmania_snsneq/user/antwerpen/205/vsc20587/scratch/leishmania_snsseq/bin"
 		}
 	],
 	"settings": {}
