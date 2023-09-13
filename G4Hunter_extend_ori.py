@@ -2,8 +2,11 @@
 
 import os
 
-snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/ori_predictions/'
-out_dir = '/Users/pmonsieurs/programming/trypanosoma_sofi_mining/results/ori/'
+# snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/ori_predictions/'
+# out_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/ori/'
+
+snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/ori_predictions_shuffled/'
+out_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/'
 
 ## set the length of the extension in bp
 # extension = 500

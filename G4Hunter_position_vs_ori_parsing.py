@@ -7,8 +7,9 @@ import pandas as pd
 
 
 ## to be run in a for loop
-# cd /Users/pmonsieurs/programming/leishmania_snsseq/results/g4hunter
-# for csv_file in *.csv; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_convert_csv2bed.py --input $csv_file; done
+# cd /Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/
+# for overlap_file in Tb427*; do echo $overlap_file; done
+
 
 my_debug = 0
 
@@ -44,10 +45,14 @@ if __name__ == '__main__':
     ## create output file
     output_file = input_file.replace(".bed", ".cov")
 
-    ## extract ORI information
+    ## extract ORI information. you have to go back here to the original ORI file,
+    ## which means before the overlap with the G4 hunter positions was caclulated
     ori_dir = os.path.dirname(input_file)
     ori_info = input_file.split(".")[-2]
+    ## setting for the default ORI: 
     ori_file = f"{ori_dir}/{ori_info}-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
+    ## setting for the randomly shuffled ORI:
+    
     print(ori_file)
 
     ori_data = pd.read_csv(ori_file, sep = "\t", header=None)
