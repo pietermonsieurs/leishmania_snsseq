@@ -12,17 +12,21 @@ bedtools_bin=/Users/pmonsieurs/programming/software/bedtools2-master/bin/bedtool
 ## G4Hunter positions that are overlapping. 
 
 ## set intersect between different SNS-seq data of Bridlin
-# g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/g4hunter/
-# snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/ori/
+g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/g4hunter/
+snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/ori/
+g4_files=($(find $g4_dir -maxdepth 1  -name "Tb427*.bed"))
+snsseq_files=($(find $snsseq_dir -name "merged*.extended_2000nt.bed"))
 
-## set intersect between different shuffled SNS-seq data of Bridlin
+## set intersect between different shuffled SNS-seq data of Bridlin, but now
+## with the shuffled ORI sequences
 g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/g4hunter/
 snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/
-
-
-## for Tb427 SNSseq data
-g4_files=($(find $g4_dir -name "Tb427*.bed"))
+g4_files=($(find $g4_dir -maxdepth 1  -name "Tb427*.bed"))
 snsseq_files=($(find $snsseq_dir -name "shuffeled*.extended_2000nt.bed"))
+
+echo ${g4_files[@]}
+echo ${snsseq_files[@]}
+
 
 for g4_file in ${g4_files[@]}; do
     # echo $g4_file

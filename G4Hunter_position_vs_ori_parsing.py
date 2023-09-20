@@ -7,8 +7,9 @@ import pandas as pd
 
 
 ## to be run in a for loop
+# cd /Users/pmonsieurs/programming/leishmania_snsseq/results/ori/
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/
-# for overlap_file in Tb427*; do echo $overlap_file; done
+# for overlap_file in Tb427*; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
 
 
 my_debug = 0
@@ -47,11 +48,19 @@ if __name__ == '__main__':
 
     ## extract ORI information. you have to go back here to the original ORI file,
     ## which means before the overlap with the G4 hunter positions was caclulated
+
+    ## setting for the default ORI: 
     ori_dir = os.path.dirname(input_file)
     ori_info = input_file.split(".")[-2]
-    ## setting for the default ORI: 
+    print(ori_info)
     ori_file = f"{ori_dir}/{ori_info}-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
+    
     ## setting for the randomly shuffled ORI:
+    # shuffeled_seed668_PCF_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed
+    # ori_dir = os.path.dirname(input_file)
+    # ori_info = input_file.split(".")[-4]
+    # print(ori_info)
+    # ori_file = f"{ori_dir}/{ori_info}.extended_2000nt.bed"
     
     print(ori_file)
 

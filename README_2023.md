@@ -27,7 +27,9 @@
     * Tb427 -  5000 sites: size 25 - treshold 1.85 --> 4562 hits // 1.80 --> 6283 hits
     * Tb427 - 20000 sites: size 25 - treshold 1.57 --> 12887 hits // 1.56 --> 30476 hits
     * Tb927 -  3500 sites: size 25 - treshold 2.00 --> 3471 hits
-* Convert the csv download file from the online G4 hunter to a bed file
+* Convert the csv download file from the online G4 hunter to a bed file: 
+    * [G4Hunter_convert_csv2bed.py](G4Hunter_convert_csv2bed.py): initially converting the csv file to a bed file. 
+    * G4Hunter data should be split up in positive versus negative strand, so output needs to results in two different bed files: one for the + strand, one for the - strand.
 
 
 ## Overlap G4Hunter versus Ori positions
@@ -36,8 +38,13 @@
 * calculate the overlap of each of the four G4Hunter scenarios (threshold 1.56, 1.57, 1.8, 1.85) with the merged ori-prediction files merged_BSF and merged_PCF
     * G4Hunter files stored in /Users/pmonsieurs/programming/leishmania_snsseq/results/g4hunter: Tb427_window25_score1.56_30476hits.bed	Tb427_window25_score1.85_4562hits.bed Tb427_window25_score1.57_13409hits.bed	Tb427_window25_score1.8_6283hits.bed
     * ori files stored in /Users/pmonsieurs/programming/leishmania_snsseq/results/ori/: merged_BSF-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed and merged_PCF-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed
-    * overlap can be calculated using the script [G4Hunter_overlap_bed.sh](G4Hunter_overlap_bed.sh). This will give an overlap of the ORI positions and the G4 hunter peaks. 
+    * overlap can be calculated using the script [G4Hunter_overlap_bed.sh](G4Hunter_overlap_bed.sh). This will give an overlap of the ORI positions and the G4 hunter peaks, but only the number of overlaps, NO information given on the position. To produce information that can be used to make the 'positional plots', see below.  
 * calculate the relative proportion of the G4 peaks versus the ORI predictions of Bridlin
+    * use the bedtools algorithm to get the overlap and return the position of overlap: [G4Hunter_position_vs_ori.sh](G4Hunter_position_vs_ori.sh)
+    * do parsing of the output of this overlapping region: [G4Hunter_position_vs_ori_parsing.py](G4Hunter_position_vs_ori_parsing.py)
+    * do plotting of the results in a graph that gives the coverage by G4 hunter peaks relatively versus the ORI position (ORI = position 0)
+* repeat with randomly shuffled ORI positions: 
     * extend the shuffled / random positions of Bridlin using [G4Hunter_extend_ori.py](G4Hunter_extend_ori.py)
     * use the bedtools algorithm to get the overlap and return the position of overlap: [G4Hunter_position_vs_ori.sh](G4Hunter_position_vs_ori.sh)
+    * do the parsing of the random file: [G4Hunter_position_vs_ori_parsing.py](G4Hunter_position_vs_ori_parsing.py)
 
