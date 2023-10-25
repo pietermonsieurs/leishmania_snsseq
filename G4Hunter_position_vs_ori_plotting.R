@@ -83,6 +83,10 @@ for (cov_file in cov_files) {
   colnames(cov_data) = c('position', 'coverage')
   cov_data = cov_data[-nrow(cov_data),]
   
+  window_size <- 100
+  cov_data$coverage_smoothed = rollapply(cov_data$coverage, width = 2 * window_size + 1, FUN = mean, align = "center", fill = NA)
+  
+  
   # sample_name_g4 = gsub("^(.*?)\\..*?\\.", "\\1", cov_file)
   # sample_name_ori = gsub(".*_([A-Z]+)_.*", "\\1", cov_file)
 
@@ -119,6 +123,12 @@ ggplot(data=cov_data_all_shuffled, aes(x=position, y=coverage, group=seed)) +
   facet_wrap(~ sample)
 
 
+ggplot(data=cov_data_all_shuffled, aes(x=position, y=coverage_smoothed, group=seed)) + 
+  geom_line(linewidth = 0.1) + 
+  theme_bw() + 
+  facet_wrap(~ sample, scales="free")
+
+
 ## merged both original and shuffled
 cov_data_merged = rbind(cov_data_all, 
                         cov_data_all_shuffled)
@@ -132,3 +142,8 @@ ggplot(data=cov_data_merged, aes(x=position, y=coverage, group=interaction(seed,
   geom_line(aes(color = type, linetype=strand), linewidth = 0.3) + 
   theme_bw() + 
   facet_wrap(~ sample)
+
+ggplot(data=cov_data_merged, aes(x=position, y=coverage_smoothed, group=interaction(seed,strand))) + 
+  geom_line(aes(color = type, linetype=strand), linewidth = 0.3) + 
+  theme_bw() + 
+  facet_wrap(~ sample, scales = "free")
