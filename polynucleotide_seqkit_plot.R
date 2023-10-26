@@ -9,6 +9,7 @@ setwd(data_dir)
 
 ## type is the number of nucleotides
 type = 'mono'
+type = 'tetra'
 nucl_files = list.files(data_dir, pattern=paste0("*", type, ".txt"))
 
 nucl_data_all = data.frame()
