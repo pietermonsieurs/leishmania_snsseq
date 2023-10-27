@@ -6,6 +6,12 @@ import argparse
 from Bio import SeqIO
 
 
+## to be run for all .bed file using the find command combined
+## with xargs
+# input_files=$(find ./ -type f -name "*.bed")
+# for input_file in $input_files; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/polynucleotide_get_sequences.py --input ${input_file}; done
+
+
 genome_fasta_file = '/Users/pmonsieurs/programming/leishmania_snsseq/data/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta'
 
 
@@ -23,12 +29,10 @@ def extract_subsequence(chroms, chromosome, start, end):
 
 
 if __name__ == '__main__':
-
-
     # Create an ArgumentParser object including the input option
     parser = argparse.ArgumentParser(description='extract the flaking regions of the origins predicted using SNS-seq or random shuffled data')
     parser.add_argument('--input', metavar='input_file', required=True, help='file containing the ori predictions')
-    parser.add_argument('--window', required=False, default=2500, help='lenght of upstream and downstream region')
+    parser.add_argument('--window', required=False, default=2000, help='lenght of upstream and downstream region')
     parser.add_argument('--output_dir', required=False, default="/Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/", help='output directory to write the output file')
 
  
@@ -59,9 +63,11 @@ if __name__ == '__main__':
 
         ## extract relevant information
         chrom = data[0]
-        center = int(int(data[2]) - int(data[1])/2)
+        center = int((int(data[2]) + int(data[1]))/2)
         start = center - window
         end = center + window
+
+        print(f"starting from {chrom} - {data[1]} - {data[2]} :: center {center} --> extracting {start} - {end}")
 
         ## get the sequence
         sequence = extract_subsequence(chroms, chrom, start, end)

@@ -1,0 +1,254 @@
+library(ggplot2)
+
+## input parameters
+data_dir_polyA = '/Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/'
+data_dir_ori = '/Users/pmonsieurs/programming/leishmania_snsseq/results/ori/'
+
+## get files for the polyA results
+window = 2000
+poly = 4
+polyA_files = list.files(data_dir_polyA, pattern=paste0("*.window",window,".poly_", poly, ".csv"))
+polyA_files = polyA_files[grep("merged", polyA_files)]
+polyA_files
+
+## get files for the G4 hunter predictions
+parameter_setting = 'Tb427_window25_score1.56_30476hits'
+# parameter_setting = 'Tb427_window25_score1.57_13409hits'
+# parameter_setting = 'Tb427_window25_score1.85_4562hits'
+# parameter_setting = 'Tb427_window25_score1.8_6283hits'
+
+cov_files = list.files(data_dir_ori, pattern="*.cov")
+cov_files = cov_files[grep(parameter_setting, cov_files)]
+cov_files
+
+cov_data_all = data.frame()
+first_file = 1
+
+for (cov_file in cov_files) {
+  cov_data = read.csv(paste0(data_dir_ori, cov_file), header=FALSE)
+  colnames(cov_data) = c('position', 'coverage')
+  cov_data = cov_data[-nrow(cov_data),]
+  
+  ## extract the strand from the sample name
+  strand = unlist(strsplit(cov_file, split="\\."))[3]
+  cov_data$strand = strand
+  cov_data$pattern = "G4hunter"
+  cov_data$pattern2 = paste0("G4hunter ", strand)
+  
+  
+  window_size <- 100
+  cov_data$coverage_smoothed = rollapply(cov_data$coverage, width = 2 * window_size + 1, FUN = mean, align = "center", fill = NA)
+  
+  ## create sample name by excluding the plus and min
+  ## information from the strand
+  sample = unlist(strsplit(cov_file, split="\\."))[4]
+  sample = gsub("merged_", "", sample)
+  sample
+  
+  # sample
+  cov_data$sample = sample
+  
+  ## add some additional column to allow visualising them
+  ## together with the random / shuffled ORI
+  cov_data$type = 'ori'
+  cov_data$seed = 'ori'
+  
+  if (first_file == 1) {
+    cov_data_all = cov_data
+    first_file = 0
+  }else{
+    cov_data_all = rbind.data.frame(cov_data_all, cov_data)
+  }
+  
+}
+
+
+## read in the polyA data
+
+first_file = 1
+for (nucl_file in polyA_files) {
+  
+  sample_count = sample_count + 1
+  cov_data = read.csv(nucl_file, header=TRUE)
+  cov_data[,1] = cov_data[,1] - 2000
+
+  
+  
+  ## extract the strand from the sample name, and assign to 
+  ## separate column
+  sample_data = unlist(strsplit(nucl_file, split="-"))[1]
+  sample = gsub("merged_", "", sample_data)
+  sample
+  print(paste0(nucl_file, " ---> ", sample))  
+  ## calculate the percentage instead of using counts. Should only be done when
+  ## the poly value is 1, so when basically looking for GC-content like things
+  cov_data_perc = cov_data
+  colnames(cov_data_perc)[1] = 'pos'
+  # head(cov_data_perc)
+  
+  ## only select the polyAAA field and subsequently
+  ## melt data to be able to plot
+  cov_data_perc = cov_data_perc[,c('pos', 'AAAA', 'TTTT')]
+  cov_data_melt = melt(cov_data_perc, id.vars = "pos")
+  colnames(cov_data_melt) = c('pos', 'pattern', 'cov')
+  cov_data_melt$sample = sample
+  # head(cov_data_melt)
+
+  ## do smoothing  
+  window_size <- 100
+  cov_data_melt$cov_smoothed = rollapply(cov_data_melt$cov, width = 2 * window_size + 1, FUN = mean, align = "center", fill = NA)
+  
+  ## specify the pattern, and get the strand
+  cov_data_melt$strand = NA
+  cov_data_melt$pattern2 = NA
+  
+  cov_data_melt[cov_data_melt$pattern == "AAAA",]$strand = 'plus'
+  cov_data_melt[cov_data_melt$pattern == "AAAA",]$pattern2 = 'polyA plus'
+  
+  cov_data_melt[cov_data_melt$pattern == "TTTT",]$strand = 'min'
+  cov_data_melt[cov_data_melt$pattern == "TTTT",]$pattern2 = 'polyA min'
+  
+  cov_data_melt$pattern = 'poly A'
+  
+  ## add to the overall data
+  if (first_file == 1) {
+    cov_data_polyA_all = cov_data_melt
+    first_file = 0
+  }else{
+    cov_data_polyA_all = rbind.data.frame(cov_data_polyA_all, cov_data_melt)
+  }
+}
+
+
+## merge both data types. First select relevant
+## columns and rename column names
+cov_data_all_sub = cov_data_all[,c('position', 
+                                   'coverage', 
+                                   'coverage_smoothed',
+                                   'strand',
+                                   'pattern',
+                                   'pattern2',
+                                   'sample')]
+
+colnames(cov_data_all_sub) = c('pos', 'cov', 'cov_smoothed', 'strand', 'pattern', 'pattern2', 'sample')
+head(cov_data_all_sub)
+
+
+## do the same for the polyA information
+cov_data_polyA_all_sub = cov_data_polyA_all[,c('pos',
+                                               'cov',
+                                               'cov_smoothed',
+                                               'strand',
+                                               'pattern',
+                                               'pattern2',
+                                               'sample')]
+head(cov_data_polyA_all_sub)
+
+
+## merge both data types
+plot_data = rbind.data.frame(cov_data_all_sub, cov_data_polyA_all_sub)
+head(plot_data)
+
+## create plot with separate color per line
+p = ggplot(data=plot_data, aes(x=pos, y=cov_smoothed)) + 
+  geom_line(aes(color=pattern2)) + 
+  theme_bw() + 
+  facet_wrap(~ sample) +
+  ylab("") + xlab("") +
+  scale_x_continuous(
+    breaks = c(-1850, 0, window-150),
+    labels = c("-2kb", "center", "+2kb")
+  ) + 
+  theme_bw() + 
+  facet_wrap(~ sample) + 
+  # scale_color_manual(values = colors) + 
+  theme(legend.title=element_blank())
+
+p
+
+output_file = paste0(data_dir_polyA, parameter_setting, "_with_polyA.png")
+ggsave(output_file, p, width=8, height=4)
+
+
+
+## create plot with separate color per strand and 
+## separate linetype per analysis method
+p = ggplot(data=plot_data, aes(x=pos, y=cov_smoothed)) + 
+  geom_line(aes(color=strand, linetype=pattern)) + 
+  theme_bw() + 
+  facet_wrap(~ sample) +
+  ylab("") + xlab("") +
+  scale_x_continuous(
+    breaks = c(-1850, 0, window-150),
+    labels = c("-2kb", "center", "+2kb")
+  ) + 
+  theme_bw() + 
+  facet_wrap(~ sample) + 
+  # scale_color_manual(values = colors) + 
+  theme(legend.title=element_blank())
+
+p
+
+output_file = paste0(data_dir_polyA, parameter_setting, "_with_polyA.variant.png")
+ggsave(output_file, p, width=8, height=4)
+
+
+
+
+
+
+## try out with two axes. First add additional column 
+## containing the polyA values
+head(cov_data_all_sub)
+cov_data_merged = cov_data_all_sub
+cov_data_merged$polyA = 0
+for (i in 1:dim(cov_data_merged)[1]) {
+  sample = cov_data_merged[i,]$sample
+  pos = cov_data_merged[i,]$pos
+  polyA_value =  cov_data_polyA_all_sub[cov_data_polyA_all_sub$pos == pos & cov_data_polyA_all_sub$sample == sample,]$cov_smoothed
+  if (is.numeric(polyA_value) && length(polyA_value) > 0) {
+    print(polyA_value)
+    cov_data_merged[i,]$polyA = polyA_value
+  }
+}
+
+
+p = ggplot(data=cov_data_merged, aes(x=pos, y=cov_smoothed)) + 
+  geom_line(aes(color=pattern, y=cov_smoothed), linewidth=0.80) + 
+  geom_line(aes(x=pos,y=polyA*0.30), linewidth=0.80, color = "#FFA500") + 
+  facet_wrap(~ sample) + 
+  scale_y_continuous(name = "G4 Hunter results", sec.axis = sec_axis(~./0.30, name = "polyA")) +
+  # coord_cartesian(xlim=c(250,2*window-250)) +#, ylim=c(0, 0.75)) +
+  xlab("") +
+  scale_x_continuous(
+    breaks = c(-1850, 0, window-150),
+    labels = c("-2kb", "center", "+2kb")) +
+  theme_bw() + 
+  scale_color_manual(values = colors) + 
+  theme(panel.spacing = unit(0.5, "cm"),
+        legend.title=element_blank())
+
+p
+
+
+
+# Load the ggplot2 package
+library(ggplot2)
+
+# Create a sample dataframe
+data <- data.frame(
+  x = 1:10,
+  y1 = c(3, 6, 8, 12, 10, 9, 7, 5, 4, 2),
+  y2 = c(50, 45, 40, 35, 30, 25, 20, 15, 10, 5)
+)
+
+# Create a ggplot with two different y-axes
+ggplot(data, aes(x = x)) +
+  geom_line(aes(y = y1), color = "blue") +
+  geom_line(aes(y = y2 * 0.1), color = "red") +
+  scale_y_continuous(name = "Primary Y-Axis", sec.axis = sec_axis(~.*10, name = "Secondary Y-Axis (scaled by 10)")) +
+  labs(title = "GGPlot with Two Different Y-Axes")
+
+
+
+
