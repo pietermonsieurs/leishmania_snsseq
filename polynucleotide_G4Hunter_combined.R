@@ -3,12 +3,14 @@ library(ggplot2)
 ## input parameters
 data_dir_polyA = '/Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/'
 data_dir_ori = '/Users/pmonsieurs/programming/leishmania_snsseq/results/ori/'
+data_dir_ori_shuffled = '/Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/'
 
 ## get files for the polyA results
 window = 2000
 poly = 4
 polyA_files = list.files(data_dir_polyA, pattern=paste0("*.window",window,".poly_", poly, ".csv"))
-polyA_files = polyA_files[grep("merged", polyA_files)]
+polyA_files = polyA_files[-grep("667", polyA_files)]
+polyA_files = polyA_files[-grep("668", polyA_files)]
 polyA_files
 
 ## get files for the G4 hunter predictions
@@ -17,14 +19,21 @@ parameter_setting = 'Tb427_window25_score1.56_30476hits'
 # parameter_setting = 'Tb427_window25_score1.85_4562hits'
 # parameter_setting = 'Tb427_window25_score1.8_6283hits'
 
-cov_files = list.files(data_dir_ori, pattern="*.cov")
-cov_files = cov_files[grep(parameter_setting, cov_files)]
-cov_files
+cov_files_sns = list.files(data_dir_ori, pattern="*.cov")
+cov_files_sns = cov_files[grep(parameter_setting, cov_files_sns)]
+cov_files_shuffled = list.files(data_dir_ori_shuffled, pattern="*.cov")
+cov_files_shuffled = cov_files_shuffled[grep("seed666", cov_files_shuffled)]
+cov_files_shuffled = cov_files_shuffled[grep(parameter_setting, cov_files_shuffled)]
+
+
+# cov_files = c(cov_files_sns, cov_files_shuffled)
 
 cov_data_all = data.frame()
 first_file = 1
 
-for (cov_file in cov_files) {
+## first read in for the true data (G4Hunter results
+## based on the SNSseq data). Afterwards for the shuffled data
+for (cov_file in cov_files_sns) {
   cov_data = read.csv(paste0(data_dir_ori, cov_file), header=FALSE)
   colnames(cov_data) = c('position', 'coverage')
   cov_data = cov_data[-nrow(cov_data),]
@@ -61,6 +70,48 @@ for (cov_file in cov_files) {
   }
   
 }
+
+
+## read in the cov data based from G4Hunter based on the
+## shuffled regions
+for (cov_file in cov_files_shuffled) {
+  cov_data = read.csv(paste0(data_dir_ori_shuffled, cov_file), header=FALSE)
+  colnames(cov_data) = c('position', 'coverage')
+  cov_data = cov_data[-nrow(cov_data),]
+  
+  ## extract the strand from the sample name
+  strand = unlist(strsplit(cov_file, split="\\."))[3]
+  cov_data$strand = strand
+  cov_data$pattern = "G4hunter"
+  cov_data$pattern2 = paste0("G4hunter ", strand)
+  
+  
+  window_size <- 100
+  cov_data$coverage_smoothed = rollapply(cov_data$coverage, width = 2 * window_size + 1, FUN = mean, align = "center", fill = NA)
+  
+  ## create sample name by excluding the plus and min
+  ## information from the strand
+  sample = unlist(strsplit(cov_file, split="\\."))[4]
+  sample = gsub("merged_", "", sample)
+  sample
+  
+  # sample
+  cov_data$sample = sample
+  
+  ## add some additional column to allow visualising them
+  ## together with the random / shuffled ORI
+  cov_data$type = 'ori'
+  cov_data$seed = 'ori'
+  
+  if (first_file == 1) {
+    cov_data_all = cov_data
+    first_file = 0
+  }else{
+    cov_data_all = rbind.data.frame(cov_data_all, cov_data)
+  }
+  
+}
+
 
 
 ## read in the polyA data
