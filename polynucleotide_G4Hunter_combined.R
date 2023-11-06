@@ -20,7 +20,7 @@ parameter_setting = 'Tb427_window25_score1.56_30476hits'
 # parameter_setting = 'Tb427_window25_score1.8_6283hits'
 
 cov_files_sns = list.files(data_dir_ori, pattern="*.cov")
-cov_files_sns = cov_files[grep(parameter_setting, cov_files_sns)]
+cov_files_sns = cov_files_sns[grep(parameter_setting, cov_files_sns)]
 cov_files_shuffled = list.files(data_dir_ori_shuffled, pattern="*.cov")
 cov_files_shuffled = cov_files_shuffled[grep("seed666", cov_files_shuffled)]
 cov_files_shuffled = cov_files_shuffled[grep(parameter_setting, cov_files_shuffled)]
@@ -91,17 +91,21 @@ for (cov_file in cov_files_shuffled) {
   
   ## create sample name by excluding the plus and min
   ## information from the strand
-  sample = unlist(strsplit(cov_file, split="\\."))[4]
-  sample = gsub("merged_", "", sample)
+  sample_full = unlist(strsplit(cov_file, split="\\."))[4]
+  sample = unlist(strsplit(sample_full, split="_"))[3]
+  sample = paste0("shuffled control ", sample)
   sample
+
   
   # sample
   cov_data$sample = sample
   
   ## add some additional column to allow visualising them
   ## together with the random / shuffled ORI
-  cov_data$type = 'ori'
-  cov_data$seed = 'ori'
+  seed = unlist(strsplit(sample_full, split="_"))[2]
+  seed = gsub("seed", "", seed)
+  cov_data$type = 'shuffled'
+  cov_data$seed = seed
   
   if (first_file == 1) {
     cov_data_all = cov_data
@@ -127,9 +131,22 @@ for (nucl_file in polyA_files) {
   
   ## extract the strand from the sample name, and assign to 
   ## separate column
+  
+  # code for normal samples
+  if (grepl("seed", nucl_file)) {
+    sample_data = unlist(strsplit(nucl_file, split="_"))[3]
+    sample = paste0("shuffled control ", sample_data)
+  }else{
+    sample_data = unlist(strsplit(nucl_file, split="-"))[1]
+    sample = gsub("merged_", "", sample_data)
+    sample    
+  }
+
+  
+  # code for shuffled controls
   sample_data = unlist(strsplit(nucl_file, split="-"))[1]
-  sample = gsub("merged_", "", sample_data)
-  sample
+  
+  
   print(paste0(nucl_file, " ---> ", sample))  
   ## calculate the percentage instead of using counts. Should only be done when
   ## the poly value is 1, so when basically looking for GC-content like things
@@ -218,7 +235,7 @@ p = ggplot(data=plot_data, aes(x=pos, y=cov_smoothed)) +
 p
 
 output_file = paste0(data_dir_polyA, parameter_setting, "_with_polyA.png")
-ggsave(output_file, p, width=8, height=4)
+ggsave(output_file, p, width=10, height=6)
 
 
 
@@ -241,7 +258,7 @@ p = ggplot(data=plot_data, aes(x=pos, y=cov_smoothed)) +
 p
 
 output_file = paste0(data_dir_polyA, parameter_setting, "_with_polyA.variant.png")
-ggsave(output_file, p, width=8, height=4)
+ggsave(output_file, p, width=10, height=6)
 
 
 
