@@ -24,6 +24,17 @@ snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/
 g4_files=($(find $g4_dir -maxdepth 1  -name "Tb427*.bed"))
 snsseq_files=($(find $snsseq_dir -name "shuffeled*.extended_2000nt.bed"))
 
+## set intersect between the G4 Hunter data with the ORI sequences
+## either true ones or shuffled ones. Different genetic background
+## (Tb427 vs Tb427_2018), but combining real and shuffled in one 
+## analysis
+g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_ORIs_suffledORIs_G4-hunter_Mnase-seq
+snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/mnase_seq/
+g4_files=($(find $g4_dir -maxdepth 1  -name "G4*.bed"))
+snsseq_files=($(find $snsseq_dir -name "*ORI*extended*.bed"))
+
+
+
 echo ${g4_files[@]}
 echo ${snsseq_files[@]}
 
@@ -32,11 +43,12 @@ for g4_file in ${g4_files[@]}; do
     # echo $g4_file
     g4_file_short=$(basename ${g4_file})
     g4_file_short=${g4_file_short/.bed/}
-    echo $g4_file_short
+    echo $g4_file_short 
     for snsseq_file in ${snsseq_files[@]}; do
         # echo $snsseq_file
         snsseq_file_short=$(basename ${snsseq_file})
-        snsseq_file_short=${snsseq_file_short/-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed/}
+        # snsseq_file_short=${snsseq_file_short/-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed/}
+        snsseq_file_short=${snsseq_file_short/_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed/}
         echo $snsseq_file_short     
         output_file=${snsseq_dir}/${g4_file_short}.${snsseq_file_short}.bed
         echo $output_file   
