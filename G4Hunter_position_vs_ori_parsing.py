@@ -15,9 +15,9 @@ import pandas as pd
 my_debug = 0
 
 def get_ori_position(ori_data, peak, g4_chrom):
-    # print(ori_file)
+    print(peak)
     peak_hit = ori_data[ori_data.peak_id == peak]
-    # print(peak_hit)
+    print(peak_hit)
     my_debug and print(peak_hit)
     ori_start = peak_hit.start.iloc[0]
     ori_end = peak_hit.end.iloc[0]
@@ -53,8 +53,12 @@ if __name__ == '__main__':
     ori_dir = os.path.dirname(input_file)
     ori_info = input_file.split(".")[-2]
     print(ori_info)
-    ori_file = f"{ori_dir}/{ori_info}-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
     
+    ## first line for the ori file of the original data, the second line for
+    ## the Mnase-seq data, where oris have been rem
+    # ori_file = f"{ori_dir}/{ori_info}-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
+    ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
+
     ## setting for the randomly shuffled ORI:
     # shuffeled_seed668_PCF_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed
     # ori_dir = os.path.dirname(input_file)
@@ -67,6 +71,7 @@ if __name__ == '__main__':
     ori_data = pd.read_csv(ori_file, sep = "\t", header=None)
     # ori_data.columns = ['chrom', 'start', 'end', 'peak_id', 'dummy1', 'dummy2', 'dummy3']
     ori_data.columns = ['chrom', 'start', 'end', 'peak_id', 'dummy1', 'dummy2', 'dummy3']
+    print(ori_data)
 
     ## create coverage list with all zeros
     g4_locations_coverage = [0] * 2000 * 2
@@ -90,7 +95,12 @@ if __name__ == '__main__':
         # peak = data[3].split(",")
         # for peak in peaks:
         # peak = data[3]
-        peak = data[6]
+        print(line)
+
+        ## number 6 for original data, number 8 for mnaseq data
+        # peak = data[6]
+        peak = data[8]
+
         my_debug and print(peak)
         ori_peak = get_ori_position(ori_data, peak, g4_chrom)
 
