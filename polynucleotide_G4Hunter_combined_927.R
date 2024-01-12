@@ -276,30 +276,31 @@ ggsave(output_file, p, width=10, height=6)
 
 
 ## try out with two axes. First add additional column 
-## containing the polyA values
+## containing the polyA values. This make take some time!
 head(cov_data_all_sub)
 cov_data_merged = cov_data_all_sub
 cov_data_merged$polyA = 0
 for (i in 1:dim(cov_data_merged)[1]) {
   sample = cov_data_merged[i,]$sample
   pos = cov_data_merged[i,]$pos
-  matches = sum(cov_data_polyA_all_sub$pos == pos & cov_data_polyA_all_sub$sample == sample)
-  print(matches)
-  polyA_value =  cov_data_polyA_all_sub[cov_data_polyA_all_sub$pos == pos & cov_data_polyA_all_sub$sample == sample,]$cov_smoothed
+  strand = cov_data_merged[i,]$strand
+  matches = sum(cov_data_polyA_all_sub$pos == pos & cov_data_polyA_all_sub$sample == sample & cov_data_polyA_all_sub$strand == strand)
+  # print(matches)
+  polyA_value =  cov_data_polyA_all_sub[cov_data_polyA_all_sub$pos == pos & cov_data_polyA_all_sub$sample == sample & cov_data_polyA_all_sub$strand == strand,]$cov_smoothed
   if (is.numeric(polyA_value) && length(polyA_value) > 0) {
-    print(polyA_value)
+    # print(polyA_value)
     cov_data_merged[i,]$polyA = polyA_value
   }
 }
 
 
-
 p = ggplot(data=cov_data_merged, aes(x=pos, y=cov_smoothed)) + 
-  geom_line(aes(color=pattern, y=cov_smoothed), linewidth=0.80) + 
-  geom_line(aes(x=pos,y=polyA*0.30), linewidth=0.80, color = "#FFA500") + 
+  geom_line(aes(color=pattern2, y=cov_smoothed, linetype="G4"), linewidth=0.80) + 
+  # geom_line(aes(x=pos,y=polyA*0.30), linewidth=0.80, color = "#FFA500") + 
+  # geom_line(aes(x=pos,y=polyA*2, linetype = pattern2), linewidth=0.80, color = "#FFA500") + 
+  geom_line(aes(x=pos,y=polyA*1.5, color = pattern2, linetype="polyA"), linewidth=0.80) + 
   facet_wrap(~ sample) + 
-  # scale_y_continuous(name = "G4 Hunter results", sec.axis = sec_axis(~./0.30, name = "polyA")) +
-  # coord_cartesian(xlim=c(250,2*window-250)) +#, ylim=c(0, 0.75)) +
+  scale_y_continuous(name = "G4 Hunter results", sec.axis = sec_axis(~./1.5, name = "polyA")) + 
   xlab("") +
   scale_x_continuous(
     breaks = c(-1850, 0, window-150),
@@ -307,16 +308,16 @@ p = ggplot(data=cov_data_merged, aes(x=pos, y=cov_smoothed)) +
   theme_bw() + 
   # scale_color_manual(values = colors) + 
   theme(panel.spacing = unit(0.5, "cm"),
-        legend.title=element_blank())
+        legend.title=element_blank(),
+        legend.key.width = unit(1.5, "cm")) + 
+  # guides(linetype = guide_legend(override.aes = list(linetype = c("G4" = "solid", "polyA" = "dashed"))))
+  scale_linetype_manual(values = c("G4" = "solid", "polyA" = "dashed"))
 
 p
 
+output_file = paste0(data_dir_polyA, parameter_setting, "_with_polyA.variant.dual_axes.png")
+ggsave(output_file, p, width=10, height=6)
 
-p = ggplot(data=cov_data_merged, aes(x=pos, y=cov_smoothed)) + 
-  geom_line(aes(color=pattern), linewidth=0.80) + 
-  geom_line(aes(x=pos,y=polyA*0.30), linewidth=0.80, color = "#FFA500") + 
-  facet_wrap(~ sample) 
-p
 
 # Load the ggplot2 package
 library(ggplot2)
