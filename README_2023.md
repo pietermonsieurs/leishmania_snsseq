@@ -50,9 +50,14 @@
 
 
 ## Tb427 new ref genome
-* repeat the analysis but now for the Tb427 reference genome instaed of the Tb427_2018 ref genome, with plotting G4 hunter + MNaseSeq data relative to the ORI. 
-* repeat steps from previous analysis: 
-    * extend the ORI: [G4Hunter_extend_ori.py](G4Hunter_extend_ori.py)
-    * calculate overlap between G4 and predicted ORIs: [G4Hunter_position_vs_ori.sh](G4Hunter_position_vs_ori.sh)
-    * do the parsing of the files: [G4Hunter_position_vs_ori_parsing.py](G4Hunter_position_vs_ori_parsing.py)
+* repeat the analysis but now for the Tb427 reference genome instaed of the Tb427_2018 ref genome, with plotting G4 hunter + MNaseSeq data relative to the ORI. (This is "second plot" in mail Bridlin 09/01/24) 
+    * new reference genome, so polyA tail should be created again
+        * create the input fasta files, i.e. the fasta file containing sequencing before and after the ORI: [polynucleotide_get_sequences.py](polynucleotide_get_sequences.py) -> use as input the ORI for which you want to do the plots
+            * this is now run for the three directory: for-Pieter_427-2018_data, for-Pieter_427_data, for-Pieter_927_data. In each of those directories are the ORI regions predicted either on the real data, or on the randomly shuffled data
+            * output contains fasta sequences 2000nt up and downstream of those ORIs, and can be used to calculate the polyA/T/C/G in the neighborhood of those sequences
+        * calculate the polyA sequences up and downstream of the ORI: [polynucleotide_inhouse.py](polynucleotide_inhouse.py)
+    * repeat steps from previous analysis: 
+        * extend the ORI: [G4Hunter_extend_ori.py](G4Hunter_extend_ori.py)
+        * calculate overlap between G4 and predicted ORIs: [G4Hunter_position_vs_ori.sh](G4Hunter_position_vs_ori.sh)
+        * do the parsing of the files: [G4Hunter_position_vs_ori_parsing.py](G4Hunter_position_vs_ori_parsing.py)
 

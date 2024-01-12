@@ -12,7 +12,7 @@ import argparse
 # input_files=$(find ./ -type f -name "*.window2000.fasta")
 # for input_file in $input_files; do echo $input_file; /Users/pmonsieurs/programming/leishmania_snsseq/bin/polynucleotide_inhouse.py --input ${input_file} --length 4; done
 
-my_debug = 0
+my_debug = 1
 
 ## Function to find specific patterns in a sequence and return their positions
 def find_patterns(sequence):

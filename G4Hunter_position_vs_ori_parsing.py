@@ -11,13 +11,22 @@ import pandas as pd
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/
 # for overlap_file in Tb427*; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
 
+## for the Mnaseq
+# cd /Users/pmonsieurs/programming/leishmania_snsseq/results/mnase_seq
+# for overlap_file in G4*merged*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
+# for overlap_file in G4*shuffeled_seed*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
+
+## for the 927 genome
+# cd /Users/pmonsieurs/programming/leishmania_snsseq/results/927/
+# for overlap_file in 927_G4*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
+
+
 
 my_debug = 0
 
 def get_ori_position(ori_data, peak, g4_chrom):
-    print(peak)
+    my_debug and print(f"peak --> {peak}")
     peak_hit = ori_data[ori_data.peak_id == peak]
-    print(peak_hit)
     my_debug and print(peak_hit)
     ori_start = peak_hit.start.iloc[0]
     ori_end = peak_hit.end.iloc[0]
@@ -57,7 +66,8 @@ if __name__ == '__main__':
     ## first line for the ori file of the original data, the second line for
     ## the Mnase-seq data, where oris have been rem
     # ori_file = f"{ori_dir}/{ori_info}-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
-    ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
+    # ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
+    ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed"
 
     ## setting for the randomly shuffled ORI:
     # shuffeled_seed668_PCF_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed
@@ -95,13 +105,14 @@ if __name__ == '__main__':
         # peak = data[3].split(",")
         # for peak in peaks:
         # peak = data[3]
-        print(line)
+        my_debug and  print(line)
 
-        ## number 6 for original data, number 8 for mnaseq data
+        ## number 6 for original data, number 8 for mnaseq data, 7 for experimental g4 (marisco)
         # peak = data[6]
-        peak = data[8]
+        # peak = data[8]
+        peak = data[7]
 
-        my_debug and print(peak)
+        my_debug and print(f"peak --> {peak}")
         ori_peak = get_ori_position(ori_data, peak, g4_chrom)
 
         ## calculate the relative position

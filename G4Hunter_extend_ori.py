@@ -8,8 +8,20 @@ import os
 # snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/ori_predictions_shuffled/'
 # out_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/'
 
-snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_ORIs_suffledORIs_G4-hunter_Mnase-seq/'
-out_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/mnase_seq/'
+##### ADDITIONAL SETTINGS ####
+
+## settings for the data related to strain 927 - normal, with normal and
+## shuffled ORI dir (i.e. snsseq_dir) 
+# snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data/927_ORIs_bed/'
+snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data/927_shuffledORIs-bed/'
+out_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/927/'
+
+
+## settings for the data related to strain 427 - normal
+# snsseq_dir = ''
+# out_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/427/'
+
+## settings for the data related to strain 427_2018 - normal
 
 ## set the length of the extension in bp
 # extension = 500

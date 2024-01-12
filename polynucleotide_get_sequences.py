@@ -12,7 +12,23 @@ from Bio import SeqIO
 # for input_file in $input_files; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/polynucleotide_get_sequences.py --input ${input_file}; done
 
 
-genome_fasta_file = '/Users/pmonsieurs/programming/leishmania_snsseq/data/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta'
+## for the final files of Tb427 (NOT Tb427_2018)
+# cd /Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data
+# ref_genome=/Users/pmonsieurs/programming/leishmania_snsseq/data/refgenome/TriTrypDB-62_TbruceiLister427_Genome.fasta
+# input_files=$(find ./ -type f -name "*ORI*.bed")
+# for input_file in $input_files; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/polynucleotide_get_sequences.py --input ${input_file} --ref_genome=${ref_genome}; done
+
+## for the final files of Tb927 
+# cd /Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data
+# ref_genome=/Users/pmonsieurs/programming/leishmania_snsseq/data/refgenome/TriTrypDB-63_TbruceiTREU927_Genome.fasta
+# input_files=$(find ./ -type f -name "*ORI*.bed")
+# for input_file in $input_files; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/polynucleotide_get_sequences.py --input ${input_file} --ref_genome=${ref_genome}; done
+
+## for the final files of Tb427_2018
+# cd /Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427-2018_data
+# ref_genome=/Users/pmonsieurs/programming/leishmania_snsseq/data/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta
+# input_files=$(find ./ -type f -name "*.bed")
+# for input_file in $input_files; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/polynucleotide_get_sequences.py --input ${input_file} --ref_genome=${ref_genome}; done
 
 
 def read_genome(fasta_file):
@@ -34,7 +50,7 @@ if __name__ == '__main__':
     parser.add_argument('--input', metavar='input_file', required=True, help='file containing the ori predictions')
     parser.add_argument('--window', required=False, default=2000, help='lenght of upstream and downstream region')
     parser.add_argument('--output_dir', required=False, default="/Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/", help='output directory to write the output file')
-
+    parser.add_argument('--ref_genome', required=True, default='/Users/pmonsieurs/programming/leishmania_snsseq/data/refgenome/TriTrypDB-46_TbruceiLister427_2018_Genome.fasta', help='Genome fasta file from which you want to cut the sequences upstream and downstream of the ORIs')
  
     args = parser.parse_args()
 
@@ -42,6 +58,8 @@ if __name__ == '__main__':
     input_file = args.input
     window = args.window
     output_dir = args.output_dir
+    genome_fasta_file = args.ref_genome
+
     print(output_dir)
 
 
