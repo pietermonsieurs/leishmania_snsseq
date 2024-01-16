@@ -13,8 +13,14 @@ import os
 ## settings for the data related to strain 927 - normal, with normal and
 ## shuffled ORI dir (i.e. snsseq_dir) 
 # snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data/927_ORIs_bed/'
-snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data/927_shuffledORIs-bed/'
-out_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/927/'
+# snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data/927_shuffledORIs-bed/'
+# out_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/927/'
+
+## settings for the data related to strain 427 - normal, with normal and
+## shuffled ORI dir (i.e. snsseq_dir) 
+# snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_ORIs_bed/'
+snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_shuffledORIs-bed/'
+out_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/427/'
 
 
 ## settings for the data related to strain 427 - normal
