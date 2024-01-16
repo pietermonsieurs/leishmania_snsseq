@@ -1,5 +1,6 @@
 ## define the bedtools binary
-bedtools_bin=/Users/pmonsieurs/programming/software/bedtools2-master/bin/bedtools
+#bedtools_bin=/Users/pmonsieurs/programming/software/bedtools2-master/bin/bedtools
+bedtools_bin=/Users/pmonsieurs/programming/software/bedtools2/bin/bedtools
 
 ## first run the python script to extend the ORI bed file. For the 
 ## overlap this was only set to 500. Now, set to 2000bp in line with 

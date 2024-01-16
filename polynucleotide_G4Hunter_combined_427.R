@@ -3,8 +3,8 @@ library(zoo)
 
 ## input parameters
 data_dir_polyA = '/Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/'
-data_dir_ori = '/Users/pmonsieurs/programming/leishmania_snsseq/results/927/'
-data_dir_ori_shuffled = '/Users/pmonsieurs/programming/leishmania_snsseq/results/927/'
+data_dir_ori = '/Users/pmonsieurs/programming/leishmania_snsseq/results/427/'
+data_dir_ori_shuffled = '/Users/pmonsieurs/programming/leishmania_snsseq/results/427/'
 
 ## get files for the polyA results
 window = 2000
@@ -23,6 +23,8 @@ cov_files_sns = cov_files_sns[grep(parameter_setting, cov_files_sns)]
 cov_files_shuffled = list.files(data_dir_ori_shuffled, pattern="*.cov")
 cov_files_shuffled = cov_files_shuffled[grep("seed666", cov_files_shuffled)]
 # cov_files_shuffled = cov_files_shuffled[grep(parameter_setting, cov_files_shuffled)]
+
+## get files for the MNaseSeq data
 
 
 # cov_files = c(cov_files_sns, cov_files_shuffled)
