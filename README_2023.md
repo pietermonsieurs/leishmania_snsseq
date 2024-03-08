@@ -65,9 +65,21 @@
         * create the input fasta files, i.e. the fasta file containing sequencing before and after the ORI: [polynucleotide_get_sequences.py](polynucleotide_get_sequences.py) -> use as input the ORI for which you want to do the plots
             * this is now run for the three directory: for-Pieter_427-2018_data, for-Pieter_427_data, for-Pieter_927_data. In each of those directories are the ORI regions predicted either on the real data, or on the randomly shuffled data
             * output contains fasta sequences 2000nt up and downstream of those ORIs, and can be used to calculate the polyA/T/C/G in the neighborhood of those sequences
+            * those fasta sequences are stored in the directory .../results/polynucleotide/
         * calculate the polyA sequences up and downstream of the ORI: [polynucleotide_inhouse.py](polynucleotide_inhouse.py)
     * repeat steps from previous analysis: 
-        * extend the ORI: [G4Hunter_extend_ori.py](G4Hunter_extend_ori.py)
-        * calculate overlap between G4 and predicted ORIs: [G4Hunter_position_vs_ori.sh](G4Hunter_position_vs_ori.sh)
+        * extend the ORI: [G4Hunter_extend_ori.py](G4Hunter_extend_ori.py). The resulting bed files is stored in the .../results/427/ directory
+        * calculate overlap between G4 and predicted ORIs: [G4Hunter_position_vs_ori_427.sh](G4Hunter_position_vs_ori_427.sh)
         * do the parsing of the files: [G4Hunter_position_vs_ori_parsing.py](G4Hunter_position_vs_ori_parsing.py)
+    * include the Mnase-seq data by checking the overlap with the ori positions
+        * include the code for this in [G4Hunter_position_vs_ori_427.sh](G4Hunter_position_vs_ori_427.sh)
+            * run for normal and shuffled
+        * run again [G4Hunter_position_vs_ori_parsing.py](G4Hunter_position_vs_ori_parsing.py) but now using as input file the bed file of the MNase seq data instead of the G4Hunter data
 
+
+* repeat the analysis but now for the Tb927 reference genome with plotting G4 hunter + DRIP-seq data relative to the ORI. (This is "third A plot" = 3A in mail Bridlin 09/01/24)
+    * step from previous step do not to be repeated for Tb927, as this is already done above with the Marisco data, so [G4Hunter_extend_ori.py](G4Hunter_extend_ori.py), [G4Hunter_position_vs_ori.sh] and [G4Hunter_position_vs_ori_parsing.py](G4Hunter_position_vs_ori_parsing.py) are already run
+    * do the steps for the DRIP-seq data of Tb927:
+        * calculate overlap between the DRIPseq data and the ori's. This is wrongly called G4Hunter however there is nog G4 involved anymore. [G4Hunter_position_vs_ori_Drip_927.sh](G4Hunter_position_vs_ori_Drip_927.sh)
+        * convert the .bed file from the overlap in previous script to a coverage file (.cov) using [G4Hunter_position_vs_ori_parsing_927.py](G4Hunter_position_vs_ori_parsing_927.py)
+    

@@ -24,8 +24,9 @@ import pandas as pd
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/427/
 # for overlap_file in 427_G4*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
 
-## for the 427 MNase-seq data
-# for overlap_file in 427_*_T_brucei*bed; do echo $overlap_file; /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
+## for the 427_2018 DRIP-seq data: run only for files in which you
+## are interested
+# /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427_2018.py --input /Users/pmonsieurs/programming/leishmania_snsseq/results/427_2018/427-2018_DRIP-seq_36.merged_PCF-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed.bed
 
 
 my_debug = 0
@@ -66,14 +67,23 @@ if __name__ == '__main__':
 
     ## setting for the default ORI: 
     ori_dir = os.path.dirname(input_file)
-    ori_info = input_file.split(".")[-2]
+    if "seed" in input_file:
+        ori_info = input_file.split("_ORIs")[0]
+        ori_info = ori_info.split("-seq_36.")[1]
+        ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
+    else:
+        ori_info = input_file.split("-")[-2]
+        ori_info = ori_info.split("_36.")[-1]
+        ori_file = f"{ori_dir}/{ori_info}-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
+
+        
     print(ori_info)
     
     ## first line for the ori file of the original data, the second line for
     ## the Mnase-seq data, where oris have been rem
     # ori_file = f"{ori_dir}/{ori_info}-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
     # ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
-    ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed"
+    # ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed"
 
     ## setting for the randomly shuffled ORI:
     # shuffeled_seed668_PCF_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed
@@ -106,6 +116,11 @@ if __name__ == '__main__':
         g4_chrom = data[0]
         g4_start = int(data[1])
         g4_end = int(data[2])
+        g4_coverage = float(data[3]) ## not really G4, but MNase-seq coverage
+
+        if (g4_coverage == 0): 
+            # print("skip zeroes")
+            continue
 
         ## get the list of ORI peaks it matches with, and check 
         ## the start and stop position
@@ -133,7 +148,7 @@ if __name__ == '__main__':
         ## store in list
         for i in range(rel_g4_start, rel_g4_end + 1):
             # print(i)
-            g4_locations_coverage[2000 + i] = g4_locations_coverage[2000 + i] + 1
+            g4_locations_coverage[2000 + i] = g4_locations_coverage[2000 + i] + g4_coverage
 
         g4_locations_peaks[2000 + rel_g4_peak] = g4_locations_peaks[2000 + rel_g4_peak] + 1
 

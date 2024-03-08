@@ -3,15 +3,15 @@ library(zoo)
 
 ## input parameters
 data_dir_polyA = '/Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/'
-data_dir_ori = '/Users/pmonsieurs/programming/leishmania_snsseq/results/427/'
-data_dir_ori_shuffled = '/Users/pmonsieurs/programming/leishmania_snsseq/results/427/'
+data_dir_ori = '/Users/pmonsieurs/programming/leishmania_snsseq/results/427_2018/'
+data_dir_ori_shuffled = '/Users/pmonsieurs/programming/leishmania_snsseq/results/427_2018/'
 
 ## get files for the polyA results
 window = 2000
 poly = 4
-polyA_files = list.files(data_dir_polyA) #, pattern=paste0("927*.window",window,".poly_", poly, ".csv"))
+polyA_files = list.files(data_dir_polyA) #, pattern=paste0("427_2018*.window",window,".poly_", poly, ".csv"))
 polyA_files = polyA_files[grep(paste0("window",window,".poly_", poly, ".csv"), polyA_files)]
-polyA_files = polyA_files[grep("427_", polyA_files)]
+polyA_files = polyA_files[grep("927", polyA_files)]
 polyA_files = polyA_files[-grep("667", polyA_files)]
 polyA_files = polyA_files[-grep("668", polyA_files)]
 polyA_files
@@ -20,17 +20,19 @@ polyA_files
 parameter_setting = 'merged'
 cov_files_sns = list.files(data_dir_ori, pattern="*.cov")
 cov_files_sns = cov_files_sns[grep(parameter_setting, cov_files_sns)]
-cov_files_sns = cov_files_sns[grep("427_G4", cov_files_sns)]
+cov_files_sns = cov_files_sns[grep("Tb427", cov_files_sns)]
 
 cov_files_shuffled = list.files(data_dir_ori_shuffled, pattern="*.cov")
 cov_files_shuffled = cov_files_shuffled[grep("seed666", cov_files_shuffled)]
-cov_files_shuffled = cov_files_shuffled[grep("427_G4", cov_files_shuffled)]
+cov_files_shuffled = cov_files_shuffled[grep("Tb427_", cov_files_shuffled)]
+cov_files_shuffled
 
-# cov_files_shuffled = cov_files_shuffled[grep(parameter_setting, cov_files_shuffled)]
 
-## get files for the MNaseSeq data
-mnase_files = list.files(data_dir_ori, pattern="*.cov")
-mnase_files = mnase_files[grep("T_brucei", mnase_files)]
+## get the DRIP-seq data
+drip_files =  list.files(data_dir_ori, pattern="*.cov")
+drip_files = drip_files[grep("427-2018_DRIP", drip_files)]
+drip_files
+
 
 # cov_files = c(cov_files_sns, cov_files_shuffled)
 
@@ -38,21 +40,21 @@ cov_data_all = data.frame()
 first_file = 1
 
 ## first read in for the true data (G4Hunter results
-## based on the experimental data). Afterwards for the shuffled data
+## based on the SNSseq data). Afterwards for the shuffled data
 for (cov_file in cov_files_sns) {
   cov_data = read.csv(paste0(data_dir_ori, cov_file), header=FALSE)
   colnames(cov_data) = c('position', 'coverage')
   cov_data = cov_data[-nrow(cov_data),]
   
   ## extract the strand from the sample name
-  strand = unlist(strsplit(cov_file, split="\\."))[2]
-  strand = unlist(strsplit(strand, split="_"))[3]
+  strand = unlist(strsplit(cov_file, split="\\."))[3]
+  # strand = unlist(strsplit(cov_file, split="_"))[3]
   strand = tolower(strand)
   strand = gsub("minus", 'min', strand)
   print(strand)
   cov_data$strand = strand
-  cov_data$pattern = "G4exp"
-  cov_data$pattern2 = paste0("G4exp ", strand)
+  cov_data$pattern = "G4Hunter"
+  cov_data$pattern2 = paste0("G4Hunter ", strand)
   
   
   
@@ -61,9 +63,9 @@ for (cov_file in cov_files_sns) {
   
   ## create sample name by excluding the plus and min
   ## information from the strand
-  sample = unlist(strsplit(cov_file, split="\\."))[3]
-  sample = unlist(strsplit(sample, split="_"))[3]
-  # sample = gsub("merged_", "", sample)
+  sample = unlist(strsplit(cov_file, split="\\."))[4]
+  # sample = unlist(strsplit(sample, split="_"))[3]
+  sample = gsub("merged_", "", sample)
   sample
   
   # sample
@@ -92,15 +94,15 @@ for (cov_file in cov_files_shuffled) {
   cov_data = cov_data[-nrow(cov_data),]
   
   ## extract the strand from the sample name
-  strand = unlist(strsplit(cov_file, split="\\."))[2]
-  strand = unlist(strsplit(strand, split="_"))[3]
+  strand = unlist(strsplit(cov_file, split="\\."))[3]
+  # strand = unlist(strsplit(cov_file, split="_"))[3]
   strand = tolower(strand)
   strand = gsub("minus", 'min', strand)
   
   print(strand)
   cov_data$strand = strand
-  cov_data$pattern = "G4exp"
-  cov_data$pattern2 = paste0("G4exp ", strand)
+  cov_data$pattern = "G4Hunter"
+  cov_data$pattern2 = paste0("G4Hunter ", strand)
   
   
   window_size <- 100
@@ -108,8 +110,8 @@ for (cov_file in cov_files_shuffled) {
   
   ## create sample name by excluding the plus and min
   ## information from the strand
-  sample_full = unlist(strsplit(cov_file, split="\\."))[3]
-  sample = unlist(strsplit(sample_full, split="_"))[4]
+  sample_full = unlist(strsplit(cov_file, split="\\."))[4]
+  sample = unlist(strsplit(sample_full, split="_"))[3]
   sample = paste0("shuffled control ", sample)
   sample
 
@@ -153,6 +155,7 @@ for (nucl_file in polyA_files) {
   if (grepl("seed", nucl_file)) {
     sample_data = unlist(strsplit(nucl_file, split="_"))[4]
     sample = paste0("shuffled control ", sample_data)
+    sample
   }else{
     sample_data = unlist(strsplit(nucl_file, split="_"))[3]
     sample = gsub("merged_", "", sample_data)
@@ -207,12 +210,13 @@ for (nucl_file in polyA_files) {
 
 
 
-cov_data_mmase_all = data.frame()
+
+## read in DRIPseq data
+cov_data_drip_all = data.frame()
 first_file = 1
 
-## readn in MNAseq-data
-for (mnase_file in mnase_files) {
-  cov_data = read.csv(paste0(data_dir_ori, mnase_file), header=FALSE)
+for (drip_file in drip_files) {
+  cov_data = read.csv(paste0(data_dir_ori, drip_file), header=FALSE)
   colnames(cov_data) = c('position', 'coverage')
   cov_data = cov_data[-nrow(cov_data),]
   
@@ -225,8 +229,8 @@ for (mnase_file in mnase_files) {
   strand = NA
   
   cov_data$strand = strand
-  cov_data$pattern = "MNase-Seq"
-  cov_data$pattern2 = "MNase-seq"
+  cov_data$pattern = "DRIP-Seq"
+  cov_data$pattern2 = "DRIP-seq"
   
   
   
@@ -235,14 +239,15 @@ for (mnase_file in mnase_files) {
   
   ## create sample name by excluding the plus and min
   ## information from the strand
-  sample = unlist(strsplit(mnase_file, split="\\."))[2]
+  sample = unlist(strsplit(drip_file, split="\\."))[2]
   if (grepl("seed", sample)) {
-    sample = unlist(strsplit(sample, split="_"))[4]
+    sample = unlist(strsplit(sample, split="_"))[3]
     sample = paste0("shuffled control ", sample)
   }else{
-    sample = unlist(strsplit(sample, split="_"))[3]
+    sample = unlist(strsplit(sample, split="-"))[1]
+    sample = gsub("merged_", "", sample)
   }
-  # sample = gsub("merged_", "", sample)
+  
   sample
   
   # sample
@@ -254,13 +259,14 @@ for (mnase_file in mnase_files) {
   # cov_data$seed = NA
   
   if (first_file == 1) {
-    cov_data_nmase_all = cov_data
+    cov_data_drip_all = cov_data
     first_file = 0
   }else{
-    cov_data_nmase_all = rbind.data.frame(cov_data_nmase_all, cov_data)
+    cov_data_drip_all = rbind.data.frame(cov_data_drip_all, cov_data)
   }
   
 }
+
 
 
 ## merge both data types. First select relevant
@@ -288,19 +294,19 @@ cov_data_polyA_all_sub = cov_data_polyA_all[,c('pos',
 head(cov_data_polyA_all_sub)
 
 
-cov_data_nmase_all_sub = cov_data_nmase_all[,c('position', 
-                                                'coverage', 
-                                                'coverage_smoothed',
-                                                'strand',
-                                                'pattern',
-                                                'pattern2',
-                                                'sample')]
-colnames(cov_data_nmase_all_sub) = c('pos', 'cov', 'cov_smoothed', 'strand', 'pattern', 'pattern2', 'sample')
+cov_data_drip_all_sub = cov_data_drip_all[,c('position', 
+                                               'coverage', 
+                                               'coverage_smoothed',
+                                               'strand',
+                                               'pattern',
+                                               'pattern2',
+                                               'sample')]
+colnames(cov_data_drip_all_sub) = c('pos', 'cov', 'cov_smoothed', 'strand', 'pattern', 'pattern2', 'sample')
 
 
 ## merge both data types
 plot_data = rbind.data.frame(cov_data_all_sub, cov_data_polyA_all_sub)
-plot_data = rbind.data.frame(plot_data, cov_data_nmase_all_sub)
+plot_data = rbind.data.frame(plot_data, cov_data_drip_all_sub)
 head(plot_data)
 
 ## create plot with separate color per line
@@ -352,11 +358,11 @@ ggsave(output_file, p, width=10, height=6)
 
 
 ## try out with two axes. First add additional column 
-## containing the mnase-seq values. This make take some time!
+## containing the polyA values. This make take some time!
 head(cov_data_all_sub)
 cov_data_merged = cov_data_all_sub
 cov_data_merged$polyA = 0
-cov_data_merged$MNase = 0
+cov_data_merged$DRIPseq = 0
 
 for (i in 1:dim(cov_data_merged)[1]) {
   if (i%%100 == 0) {print(i)}
@@ -373,40 +379,43 @@ for (i in 1:dim(cov_data_merged)[1]) {
     cov_data_merged[i,]$polyA = polyA_value
   }
   
-  ## add additional MNAse column to the cov_data_merged data frame
-  matches = sum(cov_data_nmase_all_sub$pos == pos & cov_data_nmase_all_sub$sample == sample)
+  ## add additional DRIP-seq column to the cov_data_merged data frame
+  matches = sum(cov_data_drip_all_sub$pos == pos & cov_data_drip_all_sub$sample == sample)
   # print(matches)
-  mmnase_value =  cov_data_nmase_all_sub[cov_data_nmase_all_sub$pos == pos & cov_data_nmase_all_sub$sample == sample,]$cov_smoothed
+  drip_value =  cov_data_drip_all_sub[cov_data_drip_all_sub$pos == pos & cov_data_drip_all_sub$sample == sample,]$cov_smoothed
   if (is.numeric(mmnase_value) && length(mmnase_value) > 0) {
     # print(polyA_value)
-    cov_data_merged[i,]$MNase = mmnase_value
+    cov_data_merged[i,]$DRIPseq = drip_value
   }
   
   # if (i > 1000) {break}
   
 }
 
-cov_data_merged$MNase_color = "MNase-Seq"
+library(scales)
+cov_data_merged$DRIPseq_color = "DRIP-Seq"
+manual_colors <- hue_pal()(3)
+manual_colors = c(manual_colors[3], manual_colors[1:2])
 
 p = ggplot(data=cov_data_merged, aes(x=pos, y=cov_smoothed)) + 
   geom_line(aes(color=pattern2, y=cov_smoothed, linetype="G4"), linewidth=0.80) + 
   # geom_line(aes(x=pos,y=polyA*0.30), linewidth=0.80, color = "#FFA500") + 
   # geom_line(aes(x=pos,y=polyA*2, linetype = pattern2), linewidth=0.80, color = "#FFA500") + 
   geom_line(aes(x=pos,y=polyA, color = pattern2, linetype="polyA"), linewidth=0.80) + 
-  geom_line(aes(x=pos,y=MNase*0.075, color=MNase_color, linetype="MNase-Seq"), linewidth=0.80) +
+  geom_line(aes(x=pos,y=DRIPseq*0.15, color=DRIPseq_color, linetype="DRIP-Seq"), linewidth=0.80) +
   facet_wrap(~ sample) + 
-  scale_y_continuous(name = "G4 Hunter results", sec.axis = sec_axis(~./0.075, name = "MNase-Seq")) + 
+  scale_y_continuous(name = "G4 Hunter results", sec.axis = sec_axis(~./0.15, name = "DRIP-Seq")) + 
   xlab("") +
   scale_x_continuous(
     breaks = c(-1850, 0, window-150),
     labels = c("-2kb", "center", "+2kb")) +
   theme_bw() + 
-  # scale_color_manual(values = colors) + 
+  scale_color_manual(values = manual_colors) + 
   theme(panel.spacing = unit(0.5, "cm"),
         legend.title=element_blank(),
         legend.key.width = unit(1.5, "cm")) + 
   # guides(linetype = guide_legend(override.aes = list(linetype = c("G4" = "solid", "polyA" = "dashed"))))
-  scale_linetype_manual(values = c("G4" = "solid", "polyA" = "dashed", "MNase-Seq" = "dotted"))
+  scale_linetype_manual(values = c("G4" = "solid", "polyA" = "dashed", "DRIP-Seq" = "solid"))
 
 p
 

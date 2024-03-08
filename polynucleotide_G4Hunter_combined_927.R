@@ -20,9 +20,20 @@ polyA_files
 parameter_setting = 'merged'
 cov_files_sns = list.files(data_dir_ori, pattern="*.cov")
 cov_files_sns = cov_files_sns[grep(parameter_setting, cov_files_sns)]
+cov_files_sns = cov_files_sns[grep("927_G4_", cov_files_sns)]
+
 cov_files_shuffled = list.files(data_dir_ori_shuffled, pattern="*.cov")
 cov_files_shuffled = cov_files_shuffled[grep("seed666", cov_files_shuffled)]
-# cov_files_shuffled = cov_files_shuffled[grep(parameter_setting, cov_files_shuffled)]
+cov_files_shuffled = cov_files_shuffled[grep("927_G4_", cov_files_shuffled)]
+cov_files_shuffled
+
+
+## get the DRIP-seq data
+drip_files =  list.files(data_dir_ori, pattern="*.cov")
+drip_files = drip_files[grep("927-DRIP", drip_files)]
+drip_files
+
+
 
 
 # cov_files = c(cov_files_sns, cov_files_shuffled)
@@ -198,6 +209,66 @@ for (nucl_file in polyA_files) {
 }
 
 
+
+
+
+## read in DRIPseq data
+cov_data_drip_all = data.frame()
+first_file = 1
+
+for (drip_file in drip_files) {
+  cov_data = read.csv(paste0(data_dir_ori, drip_file), header=FALSE)
+  colnames(cov_data) = c('position', 'coverage')
+  cov_data = cov_data[-nrow(cov_data),]
+  
+  ## extract the strand from the sample name
+  # strand = unlist(strsplit(mnase_file, split="\\."))[2]
+  # strand = unlist(strsplit(strand, split="_"))[3]
+  # strand = tolower(strand)
+  # strand = gsub("minus", 'min', strand)
+  # print(strand)
+  strand = NA
+  
+  cov_data$strand = strand
+  cov_data$pattern = "DRIP-Seq"
+  cov_data$pattern2 = "DRIP-seq"
+  
+  
+  
+  window_size <- 100
+  cov_data$coverage_smoothed = rollapply(cov_data$coverage, width = 2 * window_size + 1, FUN = mean, align = "center", fill = NA)
+  
+  ## create sample name by excluding the plus and min
+  ## information from the strand
+  sample = unlist(strsplit(drip_file, split="\\."))[2]
+  if (grepl("seed", sample)) {
+    sample = unlist(strsplit(sample, split="_"))[4]
+    sample = paste0("shuffled control ", sample)
+  }else{
+    sample = unlist(strsplit(sample, split="_"))[3]
+  }
+  # sample = gsub("merged_", "", sample)
+  sample
+  
+  # sample
+  cov_data$sample = sample
+  
+  ## add some additional column to allow visualising them
+  ## together with the random / shuffled ORI
+  # cov_data$type = NA
+  # cov_data$seed = NA
+  
+  if (first_file == 1) {
+    cov_data_drip_all = cov_data
+    first_file = 0
+  }else{
+    cov_data_drip_all = rbind.data.frame(cov_data_drip_all, cov_data)
+  }
+  
+}
+
+
+
 ## merge both data types. First select relevant
 ## columns and rename column names
 cov_data_all_sub = cov_data_all[,c('position', 
@@ -223,8 +294,19 @@ cov_data_polyA_all_sub = cov_data_polyA_all[,c('pos',
 head(cov_data_polyA_all_sub)
 
 
+cov_data_drip_all_sub = cov_data_drip_all[,c('position', 
+                                               'coverage', 
+                                               'coverage_smoothed',
+                                               'strand',
+                                               'pattern',
+                                               'pattern2',
+                                               'sample')]
+colnames(cov_data_drip_all_sub) = c('pos', 'cov', 'cov_smoothed', 'strand', 'pattern', 'pattern2', 'sample')
+
+
 ## merge both data types
 plot_data = rbind.data.frame(cov_data_all_sub, cov_data_polyA_all_sub)
+plot_data = rbind.data.frame(plot_data, cov_data_drip_all_sub)
 head(plot_data)
 
 ## create plot with separate color per line
@@ -280,10 +362,15 @@ ggsave(output_file, p, width=10, height=6)
 head(cov_data_all_sub)
 cov_data_merged = cov_data_all_sub
 cov_data_merged$polyA = 0
+cov_data_merged$DRIPseq = 0
+
 for (i in 1:dim(cov_data_merged)[1]) {
+  if (i%%100 == 0) {print(i)}
   sample = cov_data_merged[i,]$sample
   pos = cov_data_merged[i,]$pos
   strand = cov_data_merged[i,]$strand
+  
+  ## add additional polyA column to the cov_data_merged data frame
   matches = sum(cov_data_polyA_all_sub$pos == pos & cov_data_polyA_all_sub$sample == sample & cov_data_polyA_all_sub$strand == strand)
   # print(matches)
   polyA_value =  cov_data_polyA_all_sub[cov_data_polyA_all_sub$pos == pos & cov_data_polyA_all_sub$sample == sample & cov_data_polyA_all_sub$strand == strand,]$cov_smoothed
@@ -291,27 +378,44 @@ for (i in 1:dim(cov_data_merged)[1]) {
     # print(polyA_value)
     cov_data_merged[i,]$polyA = polyA_value
   }
+  
+  ## add additional DRIP-seq column to the cov_data_merged data frame
+  matches = sum(cov_data_drip_all_sub$pos == pos & cov_data_drip_all_sub$sample == sample)
+  # print(matches)
+  drip_value =  cov_data_drip_all_sub[cov_data_drip_all_sub$pos == pos & cov_data_drip_all_sub$sample == sample,]$cov_smoothed
+  if (is.numeric(mmnase_value) && length(mmnase_value) > 0) {
+    # print(polyA_value)
+    cov_data_merged[i,]$DRIPseq = drip_value
+  }
+  
+  # if (i > 1000) {break}
+  
 }
 
+library(scales)
+cov_data_merged$DRIPseq_color = "DRIP-Seq"
+manual_colors <- hue_pal()(3)
+manual_colors = c(manual_colors[3], manual_colors[1:2])
 
 p = ggplot(data=cov_data_merged, aes(x=pos, y=cov_smoothed)) + 
   geom_line(aes(color=pattern2, y=cov_smoothed, linetype="G4"), linewidth=0.80) + 
   # geom_line(aes(x=pos,y=polyA*0.30), linewidth=0.80, color = "#FFA500") + 
   # geom_line(aes(x=pos,y=polyA*2, linetype = pattern2), linewidth=0.80, color = "#FFA500") + 
-  geom_line(aes(x=pos,y=polyA*1.5, color = pattern2, linetype="polyA"), linewidth=0.80) + 
+  geom_line(aes(x=pos,y=polyA, color = pattern2, linetype="polyA"), linewidth=0.80) + 
+  geom_line(aes(x=pos,y=DRIPseq*0.25, color=DRIPseq_color, linetype="DRIP-Seq"), linewidth=0.80) +
   facet_wrap(~ sample) + 
-  scale_y_continuous(name = "G4 Hunter results", sec.axis = sec_axis(~./1.5, name = "polyA")) + 
+  scale_y_continuous(name = "G4 Hunter results", sec.axis = sec_axis(~./0.25, name = "DRIP-Seq")) + 
   xlab("") +
   scale_x_continuous(
     breaks = c(-1850, 0, window-150),
     labels = c("-2kb", "center", "+2kb")) +
   theme_bw() + 
-  # scale_color_manual(values = colors) + 
+  scale_color_manual(values = manual_colors) + 
   theme(panel.spacing = unit(0.5, "cm"),
         legend.title=element_blank(),
         legend.key.width = unit(1.5, "cm")) + 
   # guides(linetype = guide_legend(override.aes = list(linetype = c("G4" = "solid", "polyA" = "dashed"))))
-  scale_linetype_manual(values = c("G4" = "solid", "polyA" = "dashed"))
+  scale_linetype_manual(values = c("G4" = "solid", "polyA" = "dashed", "DRIP-Seq" = "solid"))
 
 p
 

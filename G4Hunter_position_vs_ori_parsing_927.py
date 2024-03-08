@@ -106,6 +106,11 @@ if __name__ == '__main__':
         g4_chrom = data[0]
         g4_start = int(data[1])
         g4_end = int(data[2])
+        g4_coverage = float(data[3]) ## not really G4, but MNase-seq coverage
+
+        if (g4_coverage == 0): 
+            # print("skip zeroes")
+            continue
 
         ## get the list of ORI peaks it matches with, and check 
         ## the start and stop position
@@ -133,7 +138,7 @@ if __name__ == '__main__':
         ## store in list
         for i in range(rel_g4_start, rel_g4_end + 1):
             # print(i)
-            g4_locations_coverage[2000 + i] = g4_locations_coverage[2000 + i] + 1
+            g4_locations_coverage[2000 + i] = g4_locations_coverage[2000 + i] + g4_coverage
 
         g4_locations_peaks[2000 + rel_g4_peak] = g4_locations_peaks[2000 + rel_g4_peak] + 1
 

@@ -24,9 +24,9 @@ import pandas as pd
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/427/
 # for overlap_file in 427_G4*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
 
-## for the 427 MNase-seq data
-# for overlap_file in 427_*_T_brucei*bed; do echo $overlap_file; /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
-
+## for the 427 MNase-seq data, run manually. Takes long time so don't 
+## run for random seeds 667 and 668 which are not used. E.g. 
+# ./G4Hunter_position_vs_ori_parsing_427.py --input /Users/pmonsieurs/programming/leishmania_snsseq/results/427/427_PCF_Amt_WT_rep1_T_brucei_427.427_merged_PCF.bed
 
 my_debug = 0
 
@@ -106,6 +106,11 @@ if __name__ == '__main__':
         g4_chrom = data[0]
         g4_start = int(data[1])
         g4_end = int(data[2])
+        g4_coverage = float(data[3]) ## not really G4, but MNase-seq coverage
+
+        if (g4_coverage == 0): 
+            # print("skip zeroes")
+            continue
 
         ## get the list of ORI peaks it matches with, and check 
         ## the start and stop position
@@ -133,7 +138,7 @@ if __name__ == '__main__':
         ## store in list
         for i in range(rel_g4_start, rel_g4_end + 1):
             # print(i)
-            g4_locations_coverage[2000 + i] = g4_locations_coverage[2000 + i] + 1
+            g4_locations_coverage[2000 + i] = g4_locations_coverage[2000 + i] + g4_coverage
 
         g4_locations_peaks[2000 + rel_g4_peak] = g4_locations_peaks[2000 + rel_g4_peak] + 1
 
