@@ -388,6 +388,10 @@ for (i in 1:dim(cov_data_merged)[1]) {
 
 cov_data_merged$MNase_color = "MNase-Seq"
 
+## save cov_data_merged to the output diretory
+# cov_data_file = paste0(data_dir_ori, 'cov_data_427.rds')
+# saveRDS(cov_data, cov_data_file)
+
 p = ggplot(data=cov_data_merged, aes(x=pos, y=cov_smoothed)) + 
   geom_line(aes(color=pattern2, y=cov_smoothed, linetype="G4"), linewidth=0.80) + 
   # geom_line(aes(x=pos,y=polyA*0.30), linewidth=0.80, color = "#FFA500") + 
@@ -395,7 +399,7 @@ p = ggplot(data=cov_data_merged, aes(x=pos, y=cov_smoothed)) +
   geom_line(aes(x=pos,y=polyA, color = pattern2, linetype="polyA"), linewidth=0.80) + 
   geom_line(aes(x=pos,y=MNase*0.075, color=MNase_color, linetype="MNase-Seq"), linewidth=0.80) +
   facet_wrap(~ sample) + 
-  scale_y_continuous(name = "G4 Hunter results", sec.axis = sec_axis(~./0.075, name = "MNase-Seq")) + 
+  scale_y_continuous(name = "G4 and polyA", sec.axis = sec_axis(~./0.075, name = "MNase-Seq")) + 
   xlab("") +
   scale_x_continuous(
     breaks = c(-1850, 0, window-150),
@@ -404,14 +408,93 @@ p = ggplot(data=cov_data_merged, aes(x=pos, y=cov_smoothed)) +
   # scale_color_manual(values = colors) + 
   theme(panel.spacing = unit(0.5, "cm"),
         legend.title=element_blank(),
-        legend.key.width = unit(1.5, "cm")) + 
+        legend.key.width = unit(1.5, "cm")) #+ 
   # guides(linetype = guide_legend(override.aes = list(linetype = c("G4" = "solid", "polyA" = "dashed"))))
   scale_linetype_manual(values = c("G4" = "solid", "polyA" = "dashed", "MNase-Seq" = "dotted"))
 
 p
 
-output_file = paste0(data_dir_polyA, parameter_setting, "_with_polyA.variant.dual_axes.png")
-ggsave(output_file, p, width=10, height=6)
+output_file = paste0(data_dir_ori, "427_with_polyA.variant.dual_axes.tiff")
+ggsave(output_file, p, width=10, height=6, dpi=300)
+
+
+## find the maximum hight of the peak of the MNA-seq data verus 
+## the ORI position (= position 0), this mean finding the maximum
+## value for the MNase on the minus region, and on the plus region
+
+
+for (sample in unique(cov_data_merged$sample)) {
+  
+  print(paste0("sample --> ", sample))
+  cov_data_max = cov_data_merged[cov_data_merged$sample == sample,]
+  
+  ## focus on downstream side
+  print("..downstream")
+  cov_data_max_down = cov_data_max[cov_data_max$pos < 0,]
+  max_mnase_index = which(cov_data_max_down$MNase == max(cov_data_max_down$MNase, na.rm = TRUE))
+  max_mnase_peak = cov_data_max_down[max_mnase_index,]$pos[1]
+  print(paste0("....MNase peak: ", max_mnase_peak))
+  
+  ## split between plus and minus strand
+  print("......strand +")
+  cov_data_max_down_plus = cov_data_max_down[cov_data_max_down$strand == "plus",] 
+  
+  max_polyA_index = which(cov_data_max_down_plus$polyA == max(cov_data_max_down_plus$polyA, na.rm = TRUE))
+  max_polyA_peak = cov_data_max_down_plus[max_polyA_index,]$pos[1]
+  print(paste0("........polyA peak: ", max_polyA_peak))
+  
+  max_G4_index = which(cov_data_max_down_plus$cov_smoothed == max(cov_data_max_down_plus$cov_smoothed, na.rm = TRUE))
+  max_G4_peak = cov_data_max_down_plus[max_G4_index,]$pos[1]
+  print(paste0("........G4 peak: ", max_G4_peak))
+  
+  print("......strand -")
+  cov_data_max_down_min = cov_data_max_down[cov_data_max_down$strand == "min",] 
+  max_polyA_index = which(cov_data_max_down_min$polyA == max(cov_data_max_down_min$polyA, na.rm = TRUE))
+  max_polyA_peak = cov_data_max_down_min[max_polyA_index,]$pos[1]
+  print(paste0("........polyA peak: ", max_polyA_peak))
+  
+  max_G4_index = which(cov_data_max_down_min$cov_smoothed == max(cov_data_max_down_min$cov_smoothed, na.rm = TRUE))
+  max_G4_peak = cov_data_max_down_min[max_G4_index,]$pos[1]
+  print(paste0("........G4 peak: ", max_G4_peak))
+
+  ## focus on upstream side
+  print("...upstream")
+  cov_data_max_up = cov_data_max[cov_data_max$pos > 0,]
+  max_mnase_index = which(cov_data_max_up$MNase == max(cov_data_max_up$MNase, na.rm = TRUE))
+  max_mnase_peak = cov_data_max_up[max_mnase_index,]$pos[1]
+  print(paste0("...MNase peak: ", max_mnase_peak))
+
+  
+  ## split between plus and minus strand
+  print("......strand +")
+  cov_data_max_up_plus = cov_data_max_up[cov_data_max_up$strand == "plus",] 
+  
+  max_polyA_index = which(cov_data_max_up_plus$polyA == max(cov_data_max_up_plus$polyA, na.rm = TRUE))
+  max_polyA_peak = cov_data_max_up_plus[max_polyA_index,]$pos[1]
+  print(paste0("........polyA peak: ", max_polyA_peak))
+  
+  max_G4_index = which(cov_data_max_up_plus$cov_smoothed == max(cov_data_max_up_plus$cov_smoothed, na.rm = TRUE))
+  max_G4_peak = cov_data_max_up_plus[max_G4_index,]$pos[1]
+  print(paste0("........G4 peak: ", max_G4_peak))
+  
+  print("......strand -")
+  cov_data_max_up_min = cov_data_max_up[cov_data_max_up$strand == "min",] 
+  max_polyA_index = which(cov_data_max_up_min$polyA == max(cov_data_max_up_min$polyA, na.rm = TRUE))
+  max_polyA_peak = cov_data_max_up_min[max_polyA_index,]$pos[1]
+  print(paste0("........polyA peak: ", max_polyA_peak))
+  
+  max_G4_index = which(cov_data_max_up_min$cov_smoothed == max(cov_data_max_up_min$cov_smoothed, na.rm = TRUE))
+  max_G4_peak = cov_data_max_up_min[max_G4_index,]$pos[1]
+  print(paste0("........G4 peak: ", max_G4_peak))
+  
+  
+  
+  
+}
+
+
+
+
 
 
 # Load the ggplot2 package

@@ -55,8 +55,8 @@ for (cov_file in cov_files_sns) {
   strand = gsub("minus", 'min', strand)
   print(strand)
   cov_data$strand = strand
-  cov_data$pattern = "G4exp"
-  cov_data$pattern2 = paste0("G4exp ", strand)
+  cov_data$pattern = "G4"
+  cov_data$pattern2 = paste0("G4 ", strand)
   
   
   
@@ -103,8 +103,8 @@ for (cov_file in cov_files_shuffled) {
   
   print(strand)
   cov_data$strand = strand
-  cov_data$pattern = "G4exp"
-  cov_data$pattern2 = paste0("G4exp ", strand)
+  cov_data$pattern = "G4"
+  cov_data$pattern2 = paste0("G4 ", strand)
   
   
   window_size <- 100
@@ -397,6 +397,10 @@ cov_data_merged$DRIPseq_color = "DRIP-Seq"
 manual_colors <- hue_pal()(3)
 manual_colors = c(manual_colors[3], manual_colors[1:2])
 
+## save cov_data_merged to the output diretory
+# cov_data_file = paste0(data_dir_ori, 'cov_data_927.rds')
+# saveRDS(cov_data, cov_data_file)
+
 p = ggplot(data=cov_data_merged, aes(x=pos, y=cov_smoothed)) + 
   geom_line(aes(color=pattern2, y=cov_smoothed, linetype="G4"), linewidth=0.80) + 
   # geom_line(aes(x=pos,y=polyA*0.30), linewidth=0.80, color = "#FFA500") + 
@@ -404,7 +408,7 @@ p = ggplot(data=cov_data_merged, aes(x=pos, y=cov_smoothed)) +
   geom_line(aes(x=pos,y=polyA, color = pattern2, linetype="polyA"), linewidth=0.80) + 
   geom_line(aes(x=pos,y=DRIPseq*0.25, color=DRIPseq_color, linetype="DRIP-Seq"), linewidth=0.80) +
   facet_wrap(~ sample) + 
-  scale_y_continuous(name = "G4 Hunter results", sec.axis = sec_axis(~./0.25, name = "DRIP-Seq")) + 
+  scale_y_continuous(name = "G4 and polyA", sec.axis = sec_axis(~./0.25, name = "DRIP-Seq")) + 
   xlab("") +
   scale_x_continuous(
     breaks = c(-1850, 0, window-150),
@@ -419,8 +423,88 @@ p = ggplot(data=cov_data_merged, aes(x=pos, y=cov_smoothed)) +
 
 p
 
-output_file = paste0(data_dir_polyA, parameter_setting, "_with_polyA.variant.dual_axes.png")
-ggsave(output_file, p, width=10, height=6)
+
+
+output_file = paste0(data_dir_ori, "927_with_polyA.variant.dual_axes.tiff")
+ggsave(output_file, p, width=10, height=6, dpi=300)
+
+
+## find the maximum hight of the peak of the MNA-seq data verus 
+## the ORI position (= position 0), this mean finding the maximum
+## value for the DRIPseq on the minus region, and on the plus region
+
+
+for (sample in unique(cov_data_merged$sample)) {
+  
+  print(paste0("sample --> ", sample))
+  cov_data_max = cov_data_merged[cov_data_merged$sample == sample,]
+  
+  ## focus on downstream side
+  print("..downstream")
+  cov_data_max_down = cov_data_max[cov_data_max$pos < 0,]
+  max_DRIPseq_index = which(cov_data_max_down$DRIPseq == max(cov_data_max_down$DRIPseq, na.rm = TRUE))
+  max_DRIPseq_peak = cov_data_max_down[max_DRIPseq_index,]$pos[1]
+  print(paste0("....DRIPseq peak: ", max_DRIPseq_peak))
+  
+  ## split between plus and minus strand
+  print("......strand +")
+  cov_data_max_down_plus = cov_data_max_down[cov_data_max_down$strand == "plus",] 
+  
+  max_polyA_index = which(cov_data_max_down_plus$polyA == max(cov_data_max_down_plus$polyA, na.rm = TRUE))
+  max_polyA_peak = cov_data_max_down_plus[max_polyA_index,]$pos[1]
+  print(paste0("........polyA peak: ", max_polyA_peak))
+  
+  max_G4_index = which(cov_data_max_down_plus$cov_smoothed == max(cov_data_max_down_plus$cov_smoothed, na.rm = TRUE))
+  max_G4_peak = cov_data_max_down_plus[max_G4_index,]$pos[1]
+  print(paste0("........G4 peak: ", max_G4_peak))
+  
+  print("......strand -")
+  cov_data_max_down_min = cov_data_max_down[cov_data_max_down$strand == "min",] 
+  max_polyA_index = which(cov_data_max_down_min$polyA == max(cov_data_max_down_min$polyA, na.rm = TRUE))
+  max_polyA_peak = cov_data_max_down_min[max_polyA_index,]$pos[1]
+  print(paste0("........polyA peak: ", max_polyA_peak))
+  
+  max_G4_index = which(cov_data_max_down_min$cov_smoothed == max(cov_data_max_down_min$cov_smoothed, na.rm = TRUE))
+  max_G4_peak = cov_data_max_down_min[max_G4_index,]$pos[1]
+  print(paste0("........G4 peak: ", max_G4_peak))
+  
+  ## focus on upstream side
+  print("...upstream")
+  cov_data_max_up = cov_data_max[cov_data_max$pos > 0,]
+  max_DRIPseq_index = which(cov_data_max_up$DRIPseq == max(cov_data_max_up$DRIPseq, na.rm = TRUE))
+  max_DRIPseq_peak = cov_data_max_up[max_DRIPseq_index,]$pos[1]
+  print(paste0("...DRIPseq peak: ", max_DRIPseq_peak))
+  
+  
+  ## split between plus and minus strand
+  print("......strand +")
+  cov_data_max_up_plus = cov_data_max_up[cov_data_max_up$strand == "plus",] 
+  
+  max_polyA_index = which(cov_data_max_up_plus$polyA == max(cov_data_max_up_plus$polyA, na.rm = TRUE))
+  max_polyA_peak = cov_data_max_up_plus[max_polyA_index,]$pos[1]
+  print(paste0("........polyA peak: ", max_polyA_peak))
+  
+  max_G4_index = which(cov_data_max_up_plus$cov_smoothed == max(cov_data_max_up_plus$cov_smoothed, na.rm = TRUE))
+  max_G4_peak = cov_data_max_up_plus[max_G4_index,]$pos[1]
+  print(paste0("........G4 peak: ", max_G4_peak))
+  
+  print("......strand -")
+  cov_data_max_up_min = cov_data_max_up[cov_data_max_up$strand == "min",] 
+  max_polyA_index = which(cov_data_max_up_min$polyA == max(cov_data_max_up_min$polyA, na.rm = TRUE))
+  max_polyA_peak = cov_data_max_up_min[max_polyA_index,]$pos[1]
+  print(paste0("........polyA peak: ", max_polyA_peak))
+  
+  max_G4_index = which(cov_data_max_up_min$cov_smoothed == max(cov_data_max_up_min$cov_smoothed, na.rm = TRUE))
+  max_G4_peak = cov_data_max_up_min[max_G4_index,]$pos[1]
+  print(paste0("........G4 peak: ", max_G4_peak))
+  
+  
+  
+  
+}
+
+
+
 
 
 # Load the ggplot2 package
