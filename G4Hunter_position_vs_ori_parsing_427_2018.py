@@ -27,6 +27,7 @@ import pandas as pd
 ## for the 427_2018 DRIP-seq data: run only for files in which you
 ## are interested
 # /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427_2018.py --input /Users/pmonsieurs/programming/leishmania_snsseq/results/427_2018/427-2018_DRIP-seq_36.merged_PCF-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed.bed
+# /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427_2018.py --input/Users/pmonsieurs/programming/leishmania_snsseq/results/427_2018/427-2018_DRIP-seq_36.shuffeled_seed666_BSF_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed.bed
 
 
 my_debug = 0

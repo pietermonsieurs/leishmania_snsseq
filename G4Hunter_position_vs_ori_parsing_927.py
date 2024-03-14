@@ -28,6 +28,12 @@ import pandas as pd
 # for overlap_file in 427_*_T_brucei*bed; do echo $overlap_file; /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
 
 
+## for the 927 DRIP-seq data. Run only for those samples that you will
+## be using as it takes quite some time. So only shuffled seed 666
+# /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_927.py --input /Users/pmonsieurs/programming/leishmania_snsseq/results/927/927-DRIP-seq_36.927_shuffeled_seed666_BSF_ORIs.bed
+
+
+
 my_debug = 0
 
 def get_ori_position(ori_data, peak, g4_chrom):

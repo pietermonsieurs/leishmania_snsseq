@@ -82,12 +82,12 @@ if __name__ == '__main__':
     # print(ori_info)
     # ori_file = f"{ori_dir}/{ori_info}.extended_2000nt.bed"
     
-    print(ori_file)
+    my_debug and print(ori_file)
 
     ori_data = pd.read_csv(ori_file, sep = "\t", header=None)
     # ori_data.columns = ['chrom', 'start', 'end', 'peak_id', 'dummy1', 'dummy2', 'dummy3']
     ori_data.columns = ['chrom', 'start', 'end', 'peak_id', 'dummy1', 'dummy2', 'dummy3']
-    print(ori_data)
+    my_debug and print(ori_data)
 
     ## create coverage list with all zeros
     g4_locations_coverage = [0] * 2000 * 2

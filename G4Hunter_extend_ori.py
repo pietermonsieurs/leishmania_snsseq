@@ -19,15 +19,16 @@ import os
 ## settings for the data related to strain 427 - normal, with normal and
 ## shuffled ORI dir (i.e. snsseq_dir) 
 # snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_ORIs_bed/'
-snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_shuffledORIs-bed/'
-out_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/427/'
-
+# snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_shuffledORIs-bed/'
+# out_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/427/'
 
 ## settings for the data related to strain 427 - normal
 # snsseq_dir = ''
 # out_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/427/'
 
-## settings for the data related to strain 427_2018 - normal
+## settings for the data related to strain 427_2018 - normal: this was already 
+## analysed as this is the reference genome also used by Bridlin to caclulate
+## the SNS-seq data
 
 ## set the length of the extension in bp
 # extension = 500

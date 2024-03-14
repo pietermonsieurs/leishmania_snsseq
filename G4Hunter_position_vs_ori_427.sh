@@ -14,41 +14,16 @@ bedtools_bin=/Users/pmonsieurs/programming/software/bedtools2/bin/bedtools
 
 ## set intersect between different SNS-seq data of Bridlin
 g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_G4hunter_predictions_bed/
-snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/ori/
+snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/427/
 g4_files=($(find $g4_dir -maxdepth 1  -name "427*.bed"))
 snsseq_files=($(find $snsseq_dir -name "427_merged_*.extended_2000nt.bed"))
 
 ## set intersect between different shuffled SNS-seq data of Bridlin, but now
 ## with the shuffled ORI sequences
-g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/g4hunter/
-snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/
+g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_G4hunter_predictions_bed/
+snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/427/
 g4_files=($(find $g4_dir -maxdepth 1  -name "427*.bed"))
 snsseq_files=($(find $snsseq_dir -name "427_shuffeled*.extended_2000nt.bed"))
-
-## set intersect between the G4 Hunter data with the ORI sequences
-## either true ones or shuffled ones. Different genetic background
-## (Tb427 vs Tb427_2018), but combining real and shuffled in one 
-## analysis
-# g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_ORIs_suffledORIs_G4-hunter_Mnase-seq
-# snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/mnase_seq/
-# g4_files=($(find $g4_dir -maxdepth 1  -name "G4*.bed"))
-# snsseq_files=($(find $snsseq_dir -name "*ORI*extended*.bed"))
-
-## set intersect between the G4 experimental data with the ORI sequences
-## either true ones or shuffled ones. Same information as the initial 
-## picture, only difference is that now experimental data (Marisco) are
-## used instead of the G4Hunter data. First need to do conversion from 
-## bigwig to bed
-bigwig2bed=/Users/pmonsieurs/programming/software/bigWigToBedGraph/bigWigToBedGraph
-g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data/927_G4_experimental_Marsico/
-for bw_file in ${g4_dir}/*.bw; do
-    bed_file=${bw_file/.bw/.bed}
-    $bigwig2bed $bw_file $bed_file
-done
-g4_files=($(find $g4_dir -maxdepth 1  -name "*G4*.bed"))
-snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/927/
-snsseq_files=($(find $snsseq_dir -name "*ORI*extended*.bed"))
-
 
 ## print the file lists
 echo ${g4_files[@]}
@@ -76,6 +51,47 @@ for g4_file in ${g4_files[@]}; do
         echo " --> g4_file ${g4_file}"
         # overlap=$(${bedtools_bin} intersect -a $snsseq_file -b $g4_file 2>/dev/null | wc | awk '{print $1}')
         ${bedtools_bin} intersect -wb -a $g4_file -b $snsseq_file > ${output_file}
+        
+    done
+done
+
+
+
+
+## get the MNase-seq data 
+mnase_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_Mnase-seq_bw/
+mnase_files=($(find $mnase_dir -maxdepth 1  -name "427*.bed"))
+echo ${mnase_files[@]}
+
+## run for shuffled sequences as well as the normal ori sequences!!
+snsseq_files=($(find $snsseq_dir -name "427_merged_*.extended_2000nt.bed"))
+snsseq_files=($(find $snsseq_dir -name "427_shuffeled*.extended_2000nt.bed"))
+
+## afterwards remove the file where BSF/PCF in sns and BSF/PCF 
+## are mixed up in the same file. Only do comparison per sample so e.g. 
+## remove 427_BSF_YT3_rep2_T_brucei_427.427_shuffeled_seed668_PCF.bed
+
+## calculate the overlap 
+for mnase_file in ${mnase_files[@]}; do
+    echo $mnase_file
+    mnase_file_short=$(basename ${mnase_file})
+    mnase_file_short=${mnase_file_short/.bed/}
+    echo $mnase_file_short 
+    for snsseq_file in ${snsseq_files[@]}; do
+        echo " --> ${snsseq_file}"
+        snsseq_file_short=$(basename ${snsseq_file})
+        echo " --> basename ${snsseq_file_short}"
+        
+        ## do substitution depending on the type of file
+        # snsseq_file_short=${snsseq_file_short/-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed/}
+        # snsseq_file_short=${snsseq_file_short/_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed/}
+        snsseq_file_short=${snsseq_file_short/_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed/}
+        echo " --> snsseq_file_short ${snsseq_file_short}"     
+        output_file=${snsseq_dir}/${mnase_file_short}.${snsseq_file_short}.bed
+        echo " --> output_file ${output_file}"
+        echo " --> g4_file ${mnase_file}"
+        # overlap=$(${bedtools_bin} intersect -a $snsseq_file -b $g4_file 2>/dev/null | wc | awk '{print $1}')
+        ${bedtools_bin} intersect -wb -a $mnase_file -b $snsseq_file > ${output_file}
         
     done
 done
