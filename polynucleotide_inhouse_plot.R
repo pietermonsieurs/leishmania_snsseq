@@ -12,6 +12,7 @@ setwd(data_dir)
 # type = 'tetra'
 
 poly = 8
+poly = 4
 window=2000
 nucl_files = list.files(data_dir, pattern=paste0("*.window",window,".poly_", poly, ".csv"))
 nucl_files = nucl_files[-grep("667", nucl_files)]
