@@ -4,22 +4,20 @@ library(zoo)
 
 ## input parameters
 data_dir_polyA = '/Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/'
-data_dir_ori = '/Users/pmonsieurs/programming/leishmania_snsseq/results/mnase_seq/'
-data_dir_ori_shuffled = '/Users/pmonsieurs/programming/leishmania_snsseq/results/mnase_seq/'
+data_dir_ori = '/Users/pmonsieurs/programming/leishmania_snsseq/results/ori/'
+data_dir_ori_shuffled = '/Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/'
 setwd(data_dir_polyA)
 
 ## get files for the polyA results
 window = 2000
 poly = 4
-polyA_files = list.files(data_dir_polyA, pattern=paste0("427-2018"))
-polyA_files = polyA_files[grep(".csv", polyA_files)]
+polyA_files = list.files(data_dir_polyA, pattern=paste0("*.window",window,".poly_", poly, ".csv"))
 polyA_files = polyA_files[-grep("667", polyA_files)]
 polyA_files = polyA_files[-grep("668", polyA_files)]
-# polyA_files = polyA_files[grep("^merged|^shuffeled", polyA_files)]
-polyA_files
+polyA_files = polyA_files[grep("^merged|^shuffeled", polyA_files)]
 
 ## get files for the G4 hunter predictions
-parameter_setting = 'G4_w25-score1.56_427'
+parameter_setting = 'Tb427_window25_score1.56_30476hits'
 # parameter_setting = 'Tb427_window25_score1.57_13409hits'
 # parameter_setting = 'Tb427_window25_score1.85_4562hits'
 # parameter_setting = 'Tb427_window25_score1.8_6283hits'

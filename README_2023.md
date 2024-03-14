@@ -50,7 +50,7 @@
 
 
 ## Tb427 & Tb927 new ref genome
-* repeat the analysis but now for the Tb927 reference genome, and create the same plot as before (with polyA + G4Hunter, but now experimental + ORIs as predicted in Tb927) (This is "first plot" in mail Bridlin 09/01/24)
+* repeat the analysis but now for the Tb927 reference genome, and create the same plot as before (with polyA + G4Hunter, but now experimental + ORIs as predicted in Tb927) (This is "first plot" in mail Bridlin 09/01/24) --> in the publication this is Figure 3D?
     * polyA regions
         * create the input fasta files, i.e. the fasta file containing sequencing before and after the ORI: [polynucleotide_get_sequences.py](polynucleotide_get_sequences.py). Use the ORIs as stored in 927_ORIs_bed and 927_shuffledORIs-bed
         * calculate the polyA sequences up and downstream of the ORI: [polynucleotide_inhouse.py]
@@ -74,12 +74,33 @@
     * include the Mnase-seq data by checking the overlap with the ori positions
         * include the code for this in [G4Hunter_position_vs_ori_427.sh](G4Hunter_position_vs_ori_427.sh)
             * run for normal and shuffled
-        * run again [G4Hunter_position_vs_ori_parsing.py](G4Hunter_position_vs_ori_parsing.py) but now using as input file the bed file of the MNase seq data instead of the G4Hunter data
+        * run again the variant python script [G4Hunter_position_vs_ori_parsing_427.py](G4Hunter_position_vs_ori_parsing_427.py) but now using as input file the bed file of the MNase seq data instead of the G4Hunter data
+        * visualisation using [polynucleotide_G4Hunter_combined_427.R](polynucleotide_G4Hunter_combined_427.R)
 
 
-* repeat the analysis but now for the Tb927 reference genome with plotting G4 hunter + DRIP-seq data relative to the ORI. (This is "third A plot" = 3A in mail Bridlin 09/01/24)
+
+* repeat the analysis but now for the Tb927 reference genome with plotting G4 experimental data from Marisco + DRIP-seq data relative to the ORI. (This is "third A plot" = 3A in mail Bridlin 09/01/24)
     * step from previous step do not to be repeated for Tb927, as this is already done above with the Marisco data, so [G4Hunter_extend_ori.py](G4Hunter_extend_ori.py), [G4Hunter_position_vs_ori.sh] and [G4Hunter_position_vs_ori_parsing.py](G4Hunter_position_vs_ori_parsing.py) are already run
     * do the steps for the DRIP-seq data of Tb927:
-        * calculate overlap between the DRIPseq data and the ori's. This is wrongly called G4Hunter however there is nog G4 involved anymore. [G4Hunter_position_vs_ori_Drip_927.sh](G4Hunter_position_vs_ori_Drip_927.sh)
+        * calculate overlap between the DRIPseq data and the ori's. This is wrongly called G4Hunter however there is nog G4Hunter involved anymore (Experimentally predicted G4 sites). [G4Hunter_position_vs_ori_Drip_927.sh](G4Hunter_position_vs_ori_Drip_927.sh)
         * convert the .bed file from the overlap in previous script to a coverage file (.cov) using [G4Hunter_position_vs_ori_parsing_927.py](G4Hunter_position_vs_ori_parsing_927.py)
+        * visualisation using [polynucleotide_G4Hunter_combined_927.R](polynucleotide_G4Hunter_combined_927.R)
+
+* repeat the analysis but now for the Tb427_2018 reference genome with plotting G4 hunter + DRIP-seq data relative to the ORI. (This is "third B plot" = 3B in mail Bridlin 09/01/24)
+    * The steps for the overlap between G4Hunter and the ORIs has already been performed as one of the first analyses, and the outputs are stored in: /Users/pmonsieurs/programming/leishmania_snsseq/results/ori and /Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled. So following scripts were used (no need to re-run)
+        * [G4Hunter_extend_ori.py](G4Hunter_extend_ori.py)
+        * [G4Hunter_position_vs_ori.sh][G4Hunter_position_vs_ori.sh]
+        * [G4Hunter_position_vs_ori_parsing.py](G4Hunter_position_vs_ori_parsing.py) 
+    * do the steps for the DRIP-seq data of Tb427_2018:
+        * calculate overlap between the DRIPseq data and the ori's. This is wrongly called G4Hunter however there is nog G4 involved anymore. [G4Hunter_position_vs_ori_Drip_427_2018.sh](G4Hunter_position_vs_ori_Drip_427_2018.sh)
+        * convert the .bed file from the overlap in previous script to a coverage file (.cov) using [G4Hunter_position_vs_ori_parsing_427_2018.py](G4Hunter_position_vs_ori_parsing_927.py)
+        * visualisation using [polynucleotide_G4Hunter_combined_427_2018.R](polynucleotide_G4Hunter_combined_427_2018.R)
+
+
     
+## overview for the different pictures from the publication
+* Figure 3D: polynucleotide_G4Hunter_combined_fig3D.R
+* Figure 3E: polynucleotide_G4Hunter_combined_fig3E.R
+* Figure 4: DripSeq and MNase-Seq sequencing data: see above
+* SuppFigure 8 : polynucleotide_inhouse_plot.R
+* SuppFigure 10: G4Hunter_position_vs_ori_plotting.R

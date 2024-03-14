@@ -4,31 +4,37 @@ library(zoo)
 
 ## input parameters
 data_dir_polyA = '/Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/'
-data_dir_ori = '/Users/pmonsieurs/programming/leishmania_snsseq/results/ori/'
-data_dir_ori_shuffled = '/Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/'
+# data_dir_ori = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data/927_ORIs_bed/'
+# data_dir_ori_shuffled = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data/927_shuffledORIs-bed/'
+data_dir_ori = '/Users/pmonsieurs/programming/leishmania_snsseq/results/927/'
+data_dir_ori_shuffled = '/Users/pmonsieurs/programming/leishmania_snsseq/results/927/'
+
+
 setwd(data_dir_polyA)
 
 ## get files for the polyA results
 window = 2000
 poly = 4
-polyA_files = list.files(data_dir_polyA, pattern=paste0("*.window",window,".poly_", poly, ".csv"))
+polyA_files = list.files(data_dir_polyA, pattern="^927")
+polyA_files = polyA_files[grep(".csv", polyA_files)]
 polyA_files = polyA_files[-grep("667", polyA_files)]
 polyA_files = polyA_files[-grep("668", polyA_files)]
-polyA_files = polyA_files[grep("^merged|^shuffeled", polyA_files)]
+polyA_files
 
 ## get files for the G4 hunter predictions
-parameter_setting = 'Tb427_window25_score1.56_30476hits'
+# parameter_setting = 'G4_w25-score1.56_427'
 # parameter_setting = 'Tb427_window25_score1.57_13409hits'
 # parameter_setting = 'Tb427_window25_score1.85_4562hits'
 # parameter_setting = 'Tb427_window25_score1.8_6283hits'
 
-cov_files_sns = list.files(data_dir_ori, pattern="*.cov")
-cov_files_sns = cov_files_sns[grep(parameter_setting, cov_files_sns)]
+cov_files_all = list.files(data_dir_ori, pattern="*.cov")
+cov_files_sns = cov_files_all[grep("927_G4", cov_files_all)]
+cov_files_sns = cov_files_sns[grep("merged", cov_files_sns)]
+cov_files_sns
 
-
-cov_files_shuffled = list.files(data_dir_ori_shuffled, pattern="*.cov")
+cov_files_shuffled = cov_files_all[grep("927_G4", cov_files_all)]
 cov_files_shuffled = cov_files_shuffled[grep("seed666", cov_files_shuffled)]
-cov_files_shuffled = cov_files_shuffled[grep(parameter_setting, cov_files_shuffled)]
+cov_files_shuffled
 
 
 # cov_files = c(cov_files_sns, cov_files_shuffled)
@@ -44,7 +50,12 @@ for (cov_file in cov_files_sns) {
   cov_data = cov_data[-nrow(cov_data),]
   
   ## extract the strand from the sample name
-  strand = unlist(strsplit(cov_file, split="\\."))[3]
+  strand = unlist(strsplit(cov_file, split="\\."))[1]
+  strand = unlist(strsplit(strand, split="_"))[3]
+  strand = gsub("Plus", "plus", strand)
+  strand = gsub("Minus", "min", strand)
+  strand
+  
   cov_data$strand = strand
   cov_data$pattern = "G4hunter"
   cov_data$pattern2 = paste0("G4hunter ", strand)
@@ -55,8 +66,8 @@ for (cov_file in cov_files_sns) {
   
   ## create sample name by excluding the plus and min
   ## information from the strand
-  sample = unlist(strsplit(cov_file, split="\\."))[4]
-  sample = gsub("merged_", "", sample)
+  sample = unlist(strsplit(cov_file, split="\\."))[2]
+  sample = unlist(strsplit(sample, split="_"))[3]
   sample
   
   # sample
@@ -85,7 +96,12 @@ for (cov_file in cov_files_shuffled) {
   cov_data = cov_data[-nrow(cov_data),]
   
   ## extract the strand from the sample name
-  strand = unlist(strsplit(cov_file, split="\\."))[3]
+  strand = unlist(strsplit(cov_file, split="\\."))[1]
+  strand = unlist(strsplit(strand, split="_"))[3]
+  strand = gsub("Plus", "plus", strand)
+  strand = gsub("Minus", "min", strand)
+  strand
+  
   cov_data$strand = strand
   cov_data$pattern = "G4hunter"
   cov_data$pattern2 = paste0("G4hunter ", strand)
@@ -96,8 +112,8 @@ for (cov_file in cov_files_shuffled) {
   
   ## create sample name by excluding the plus and min
   ## information from the strand
-  sample_full = unlist(strsplit(cov_file, split="\\."))[4]
-  sample = unlist(strsplit(sample_full, split="_"))[3]
+  sample_full = unlist(strsplit(cov_file, split="\\."))[2]
+  sample = unlist(strsplit(sample_full, split="_"))[4]
   sample = paste0("shuffled control ", sample)
   sample
 
@@ -140,17 +156,13 @@ for (nucl_file in polyA_files) {
   
   # code for normal samples
   if (grepl("seed", nucl_file)) {
-    sample_data = unlist(strsplit(nucl_file, split="_"))[3]
+    sample_data = unlist(strsplit(nucl_file, split="_"))[4]
     sample = paste0("shuffled control ", sample_data)
   }else{
-    sample_data = unlist(strsplit(nucl_file, split="-"))[1]
-    sample = gsub("merged_", "", sample_data)
+    sample = unlist(strsplit(nucl_file, split="_"))[3]
     sample    
   }
-
-  
-  # code for shuffled controls
-  sample_data = unlist(strsplit(nucl_file, split="-"))[1]
+  sample
   
   
   print(paste0(nucl_file, " ---> ", sample))  
@@ -265,7 +277,7 @@ p = ggplot(data=plot_data, aes(x=pos, y=cov_smoothed)) +
 
 p
 
-output_file = paste0(data_dir_polyA, parameter_setting, "_with_polyA.variant.tiff")
+output_file = paste0(data_dir_polyA, "Tb927_G4_with_polyA.variant.tiff")
 ggsave(output_file, p, width=12, height=9)
 
 

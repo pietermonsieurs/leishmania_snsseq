@@ -143,7 +143,19 @@ ggplot(data=cov_data_merged, aes(x=position, y=coverage, group=interaction(seed,
   theme_bw() + 
   facet_wrap(~ sample)
 
-ggplot(data=cov_data_merged, aes(x=position, y=coverage_smoothed, group=interaction(seed,strand))) + 
-  geom_line(aes(color = type, linetype=strand), linewidth = 0.3) + 
+
+
+p_combined = ggplot(data=cov_data_merged, aes(x=position, y=coverage_smoothed, group=interaction(seed,strand))) + 
+  geom_line(aes(color = type, linetype=strand), linewidth = 1) + 
   theme_bw() + 
-  facet_wrap(~ sample, scales = "free")
+  facet_wrap(~ sample, scales = "free", ncol = 2) + 
+  theme(text=element_text(size=16)) + 
+  scale_x_continuous(
+    breaks = c(-1850, 0, window-150),
+    labels = c("-2kb", "center", "+2kb")
+  ) 
+
+
+## supplementary Figure 10
+output_file = paste0(data_dir, 'G4hunter_versus_ori.tiff')
+ggsave(file = output_file, plot=p_combined, dpi=300, width=12, height=12)
