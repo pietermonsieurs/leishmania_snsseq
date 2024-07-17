@@ -38,7 +38,7 @@
 * calculate the overlap of each of the four G4Hunter scenarios (threshold 1.56, 1.57, 1.8, 1.85) with the merged ori-prediction files merged_BSF and merged_PCF
     * G4Hunter files stored in /Users/pmonsieurs/programming/leishmania_snsseq/results/g4hunter: Tb427_window25_score1.56_30476hits.bed	Tb427_window25_score1.85_4562hits.bed Tb427_window25_score1.57_13409hits.bed	Tb427_window25_score1.8_6283hits.bed
     * ori files stored in /Users/pmonsieurs/programming/leishmania_snsseq/results/ori/: merged_BSF-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed and merged_PCF-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed
-    * overlap can be calculated using the script [G4Hunter_overlap_bed.sh](G4Hunter_overlap_bed.sh). This will give an overlap of the ORI positions and the G4 hunter peaks, but only the number of overlaps, NO information given on the position. To produce information that can be used to make the 'positional plots', see below.  
+    * overlap can be calculated using the script [G4Hunter_overlap_bed.sh](G4Hunter_overlap_bed.sh). This will give an overlap of the ORI positions and the G4 hunter peaks, but only the number of overlaps, NO information given on the position. To produce information that can be used to make the 'positional plots', see below.  --> SKIP! NOT needed to make the figures
 * calculate the relative proportion of the G4 peaks versus the ORI predictions of Bridlin
     * use the bedtools algorithm to get the overlap and return the position of overlap: [G4Hunter_position_vs_ori.sh](G4Hunter_position_vs_ori.sh)
     * do parsing of the output of this overlapping region: [G4Hunter_position_vs_ori_parsing.py](G4Hunter_position_vs_ori_parsing.py)
@@ -104,3 +104,14 @@
 * Figure 4: DripSeq and MNase-Seq sequencing data: see above
 * SuppFigure 8 : polynucleotide_inhouse_plot.R
 * SuppFigure 10: G4Hunter_position_vs_ori_plotting.R
+
+
+
+## New analysis - paper revision
+
+### preliminary analyses
+* extend the ORIs in all 3 genetic backgrounds with 2000bp, by setting the input directory to a different directory in [G4Hunter_extend_ori.py](G4Hunter_extend_ori.py)
+
+
+### PolyA polyT (4 nt to 8 nt) centered around the origins - 427-2018 genomic background
+* run the python script [polynucleotide_get_sequences.py](polynucleotide_get_sequences.py) to retrieve the sequences around the ORI or around the shuffled ORI for each dataset. 

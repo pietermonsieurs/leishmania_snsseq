@@ -13,17 +13,17 @@ bedtools_bin=/Users/pmonsieurs/programming/software/bedtools2/bin/bedtools
 ## G4Hunter positions that are overlapping. 
 
 ## set intersect between different SNS-seq data of Bridlin
-g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/g4hunter/
-snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/ori/
-g4_files=($(find $g4_dir -maxdepth 1  -name "Tb427*.bed"))
-snsseq_files=($(find $snsseq_dir -name "merged*.extended_2000nt.bed"))
+# g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/g4hunter/
+# snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/ori/
+# g4_files=($(find $g4_dir -maxdepth 1  -name "Tb427*.bed"))
+# snsseq_files=($(find $snsseq_dir -name "merged*.extended_2000nt.bed"))
 
 ## set intersect between different shuffled SNS-seq data of Bridlin, but now
 ## with the shuffled ORI sequences
-g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/g4hunter/
-snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/
-g4_files=($(find $g4_dir -maxdepth 1  -name "Tb427*.bed"))
-snsseq_files=($(find $snsseq_dir -name "shuffeled*.extended_2000nt.bed"))
+# g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/g4hunter/
+# snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/
+# g4_files=($(find $g4_dir -maxdepth 1  -name "Tb427*.bed"))
+# snsseq_files=($(find $snsseq_dir -name "shuffeled*.extended_2000nt.bed"))
 
 ## set intersect between the G4 Hunter data with the ORI sequences
 ## either true ones or shuffled ones. Different genetic background
@@ -33,6 +33,21 @@ snsseq_files=($(find $snsseq_dir -name "shuffeled*.extended_2000nt.bed"))
 # snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/mnase_seq/
 # g4_files=($(find $g4_dir -maxdepth 1  -name "G4*.bed"))
 # snsseq_files=($(find $snsseq_dir -name "*ORI*extended*.bed"))
+
+
+
+
+
+## for the 427_2018 genetic background on the new data set (set2). G4 Hunter data 
+## need to come from your own results as they are not provided by Bridlin but have
+## been run by you for the first time
+g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/g4hunter/
+snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/427_2018/
+snsseq_files=($(find $snsseq_dir -name "*ORI*extended*.bed"))
+g4_files=($(find $g4_dir -maxdepth 1  -name "Tb427*.bed"))
+
+
+
 
 ## set intersect between the G4 experimental data with the ORI sequences
 ## either true ones or shuffled ones. Same information as the initial 
@@ -69,7 +84,8 @@ for g4_file in ${g4_files[@]}; do
         ## do substitution depending on the type of file
         # snsseq_file_short=${snsseq_file_short/-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed/}
         # snsseq_file_short=${snsseq_file_short/_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed/}
-        snsseq_file_short=${snsseq_file_short/_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed/}
+        # snsseq_file_short=${snsseq_file_short/_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed/}
+        snsseq_file_short=${snsseq_file_short/.extended_2000nt.bed/}
         echo " --> snsseq_file_short ${snsseq_file_short}"     
         output_file=${snsseq_dir}/${g4_file_short}.${snsseq_file_short}.bed
         echo " --> output_file ${output_file}"
