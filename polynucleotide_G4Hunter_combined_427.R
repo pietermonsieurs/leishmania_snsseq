@@ -494,6 +494,42 @@ for (sample in unique(cov_data_merged$sample)) {
 
 
 
+##### plot the MNase-Seq data only
+head(cov_data_nmase_all)
+cov_data_nmase_all_shoulder = cov_data_nmase_all
+cov_data_nmase_all_shoulder$shuffled = "no"
+cov_data_nmase_all_shoulder[grep("shuffled", cov_data_nmase_all$sample),]$shuffled = "yes"
+cov_data_nmase_all_shoulder$sample2 = gsub("shuffled control ", "", cov_data_nmase_all_shoulder$sample)
+
+
+p = ggplot(data=cov_data_nmase_all_shoulder, aes(x=position, y=coverage_smoothed)) + 
+  geom_line(aes(color=sample2, linetype=shuffled), linewidth=0.80) + 
+  theme_bw() + 
+  coord_cartesian(xlim=c(-1000,1000))
+p
+
++ 
+  # geom_line(aes(x=pos,y=polyA*0.30), linewidth=0.80, color = "#FFA500") + 
+  # geom_line(aes(x=pos,y=polyA*2, linetype = pattern2), linewidth=0.80, color = "#FFA500") + 
+  geom_line(aes(x=pos,y=polyA, color = pattern2, linetype="polyA"), linewidth=0.80) + 
+  geom_line(aes(x=pos,y=MNase*0.075, color=MNase_color, linetype="MNase-Seq"), linewidth=0.80) +
+  facet_wrap(~ sample) + 
+  scale_y_continuous(name = "G4 and polyA", sec.axis = sec_axis(~./0.075, name = "MNase-Seq")) + 
+  xlab("") +
+  scale_x_continuous(
+    breaks = c(-1850, 0, window-150),
+    labels = c("-2kb", "center", "+2kb")) +
+  theme_bw() + 
+  # scale_color_manual(values = colors) + 
+  theme(panel.spacing = unit(0.5, "cm"),
+        legend.title=element_blank(),
+        legend.key.width = unit(1.5, "cm")) #+ 
+# guides(linetype = guide_legend(override.aes = list(linetype = c("G4" = "solid", "polyA" = "dashed"))))
+scale_linetype_manual(values = c("G4" = "solid", "polyA" = "dashed", "MNase-Seq" = "dotted"))
+
+p
+
+
 
 
 

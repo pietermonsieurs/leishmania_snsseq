@@ -148,7 +148,8 @@ ggplot(data=cov_data_merged, aes(x=position, y=coverage, group=interaction(seed,
 p_combined = ggplot(data=cov_data_merged, aes(x=position, y=coverage_smoothed, group=interaction(seed,strand))) + 
   geom_line(aes(color = type, linetype=strand), linewidth = 1) + 
   theme_bw() + 
-  facet_wrap(~ sample, scales = "free", ncol = 2) + 
+  # facet_wrap(~ sample, scales = "free", ncol = 2) + 
+  facet_wrap(~ sample, ncol = 2) + 
   theme(text=element_text(size=16)) + 
   scale_x_continuous(
     breaks = c(-1850, 0, window-150),

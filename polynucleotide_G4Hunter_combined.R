@@ -22,254 +22,266 @@ parameter_setting = 'Tb427_window25_score1.56_30476hits'
 # parameter_setting = 'Tb427_window25_score1.85_4562hits'
 # parameter_setting = 'Tb427_window25_score1.8_6283hits'
 
-cov_files_sns = list.files(data_dir_ori, pattern="*.cov")
-cov_files_sns = cov_files_sns[grep(parameter_setting, cov_files_sns)]
+parameter_settings = c('Tb427_window25_score1.56_30476hits',
+                      'Tb427_window25_score1.57_13409hits',
+                      'Tb427_window25_score1.85_4562hits',
+                      'Tb427_window25_score1.8_6283hits')
 
-
-cov_files_shuffled = list.files(data_dir_ori_shuffled, pattern="*.cov")
-cov_files_shuffled = cov_files_shuffled[grep("seed666", cov_files_shuffled)]
-cov_files_shuffled = cov_files_shuffled[grep(parameter_setting, cov_files_shuffled)]
-
-
-# cov_files = c(cov_files_sns, cov_files_shuffled)
-
-cov_data_all = data.frame()
-first_file = 1
-
-## first read in for the true data (G4Hunter results
-## based on the SNSseq data). Afterwards for the shuffled data
-for (cov_file in cov_files_sns) {
-  cov_data = read.csv(paste0(data_dir_ori, cov_file), header=FALSE)
-  colnames(cov_data) = c('position', 'coverage')
-  cov_data = cov_data[-nrow(cov_data),]
-  
-  ## extract the strand from the sample name
-  strand = unlist(strsplit(cov_file, split="\\."))[3]
-  cov_data$strand = strand
-  cov_data$pattern = "G4hunter"
-  cov_data$pattern2 = paste0("G4hunter ", strand)
+first_plot = 1
+for (parameter_setting in parameter_settings) {
+  cov_files_sns = list.files(data_dir_ori, pattern="*.cov")
+  cov_files_sns = cov_files_sns[grep(parameter_setting, cov_files_sns)]
   
   
-  window_size <- 100
-  cov_data$coverage_smoothed = rollapply(cov_data$coverage, width = 2 * window_size + 1, FUN = mean, align = "center", fill = NA)
+  cov_files_shuffled = list.files(data_dir_ori_shuffled, pattern="*.cov")
+  cov_files_shuffled = cov_files_shuffled[grep("seed666", cov_files_shuffled)]
+  cov_files_shuffled = cov_files_shuffled[grep(parameter_setting, cov_files_shuffled)]
   
-  ## create sample name by excluding the plus and min
-  ## information from the strand
-  sample = unlist(strsplit(cov_file, split="\\."))[4]
-  sample = gsub("merged_", "", sample)
-  sample
   
-  # sample
-  cov_data$sample = sample
+  # cov_files = c(cov_files_sns, cov_files_shuffled)
   
-  ## add some additional column to allow visualising them
-  ## together with the random / shuffled ORI
-  cov_data$type = 'ori'
-  cov_data$seed = 'ori'
+  cov_data_all = data.frame()
+  first_file = 1
   
-  if (first_file == 1) {
-    cov_data_all = cov_data
-    first_file = 0
-  }else{
-    cov_data_all = rbind.data.frame(cov_data_all, cov_data)
+  ## first read in for the true data (G4Hunter results
+  ## based on the SNSseq data). Afterwards for the shuffled data
+  for (cov_file in cov_files_sns) {
+    cov_data = read.csv(paste0(data_dir_ori, cov_file), header=FALSE)
+    colnames(cov_data) = c('position', 'coverage')
+    cov_data = cov_data[-nrow(cov_data),]
+    
+    ## extract the strand from the sample name
+    strand = unlist(strsplit(cov_file, split="\\."))[3]
+    cov_data$strand = strand
+    cov_data$pattern = "G4hunter"
+    cov_data$pattern2 = paste0("G4hunter ", strand)
+    
+    
+    window_size <- 100
+    cov_data$coverage_smoothed = rollapply(cov_data$coverage, width = 2 * window_size + 1, FUN = mean, align = "center", fill = NA)
+    
+    ## create sample name by excluding the plus and min
+    ## information from the strand
+    sample = unlist(strsplit(cov_file, split="\\."))[4]
+    sample = gsub("merged_", "", sample)
+    sample
+    
+    # sample
+    cov_data$sample = sample
+    
+    ## add some additional column to allow visualising them
+    ## together with the random / shuffled ORI
+    cov_data$type = 'ori'
+    cov_data$seed = 'ori'
+    
+    if (first_file == 1) {
+      cov_data_all = cov_data
+      first_file = 0
+    }else{
+      cov_data_all = rbind.data.frame(cov_data_all, cov_data)
+    }
+    
   }
   
-}
-
-
-## read in the cov data based from G4Hunter based on the
-## shuffled regions
-for (cov_file in cov_files_shuffled) {
-  cov_data = read.csv(paste0(data_dir_ori_shuffled, cov_file), header=FALSE)
-  colnames(cov_data) = c('position', 'coverage')
-  cov_data = cov_data[-nrow(cov_data),]
   
-  ## extract the strand from the sample name
-  strand = unlist(strsplit(cov_file, split="\\."))[3]
-  cov_data$strand = strand
-  cov_data$pattern = "G4hunter"
-  cov_data$pattern2 = paste0("G4hunter ", strand)
+  ## read in the cov data based from G4Hunter based on the
+  ## shuffled regions
+  for (cov_file in cov_files_shuffled) {
+    cov_data = read.csv(paste0(data_dir_ori_shuffled, cov_file), header=FALSE)
+    colnames(cov_data) = c('position', 'coverage')
+    cov_data = cov_data[-nrow(cov_data),]
+    
+    ## extract the strand from the sample name
+    strand = unlist(strsplit(cov_file, split="\\."))[3]
+    cov_data$strand = strand
+    cov_data$pattern = "G4hunter"
+    cov_data$pattern2 = paste0("G4hunter ", strand)
+    
+    
+    window_size <- 100
+    cov_data$coverage_smoothed = rollapply(cov_data$coverage, width = 2 * window_size + 1, FUN = mean, align = "center", fill = NA)
+    
+    ## create sample name by excluding the plus and min
+    ## information from the strand
+    sample_full = unlist(strsplit(cov_file, split="\\."))[4]
+    sample = unlist(strsplit(sample_full, split="_"))[3]
+    sample = paste0("shuffled control ", sample)
+    sample
   
-  
-  window_size <- 100
-  cov_data$coverage_smoothed = rollapply(cov_data$coverage, width = 2 * window_size + 1, FUN = mean, align = "center", fill = NA)
-  
-  ## create sample name by excluding the plus and min
-  ## information from the strand
-  sample_full = unlist(strsplit(cov_file, split="\\."))[4]
-  sample = unlist(strsplit(sample_full, split="_"))[3]
-  sample = paste0("shuffled control ", sample)
-  sample
-
-  
-  # sample
-  cov_data$sample = sample
-  
-  ## add some additional column to allow visualising them
-  ## together with the random / shuffled ORI
-  seed = unlist(strsplit(sample_full, split="_"))[2]
-  seed = gsub("seed", "", seed)
-  cov_data$type = 'shuffled'
-  cov_data$seed = seed
-  
-  if (first_file == 1) {
-    cov_data_all = cov_data
-    first_file = 0
-  }else{
-    cov_data_all = rbind.data.frame(cov_data_all, cov_data)
+    
+    # sample
+    cov_data$sample = sample
+    
+    ## add some additional column to allow visualising them
+    ## together with the random / shuffled ORI
+    seed = unlist(strsplit(sample_full, split="_"))[2]
+    seed = gsub("seed", "", seed)
+    cov_data$type = 'shuffled'
+    cov_data$seed = seed
+    
+    if (first_file == 1) {
+      cov_data_all = cov_data
+      first_file = 0
+    }else{
+      cov_data_all = rbind.data.frame(cov_data_all, cov_data)
+    }
+    
   }
   
-}
-
-
-
-## read in the polyA data
-sample_count = 0
-first_file = 1
-for (nucl_file in polyA_files) {
-  print(nucl_file)
-  
-  sample_count = sample_count + 1
-  cov_data = read.csv(nucl_file, header=TRUE)
-  cov_data[,1] = cov_data[,1] - 2000
-
   
   
-  ## extract the strand from the sample name, and assign to 
-  ## separate column
+  ## read in the polyA data
+  sample_count = 0
+  first_file = 1
+  for (nucl_file in polyA_files) {
+    print(nucl_file)
+    
+    sample_count = sample_count + 1
+    cov_data = read.csv(nucl_file, header=TRUE)
+    cov_data[,1] = cov_data[,1] - 2000
   
-  # code for normal samples
-  if (grepl("seed", nucl_file)) {
-    sample_data = unlist(strsplit(nucl_file, split="_"))[3]
-    sample = paste0("shuffled control ", sample_data)
-  }else{
+    
+    
+    ## extract the strand from the sample name, and assign to 
+    ## separate column
+    
+    # code for normal samples
+    if (grepl("seed", nucl_file)) {
+      sample_data = unlist(strsplit(nucl_file, split="_"))[3]
+      sample = paste0("shuffled control ", sample_data)
+    }else{
+      sample_data = unlist(strsplit(nucl_file, split="-"))[1]
+      sample = gsub("merged_", "", sample_data)
+      sample    
+    }
+  
+    
+    # code for shuffled controls
     sample_data = unlist(strsplit(nucl_file, split="-"))[1]
-    sample = gsub("merged_", "", sample_data)
-    sample    
+    
+    
+    print(paste0(nucl_file, " ---> ", sample))  
+    ## calculate the percentage instead of using counts. Should only be done when
+    ## the poly value is 1, so when basically looking for GC-content like things
+    cov_data_perc = cov_data
+    colnames(cov_data_perc)[1] = 'pos'
+    # head(cov_data_perc)
+    
+    ## only select the polyAAA field and subsequently
+    ## melt data to be able to plot
+    cov_data_perc = cov_data_perc[,c('pos', 'AAAA', 'TTTT')]
+    cov_data_melt = melt(cov_data_perc, id.vars = "pos")
+    colnames(cov_data_melt) = c('pos', 'pattern', 'cov')
+    cov_data_melt$sample = sample
+    # head(cov_data_melt)
+  
+    ## do smoothing  
+    window_size <- 100
+    cov_data_melt$cov_smoothed = rollapply(cov_data_melt$cov, width = 2 * window_size + 1, FUN = mean, align = "center", fill = NA)
+    
+    ## specify the pattern, and get the strand
+    cov_data_melt$strand = NA
+    cov_data_melt$pattern2 = NA
+    
+    cov_data_melt[cov_data_melt$pattern == "AAAA",]$strand = 'plus'
+    cov_data_melt[cov_data_melt$pattern == "AAAA",]$pattern2 = 'polyA plus'
+    
+    cov_data_melt[cov_data_melt$pattern == "TTTT",]$strand = 'min'
+    cov_data_melt[cov_data_melt$pattern == "TTTT",]$pattern2 = 'polyA min'
+    
+    cov_data_melt$pattern = 'poly A'
+    
+    ## add to the overall data
+    if (first_file == 1) {
+      cov_data_polyA_all = cov_data_melt
+      first_file = 0
+    }else{
+      cov_data_polyA_all = rbind.data.frame(cov_data_polyA_all, cov_data_melt)
+    }
   }
-
-  
-  # code for shuffled controls
-  sample_data = unlist(strsplit(nucl_file, split="-"))[1]
   
   
-  print(paste0(nucl_file, " ---> ", sample))  
-  ## calculate the percentage instead of using counts. Should only be done when
-  ## the poly value is 1, so when basically looking for GC-content like things
-  cov_data_perc = cov_data
-  colnames(cov_data_perc)[1] = 'pos'
-  # head(cov_data_perc)
+  ## merge both data types. First select relevant
+  ## columns and rename column names
+  cov_data_all_sub = cov_data_all[,c('position', 
+                                     'coverage', 
+                                     'coverage_smoothed',
+                                     'strand',
+                                     'pattern',
+                                     'pattern2',
+                                     'sample')]
   
-  ## only select the polyAAA field and subsequently
-  ## melt data to be able to plot
-  cov_data_perc = cov_data_perc[,c('pos', 'AAAA', 'TTTT')]
-  cov_data_melt = melt(cov_data_perc, id.vars = "pos")
-  colnames(cov_data_melt) = c('pos', 'pattern', 'cov')
-  cov_data_melt$sample = sample
-  # head(cov_data_melt)
-
-  ## do smoothing  
-  window_size <- 100
-  cov_data_melt$cov_smoothed = rollapply(cov_data_melt$cov, width = 2 * window_size + 1, FUN = mean, align = "center", fill = NA)
+  colnames(cov_data_all_sub) = c('pos', 'cov', 'cov_smoothed', 'strand', 'pattern', 'pattern2', 'sample')
+  head(cov_data_all_sub)
   
-  ## specify the pattern, and get the strand
-  cov_data_melt$strand = NA
-  cov_data_melt$pattern2 = NA
   
-  cov_data_melt[cov_data_melt$pattern == "AAAA",]$strand = 'plus'
-  cov_data_melt[cov_data_melt$pattern == "AAAA",]$pattern2 = 'polyA plus'
+  ## do the same for the polyA information
+  cov_data_polyA_all_sub = cov_data_polyA_all[,c('pos',
+                                                 'cov',
+                                                 'cov_smoothed',
+                                                 'strand',
+                                                 'pattern',
+                                                 'pattern2',
+                                                 'sample')]
+  head(cov_data_polyA_all_sub)
   
-  cov_data_melt[cov_data_melt$pattern == "TTTT",]$strand = 'min'
-  cov_data_melt[cov_data_melt$pattern == "TTTT",]$pattern2 = 'polyA min'
   
-  cov_data_melt$pattern = 'poly A'
+  ## merge both data types
+  plot_data = rbind.data.frame(cov_data_all_sub, cov_data_polyA_all_sub)
+  head(plot_data)
   
-  ## add to the overall data
-  if (first_file == 1) {
-    cov_data_polyA_all = cov_data_melt
-    first_file = 0
+  ## create plot with separate color per line
+  p = ggplot(data=plot_data, aes(x=pos, y=cov_smoothed)) + 
+    geom_line(aes(color=pattern2)) + 
+    theme_bw() + 
+    facet_wrap(~ sample) +
+    ylab("") + xlab("") +
+    scale_x_continuous(
+      breaks = c(-1850, 0, window-150),
+      labels = c("-2kb", "center", "+2kb")
+    ) + 
+    theme_bw() + 
+    facet_wrap(~ sample) + 
+    # scale_color_manual(values = colors) + 
+    theme(legend.title=element_blank())
+  
+  p
+  
+  output_file = paste0(data_dir_polyA, parameter_setting, "_with_polyA.png")
+  ggsave(output_file, p, width=10, height=6)
+  
+  
+  
+  ## create plot with separate color per strand and 
+  ## separate linetype per analysis method
+  p = ggplot(data=plot_data, aes(x=pos, y=cov_smoothed)) + 
+    geom_line(aes(color=strand, linetype=pattern), linewidth=1.5) + 
+    theme_bw() + 
+    facet_wrap(~ sample) +
+    ylab("") + xlab("") +
+    scale_x_continuous(
+      breaks = c(-1850, 0, window-150),
+      labels = c("-2kb", "center", "+2kb")
+    ) + 
+    theme_bw() + 
+    facet_wrap(~ sample) + 
+    # scale_color_manual(values = colors) + 
+    theme(legend.title=element_blank()) + 
+     theme(text=element_text(size=35))
+  
+  
+  p
+  
+  output_file = paste0(data_dir_polyA, parameter_setting, "_with_polyA.variant.tiff")
+  ggsave(output_file, p, width=12, height=9)
+  
+  if (first_plot == 1) {
+    plot_combined = p
+    first_plot = 0
   }else{
-    cov_data_polyA_all = rbind.data.frame(cov_data_polyA_all, cov_data_melt)
+    p_combined = p_combined + p
   }
 }
-
-
-## merge both data types. First select relevant
-## columns and rename column names
-cov_data_all_sub = cov_data_all[,c('position', 
-                                   'coverage', 
-                                   'coverage_smoothed',
-                                   'strand',
-                                   'pattern',
-                                   'pattern2',
-                                   'sample')]
-
-colnames(cov_data_all_sub) = c('pos', 'cov', 'cov_smoothed', 'strand', 'pattern', 'pattern2', 'sample')
-head(cov_data_all_sub)
-
-
-## do the same for the polyA information
-cov_data_polyA_all_sub = cov_data_polyA_all[,c('pos',
-                                               'cov',
-                                               'cov_smoothed',
-                                               'strand',
-                                               'pattern',
-                                               'pattern2',
-                                               'sample')]
-head(cov_data_polyA_all_sub)
-
-
-## merge both data types
-plot_data = rbind.data.frame(cov_data_all_sub, cov_data_polyA_all_sub)
-head(plot_data)
-
-## create plot with separate color per line
-p = ggplot(data=plot_data, aes(x=pos, y=cov_smoothed)) + 
-  geom_line(aes(color=pattern2)) + 
-  theme_bw() + 
-  facet_wrap(~ sample) +
-  ylab("") + xlab("") +
-  scale_x_continuous(
-    breaks = c(-1850, 0, window-150),
-    labels = c("-2kb", "center", "+2kb")
-  ) + 
-  theme_bw() + 
-  facet_wrap(~ sample) + 
-  # scale_color_manual(values = colors) + 
-  theme(legend.title=element_blank())
-
-p
-
-output_file = paste0(data_dir_polyA, parameter_setting, "_with_polyA.png")
-ggsave(output_file, p, width=10, height=6)
-
-
-
-## create plot with separate color per strand and 
-## separate linetype per analysis method
-p = ggplot(data=plot_data, aes(x=pos, y=cov_smoothed)) + 
-  geom_line(aes(color=strand, linetype=pattern), linewidth=1.5) + 
-  theme_bw() + 
-  facet_wrap(~ sample) +
-  ylab("") + xlab("") +
-  scale_x_continuous(
-    breaks = c(-1850, 0, window-150),
-    labels = c("-2kb", "center", "+2kb")
-  ) + 
-  theme_bw() + 
-  facet_wrap(~ sample) + 
-  # scale_color_manual(values = colors) + 
-  theme(legend.title=element_blank()) + 
-   theme(text=element_text(size=35))
-
-
-p
-
-output_file = paste0(data_dir_polyA, parameter_setting, "_with_polyA.variant.tiff")
-ggsave(output_file, p, width=12, height=9)
-
-
-
 
 
 

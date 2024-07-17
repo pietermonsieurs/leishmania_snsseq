@@ -9,6 +9,7 @@ import pandas as pd
 ## to be run in a for loop
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/ori/
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/
+# cd /Users/pmonsieurs/programming/leishmania_snsseq/results/427_2018/
 # for overlap_file in Tb427*; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
 
 ## for the Mnaseq
@@ -71,9 +72,12 @@ if __name__ == '__main__':
     
     ## first line for the ori file of the original data, the second line for
     ## the Mnase-seq data, where oris have been rem
+    print(f"ori-dir  => {ori_dir}")
+    print(f"ori-info => {ori_info}")
+    ori_file = f"{ori_dir}/{ori_info}.extended_2000nt.bed"
     # ori_file = f"{ori_dir}/{ori_info}-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
     # ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
-    ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed"
+    # ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed"
 
     ## setting for the randomly shuffled ORI:
     # shuffeled_seed668_PCF_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed
