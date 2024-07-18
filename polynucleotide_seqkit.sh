@@ -6,6 +6,7 @@ seqkit_bin=/Users/pmonsieurs/programming/software/seqkit/seqkit
 cd /Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/seqkit/
 vi pattern.fa
 
+cd /Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/
 
 ## testrun seqkit
 for fasta_file in *.fasta; do
@@ -17,7 +18,8 @@ for fasta_file in *.fasta; do
     echo $out_file_seqkit
 
     ## run seqtk
-    ${seqkit_bin} locate -P -f seqkit/pattern.fa ${fasta_file} -o $out_file_seqkit
+    # ${seqkit_bin} locate -P -f seqkit/pattern.fa ${fasta_file} -o $out_file_seqkit
+    ${seqkit_bin} locate -P -f seqkit/pattern_mono.fa ${fasta_file} -o $out_file_seqkit
 
 done
     
@@ -37,4 +39,12 @@ for seqkit_file in *.seqkit.txt; do
     grep "tri" $seqkit_file > ${out_file_seqkit_tri}
     grep "tetra" $seqkit_file > ${out_file_seqkit_tetra}
 
+done
+
+## if only the mono group is run, you can simply make symbolic links
+cd /Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/seqkit
+for seqkit_file in *.seqkit.txt; do
+    echo $seqkit_file
+    out_file_seqkit_mono="${seqkit_file/.seqkit.txt/.seqkit.mono.txt}"
+    ln -s $seqkit_file ${out_file_seqkit_mono}
 done

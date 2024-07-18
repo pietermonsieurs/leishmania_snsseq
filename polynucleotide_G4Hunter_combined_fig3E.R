@@ -4,25 +4,30 @@ library(zoo)
 
 ## input parameters
 data_dir_polyA = '/Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/'
-data_dir_ori = '/Users/pmonsieurs/programming/leishmania_snsseq/results/ori/'
-data_dir_ori_shuffled = '/Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/'
+# data_dir_ori = '/Users/pmonsieurs/programming/leishmania_snsseq/results/ori/'
+# data_dir_ori_shuffled = '/Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/'
+data_dir_ori = '/Users/pmonsieurs/programming/leishmania_snsseq/results/427_2018/'
+data_dir_ori_shuffled = '/Users/pmonsieurs/programming/leishmania_snsseq/results/427_2018/'
 setwd(data_dir_polyA)
 
 ## get files for the polyA results
 window = 2000
 poly = 4
 polyA_files = list.files(data_dir_polyA, pattern=paste0("*.window",window,".poly_", poly, ".csv"))
-polyA_files = polyA_files[-grep("667", polyA_files)]
+polyA_files = polyA_files[-grep("666", polyA_files)]
 polyA_files = polyA_files[-grep("668", polyA_files)]
-polyA_files = polyA_files[grep("^merged|^shuffeled", polyA_files)]
+# polyA_files = polyA_files[grep("^merged|^shuffeled", polyA_files)]
+polyA_files = polyA_files[grep("427-2018", polyA_files)]
+
 
 ## get files for the G4 hunter predictions
-parameter_setting = 'Tb427_window25_score1.56_30476hits'
+# parameter_setting = 'Tb427_window25_score1.56_30476hits'
 # parameter_setting = 'Tb427_window25_score1.57_13409hits'
 # parameter_setting = 'Tb427_window25_score1.85_4562hits'
-# parameter_setting = 'Tb427_window25_score1.8_6283hits'
+parameter_setting = 'Tb427_window25_score1.8_6283hits'
 
 cov_files_sns = list.files(data_dir_ori, pattern="*.cov")
+cov_files_sns = cov_files_sns[-grep("shuffeled", cov_files_sns)]
 cov_files_sns = cov_files_sns[grep(parameter_setting, cov_files_sns)]
 
 
@@ -56,7 +61,7 @@ for (cov_file in cov_files_sns) {
   ## create sample name by excluding the plus and min
   ## information from the strand
   sample = unlist(strsplit(cov_file, split="\\."))[4]
-  sample = gsub("merged_", "", sample)
+  sample = unlist(strsplit(sample, split="_"))[1]
   sample
   
   # sample
@@ -97,7 +102,7 @@ for (cov_file in cov_files_shuffled) {
   ## create sample name by excluding the plus and min
   ## information from the strand
   sample_full = unlist(strsplit(cov_file, split="\\."))[4]
-  sample = unlist(strsplit(sample_full, split="_"))[3]
+  sample = unlist(strsplit(sample_full, split="_"))[4]
   sample = paste0("shuffled control ", sample)
   sample
 
@@ -140,10 +145,11 @@ for (nucl_file in polyA_files) {
   
   # code for normal samples
   if (grepl("seed", nucl_file)) {
-    sample_data = unlist(strsplit(nucl_file, split="_"))[3]
+    sample_data = unlist(strsplit(nucl_file, split="_"))[4]
     sample = paste0("shuffled control ", sample_data)
   }else{
     sample_data = unlist(strsplit(nucl_file, split="-"))[1]
+    sample_data = unlist(strsplit(nucl_file, split="_"))[1]
     sample = gsub("merged_", "", sample_data)
     sample    
   }
@@ -223,6 +229,13 @@ head(cov_data_polyA_all_sub)
 plot_data = rbind.data.frame(cov_data_all_sub, cov_data_polyA_all_sub)
 head(plot_data)
 
+
+## reorder plot_data
+samples = unique(plot_data$sample)
+samples_ordered = c(samples[1], samples[3], samples[2],
+                    samples[4], samples[6], samples[5])
+plot_data$sample = factor(plot_data$sample, levels=samples_ordered)
+
 ## create plot with separate color per line
 p = ggplot(data=plot_data, aes(x=pos, y=cov_smoothed)) + 
   geom_line(aes(color=pattern2)) + 
@@ -241,7 +254,7 @@ p = ggplot(data=plot_data, aes(x=pos, y=cov_smoothed)) +
 p
 
 output_file = paste0(data_dir_polyA, parameter_setting, "_with_polyA.png")
-ggsave(output_file, p, width=10, height=6)
+# ggsave(output_file, p, width=10, height=6)
 
 
 
@@ -260,7 +273,7 @@ p = ggplot(data=plot_data, aes(x=pos, y=cov_smoothed)) +
   facet_wrap(~ sample) + 
   # scale_color_manual(values = colors) + 
   theme(legend.title=element_blank()) + 
-   theme(text=element_text(size=35))
+   theme(text=element_text(size=20))
 
 
 p

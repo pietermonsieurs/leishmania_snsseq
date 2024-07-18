@@ -6,10 +6,11 @@ import pandas as pd
 
 
 
-## to be run in a for loop
+## to be run in a for loop for Tb427_2018
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/ori/
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/
-# for overlap_file in Tb427*; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
+# cd /Users/pmonsieurs/programming/leishmania_snsseq/results/427_2018/
+# for overlap_file in Tb427*.bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427_2018.py --input $PWD/$overlap_file; done
 
 ## for the Mnaseq
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/mnase_seq
@@ -28,6 +29,9 @@ import pandas as pd
 ## are interested
 # /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427_2018.py --input /Users/pmonsieurs/programming/leishmania_snsseq/results/427_2018/427-2018_DRIP-seq_36.merged_PCF-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed.bed
 # /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427_2018.py --input/Users/pmonsieurs/programming/leishmania_snsseq/results/427_2018/427-2018_DRIP-seq_36.shuffeled_seed666_BSF_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed.bed
+# for overlap_file in 427-2018*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427_2018.py --input $PWD/$overlap_file; done
+
+print("!!!!!!!!!!!!!!!!!!!! \n CHECK WHICH COLUMN TO USE ON LINE 139 \n !!!!!!!!!!!!!!!!!!!!!!!")
 
 
 my_debug = 0
@@ -58,7 +62,7 @@ if __name__ == '__main__':
     ## extract the input and create the ORI file based on the information
     ## stored in the input file
     input_file = args.input
-    print(input_file)
+    print(f"input_file -> {input_file}")
 
     ## create output file
     output_file = input_file.replace(".bed", ".cov")
@@ -69,14 +73,22 @@ if __name__ == '__main__':
     ## setting for the default ORI: 
     ori_dir = os.path.dirname(input_file)
     if "seed" in input_file:
-        ori_info = input_file.split("_ORIs")[0]
-        ori_info = ori_info.split("-seq_36.")[1]
-        ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
-    else:
-        ori_info = input_file.split("-")[-2]
-        ori_info = ori_info.split("_36.")[-1]
-        ori_file = f"{ori_dir}/{ori_info}-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
+        # ori_info = input_file.split("_ORIs")[0]
+        # my_debug and print(ori_info)
+        # ori_info = ori_info.split("-seq_36.")[1]
+        ori_info = input_file.split("-seq_36.")[1]
+        ori_info = ori_info.replace('.bed', '')
+        my_debug and print(ori_info)
 
+        # ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
+        ori_file = f"{ori_dir}/{ori_info}_ORIs_RNASE_CDS-exclu.extended_2000nt.bed"
+    else:
+        # ori_info = input_file.split("-")[-2]
+        # my_debug and print(f"ori_info --> {ori_info}")
+        ori_info = input_file.split("_36.")[-1]
+        ori_info = ori_info.replace('.bed', '')
+        # ori_file = f"{ori_dir}/{ori_info}-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
+        ori_file = f"{ori_dir}/{ori_info}_ORIs_RNASE_427-2018.extended_2000nt.bed"
         
     print(ori_info)
     
@@ -130,7 +142,7 @@ if __name__ == '__main__':
         # peak = data[3]
         my_debug and  print(line)
 
-        ## number 6 for original data, number 8 for mnaseq data, 7 for experimental g4 (marisco)
+        ## number 6 for original data, number 8 for mnaseq data, 7 for experimental g4 (marisco) and DRIPseq
         # peak = data[6]
         # peak = data[8]
         peak = data[7]

@@ -13,17 +13,18 @@ bedtools_bin=/Users/pmonsieurs/programming/software/bedtools2/bin/bedtools
 ## G4Hunter positions that are overlapping. 
 
 ## set intersect between different SNS-seq data of Bridlin
-g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_G4hunter_predictions_bed/
+# g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_G4hunter_predictions_bed/
+g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data_set2/427_G4hunter_predictions_bed
 snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/427/
 g4_files=($(find $g4_dir -maxdepth 1  -name "427*.bed"))
-snsseq_files=($(find $snsseq_dir -name "427_merged_*.extended_2000nt.bed"))
+snsseq_files=($(find $snsseq_dir -name "merged_*.extended_2000nt.bed"))
 
 ## set intersect between different shuffled SNS-seq data of Bridlin, but now
 ## with the shuffled ORI sequences
 g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_G4hunter_predictions_bed/
 snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/427/
 g4_files=($(find $g4_dir -maxdepth 1  -name "427*.bed"))
-snsseq_files=($(find $snsseq_dir -name "427_shuffeled*.extended_2000nt.bed"))
+snsseq_files=($(find $snsseq_dir -name "shuffeled_427*.extended_2000nt.bed"))
 
 ## print the file lists
 echo ${g4_files[@]}
@@ -44,7 +45,10 @@ for g4_file in ${g4_files[@]}; do
         ## do substitution depending on the type of file
         # snsseq_file_short=${snsseq_file_short/-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed/}
         # snsseq_file_short=${snsseq_file_short/_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed/}
-        snsseq_file_short=${snsseq_file_short/_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed/}
+        # snsseq_file_short=${snsseq_file_short/_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed/}
+        snsseq_file_short=${snsseq_file_short/_ORIs_RNASE_CDS-exclu.extended_2000nt.bed/}
+        snsseq_file_short=${snsseq_file_short/_ORIs_RNASE_427.extended_2000nt.bed}
+
         echo " --> snsseq_file_short ${snsseq_file_short}"     
         output_file=${snsseq_dir}/${g4_file_short}.${snsseq_file_short}.bed
         echo " --> output_file ${output_file}"
@@ -58,18 +62,30 @@ done
 
 
 
-## get the MNase-seq data 
-mnase_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_Mnase-seq_bw/
+## get the MNase-seq data and convert bigwig to bed
+# mnase_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_Mnase-seq_bw/
+mnase_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data_set2/427_Mnase-seq_bw/
+bigwig2bed=/Users/pmonsieurs/programming/software/bigWigToBedGraph/bigWigToBedGraph
+for bw_file in ${mnase_dir}/*.bigwig; do
+    bed_file=${bw_file/.bigwig/.bed}
+    $bigwig2bed $bw_file $bed_file
+done
+
 mnase_files=($(find $mnase_dir -maxdepth 1  -name "427*.bed"))
 echo ${mnase_files[@]}
 
 ## run for shuffled sequences as well as the normal ori sequences!!
-snsseq_files=($(find $snsseq_dir -name "427_merged_*.extended_2000nt.bed"))
-snsseq_files=($(find $snsseq_dir -name "427_shuffeled*.extended_2000nt.bed"))
+snsseq_files=($(find $snsseq_dir -name "merged_*.extended_2000nt.bed"))
+snsseq_files=($(find $snsseq_dir -name "shuffeled*.extended_2000nt.bed"))
+
+echo ${mnase_files[@]}
+echo ${snsseq_files[@]}
+
 
 ## afterwards remove the file where BSF/PCF in sns and BSF/PCF 
 ## are mixed up in the same file. Only do comparison per sample so e.g. 
 ## remove 427_BSF_YT3_rep2_T_brucei_427.427_shuffeled_seed668_PCF.bed
+## ==> combinations of PCF and BSF should be removed
 
 ## calculate the overlap 
 for mnase_file in ${mnase_files[@]}; do
@@ -85,7 +101,9 @@ for mnase_file in ${mnase_files[@]}; do
         ## do substitution depending on the type of file
         # snsseq_file_short=${snsseq_file_short/-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed/}
         # snsseq_file_short=${snsseq_file_short/_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed/}
-        snsseq_file_short=${snsseq_file_short/_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed/}
+        # snsseq_file_short=${snsseq_file_short/_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed/}
+        snsseq_file_short=${snsseq_file_short/_ORIs_RNASE_CDS-exclu.extended_2000nt.bed/}
+        snsseq_file_short=${snsseq_file_short/_ORIs_RNASE_427.extended_2000nt.bed}
         echo " --> snsseq_file_short ${snsseq_file_short}"     
         output_file=${snsseq_dir}/${mnase_file_short}.${snsseq_file_short}.bed
         echo " --> output_file ${output_file}"

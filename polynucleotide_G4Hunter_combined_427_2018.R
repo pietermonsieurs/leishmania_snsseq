@@ -1,5 +1,6 @@
 library(ggplot2)
 library(zoo)
+library(reshape)
 
 ## input parameters
 data_dir_polyA = '/Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/'
@@ -11,26 +12,31 @@ window = 2000
 poly = 4
 polyA_files = list.files(data_dir_polyA) #, pattern=paste0("427_2018*.window",window,".poly_", poly, ".csv"))
 polyA_files = polyA_files[grep(paste0("window",window,".poly_", poly, ".csv"), polyA_files)]
-polyA_files = polyA_files[grep("927", polyA_files)]
-polyA_files = polyA_files[-grep("667", polyA_files)]
+polyA_files = polyA_files[grep("427-2018", polyA_files)]
+polyA_files = polyA_files[-grep("666", polyA_files)]
 polyA_files = polyA_files[-grep("668", polyA_files)]
 polyA_files
 
 ## get files for the G4 hunter predictions
-parameter_setting = 'merged'
+# parameter_setting = 'merged'
+parameter_setting = '_ORIs_RNASE_427-2018'
 cov_files_sns = list.files(data_dir_ori, pattern="*.cov")
 cov_files_sns = cov_files_sns[grep(parameter_setting, cov_files_sns)]
 cov_files_sns = cov_files_sns[grep("Tb427", cov_files_sns)]
+cov_files_sns = cov_files_sns[grep("Tb427_window25_score1.56", cov_files_sns)]
+
 
 cov_files_shuffled = list.files(data_dir_ori_shuffled, pattern="*.cov")
-cov_files_shuffled = cov_files_shuffled[grep("seed666", cov_files_shuffled)]
-cov_files_shuffled = cov_files_shuffled[grep("Tb427_", cov_files_shuffled)]
+cov_files_shuffled = cov_files_shuffled[grep("seed667", cov_files_shuffled)]
+# cov_files_shuffled = cov_files_shuffled[grep("Tb427_", cov_files_shuffled)]
+cov_files_shuffled = cov_files_shuffled[grep("Tb427_window25_score1.56", cov_files_shuffled)]
 cov_files_shuffled
 
 
 ## get the DRIP-seq data
 drip_files =  list.files(data_dir_ori, pattern="*.cov")
 drip_files = drip_files[grep("427-2018_DRIP", drip_files)]
+## remove the seeds 666 and 668
 drip_files
 
 
@@ -64,9 +70,10 @@ for (cov_file in cov_files_sns) {
   ## create sample name by excluding the plus and min
   ## information from the strand
   sample = unlist(strsplit(cov_file, split="\\."))[4]
-  # sample = unlist(strsplit(sample, split="_"))[3]
+  sample = unlist(strsplit(sample, split="_"))[1]
   sample = gsub("merged_", "", sample)
   sample
+  print(sample)
   
   # sample
   cov_data$sample = sample
@@ -110,11 +117,11 @@ for (cov_file in cov_files_shuffled) {
   
   ## create sample name by excluding the plus and min
   ## information from the strand
-  sample_full = unlist(strsplit(cov_file, split="\\."))[4]
-  sample = unlist(strsplit(sample_full, split="_"))[3]
+  sample = unlist(strsplit(cov_file, split="_"))[7]
+  # sample = unlist(strsplit(sample_full, split="_"))[3]
   sample = paste0("shuffled control ", sample)
   sample
-
+  print(sample)
   
   # sample
   cov_data$sample = sample
@@ -157,8 +164,8 @@ for (nucl_file in polyA_files) {
     sample = paste0("shuffled control ", sample_data)
     sample
   }else{
-    sample_data = unlist(strsplit(nucl_file, split="_"))[3]
-    sample = gsub("merged_", "", sample_data)
+    sample = unlist(strsplit(nucl_file, split="_"))[1]
+    # sample = gsub("merged_", "", sample_data)
     sample    
   }
 
@@ -239,16 +246,17 @@ for (drip_file in drip_files) {
   
   ## create sample name by excluding the plus and min
   ## information from the strand
-  sample = unlist(strsplit(drip_file, split="\\."))[2]
-  if (grepl("seed", sample)) {
-    sample = unlist(strsplit(sample, split="_"))[3]
+  # sample = unlist(strsplit(drip_file, split="\\."))[2]
+  if (grepl("seed", drip_file)) {
+    sample = unlist(strsplit(drip_file, split="_"))[6]
+    sample = gsub(".cov", "", sample)
     sample = paste0("shuffled control ", sample)
   }else{
-    sample = unlist(strsplit(sample, split="-"))[1]
-    sample = gsub("merged_", "", sample)
+    sample = unlist(strsplit(drip_file, split="\\."))[2]
+    # sample = gsub("merged_", "", sample)
   }
   
-  sample
+  print(sample)
   
   # sample
   cov_data$sample = sample
@@ -356,9 +364,9 @@ ggsave(output_file, p, width=10, height=6)
 
 
 
-
 ## try out with two axes. First add additional column 
-## containing the polyA values. This make take some time!
+## containing the polyA values, and then also add a new
+## column indicating the DRIPseq data. This make take some time!
 head(cov_data_all_sub)
 cov_data_merged = cov_data_all_sub
 cov_data_merged$polyA = 0
@@ -371,7 +379,7 @@ for (i in 1:dim(cov_data_merged)[1]) {
   strand = cov_data_merged[i,]$strand
   
   ## add additional polyA column to the cov_data_merged data frame
-  matches = sum(cov_data_polyA_all_sub$pos == pos & cov_data_polyA_all_sub$sample == sample & cov_data_polyA_all_sub$strand == strand)
+  # matches = sum(cov_data_polyA_all_sub$pos == pos & cov_data_polyA_all_sub$sample == sample & cov_data_polyA_all_sub$strand == strand)
   # print(matches)
   polyA_value =  cov_data_polyA_all_sub[cov_data_polyA_all_sub$pos == pos & cov_data_polyA_all_sub$sample == sample & cov_data_polyA_all_sub$strand == strand,]$cov_smoothed
   if (is.numeric(polyA_value) && length(polyA_value) > 0) {
@@ -380,12 +388,12 @@ for (i in 1:dim(cov_data_merged)[1]) {
   }
   
   ## add additional DRIP-seq column to the cov_data_merged data frame
-  matches = sum(cov_data_drip_all_sub$pos == pos & cov_data_drip_all_sub$sample == sample)
+  # matches = sum(cov_data_drip_all_sub$pos == pos & cov_data_drip_all_sub$sample == sample)
   # print(matches)
   drip_value =  cov_data_drip_all_sub[cov_data_drip_all_sub$pos == pos & cov_data_drip_all_sub$sample == sample,]$cov_smoothed
-  if (is.numeric(mmnase_value) && length(mmnase_value) > 0) {
+  if (is.numeric(drip_value) && length(drip_value) > 0) {
     # print(polyA_value)
-    cov_data_merged[i,]$DRIPseq = drip_value
+    cov_data_merged[i,]$DRIPseq = drip_value[1]
   }
   
   # if (i > 1000) {break}

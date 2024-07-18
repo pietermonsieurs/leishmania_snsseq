@@ -10,9 +10,10 @@ import argparse
 
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide
 # input_files=$(find ./ -type f -name "*.window2000.fasta")
+# input_files=$(find ./ -type f -name "*427-2018*.window2000.fasta")
 # for input_file in $input_files; do echo $input_file; /Users/pmonsieurs/programming/leishmania_snsseq/bin/polynucleotide_inhouse.py --input ${input_file} --length 4; done
 
-my_debug = 1
+my_debug = 0
 
 ## Function to find specific patterns in a sequence and return their positions
 def find_patterns(sequence):
@@ -30,6 +31,7 @@ def find_patterns(sequence):
 
 ## Function to read FASTA file and find specific patterns in each sequence
 def find_patterns_in_fasta(file_path):
+    print("finding patterns in fasta")
     with open(file_path, 'r') as fasta_file:
         sequences = {}
         current_sequence = ""
@@ -45,7 +47,7 @@ def find_patterns_in_fasta(file_path):
         # Process the last sequence in the file
         if current_header:
             sequences[current_header] = current_sequence
-
+    
     pattern_positions = {}
     for header, sequence in sequences.items():
         pattern_positions[header] = find_patterns(sequence)
@@ -84,12 +86,16 @@ if __name__ == '__main__':
     df = pd.DataFrame(0, index=range(window*2), columns=patterns)
 
 
+    count = 0
     for header, positions in pattern_positions.items():
-        my_debug and print(f"Header: {header}")
+        count = count + 1
+        print(f"Header [{count}/{len(pattern_positions)}]: {header}", end = "\r")
         for pattern, positions_list in positions.items():
             my_debug and print(f"Pattern: {pattern}, Positions: {positions_list}")
             for position in positions_list:
-                df.at[position, pattern] += 1
+                my_debug and print(position)
+                if position < 4000: 
+                    df.at[position, pattern] += 1
 
     print(df)
     df.to_csv(output_file)

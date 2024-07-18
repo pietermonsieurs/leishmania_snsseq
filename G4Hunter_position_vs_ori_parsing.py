@@ -10,7 +10,7 @@ import pandas as pd
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/ori/
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/ori_shuffled/
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/427_2018/
-# for overlap_file in Tb427*; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
+# for overlap_file in Tb427*.bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
 
 ## for the Mnaseq
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/mnase_seq
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     # print(ori_info)
     # ori_file = f"{ori_dir}/{ori_info}.extended_2000nt.bed"
     
-    my_debug and print(ori_file)
+    my_debug and print(f"ori file {ori_file}")
 
     ori_data = pd.read_csv(ori_file, sep = "\t", header=None)
     # ori_data.columns = ['chrom', 'start', 'end', 'peak_id', 'dummy1', 'dummy2', 'dummy3']

@@ -47,6 +47,15 @@
     * extend the shuffled / random positions of Bridlin using [G4Hunter_extend_ori.py](G4Hunter_extend_ori.py)
     * use the bedtools algorithm to get the overlap and return the position of overlap: [G4Hunter_position_vs_ori.sh](G4Hunter_position_vs_ori.sh)
     * do the parsing of the random file: [G4Hunter_position_vs_ori_parsing.py](G4Hunter_position_vs_ori_parsing.py)
+* visualisation: [G4Hunter_position_vs_ori_plotting.R](G4Hunter_position_vs_ori_plotting.R)
+    * initially done on two different folders, one with the "ori" and one with the "shuffled ori". This has been used for the first draft of the paper. 
+    * for the revision done on one folder containing both the "oris" and shuffled ones: /Users/pmonsieurs/programming/leishmania_snsseq/results/427_2018/
+    * this can be used to create SuppFigure 10 (version1) / SuppFigure 11A (version2)
+* polyA/N regions
+    * for poly regions length 4 to 8: use inhouse tool
+    * for mono regions (nucleotide frequency): use the seqkit tool for the "mono" type
+        * run seqkit [polynucleotide_seqkit.sh](polynucleotide_seqkit.sh)
+        * plot in R [polynucleotide_seqkit_plot.R](polynucleotide_seqkit_plot.R)
 
 
 ## Tb427 & Tb927 new ref genome
@@ -59,6 +68,7 @@
         * use G4 data as stored in 927_G4_experimental_Marsico [G4Hunter_extend_ori.py](G4Hunter_extend_ori.py)
         * calculate overlap between G4 and predicted ORIs: [G4Hunter_position_vs_ori.sh](G4Hunter_position_vs_ori.sh)
         * do the parsing of the files: [G4Hunter_position_vs_ori_parsing.py](G4Hunter_position_vs_ori_parsing.py)
+    * * Figure 3D: combination of polyA with G4Marisco in 927 background [polynucleotide_G4Hunter_combined_fig3D.R](polynucleotide_G4Hunter_combined_fig3D.R)
 
 * repeat the analysis but now for the Tb427 reference genome instaed of the Tb427_2018 ref genome, with plotting G4 hunter + MNaseSeq data relative to the ORI. (This is "second plot" in mail Bridlin 09/01/24)
     * new reference genome, so polyA tail should be created again
@@ -99,11 +109,11 @@
 
     
 ## overview for the different pictures from the publication
-* Figure 3D: polynucleotide_G4Hunter_combined_fig3D.R
+* Figure 3D: polynucleotide_G4Hunter_combined_fig3D.R - combination of polyA with G4Marisco in 927 background
 * Figure 3E: polynucleotide_G4Hunter_combined_fig3E.R
 * Figure 4: DripSeq and MNase-Seq sequencing data: see above
 * SuppFigure 8 : polynucleotide_inhouse_plot.R
-* SuppFigure 10: G4Hunter_position_vs_ori_plotting.R
+* SuppFigure 10 / SuppFigure 11A in version2: G4Hunter_position_vs_ori_plotting.R
 
 
 

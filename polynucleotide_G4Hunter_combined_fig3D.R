@@ -15,9 +15,10 @@ setwd(data_dir_polyA)
 ## get files for the polyA results
 window = 2000
 poly = 4
-polyA_files = list.files(data_dir_polyA, pattern="^927")
+polyA_files = list.files(data_dir_polyA, pattern="927")
+polyA_files = polyA_files[grep(".poly_4.csv", polyA_files)]
 polyA_files = polyA_files[grep(".csv", polyA_files)]
-polyA_files = polyA_files[-grep("667", polyA_files)]
+polyA_files = polyA_files[-grep("666", polyA_files)]
 polyA_files = polyA_files[-grep("668", polyA_files)]
 polyA_files
 
@@ -67,7 +68,8 @@ for (cov_file in cov_files_sns) {
   ## create sample name by excluding the plus and min
   ## information from the strand
   sample = unlist(strsplit(cov_file, split="\\."))[2]
-  sample = unlist(strsplit(sample, split="_"))[3]
+  #sample = unlist(strsplit(sample, split="_"))[3]
+  sample = unlist(strsplit(sample, split="_"))[2]
   sample
   
   # sample
@@ -159,7 +161,8 @@ for (nucl_file in polyA_files) {
     sample_data = unlist(strsplit(nucl_file, split="_"))[4]
     sample = paste0("shuffled control ", sample_data)
   }else{
-    sample = unlist(strsplit(nucl_file, split="_"))[3]
+    #sample = unlist(strsplit(nucl_file, split="_"))[3]
+    sample = unlist(strsplit(nucl_file, split="_"))[2]
     sample    
   }
   sample
@@ -235,6 +238,12 @@ head(cov_data_polyA_all_sub)
 plot_data = rbind.data.frame(cov_data_all_sub, cov_data_polyA_all_sub)
 head(plot_data)
 
+
+samples = unique(plot_data$sample)
+samples_ordered = c(samples[1], samples[3], samples[2],
+                    samples[4], samples[6], samples[5])
+plot_data$sample = factor(plot_data$sample, levels=samples_ordered)
+
 ## create plot with separate color per line
 p = ggplot(data=plot_data, aes(x=pos, y=cov_smoothed)) + 
   geom_line(aes(color=pattern2)) + 
@@ -251,6 +260,7 @@ p = ggplot(data=plot_data, aes(x=pos, y=cov_smoothed)) +
   theme(legend.title=element_blank())
 
 p
+
 
 output_file = paste0(data_dir_polyA, parameter_setting, "_with_polyA.png")
 ggsave(output_file, p, width=10, height=6)
@@ -272,7 +282,7 @@ p = ggplot(data=plot_data, aes(x=pos, y=cov_smoothed)) +
   facet_wrap(~ sample) + 
   # scale_color_manual(values = colors) + 
   theme(legend.title=element_blank()) + 
-   theme(text=element_text(size=35))
+   theme(text=element_text(size=20))
 
 
 p

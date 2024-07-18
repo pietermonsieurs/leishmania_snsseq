@@ -9,16 +9,19 @@ setwd(data_dir)
 
 ## type is the number of nucleotides
 type = 'mono'
-type = 'tetra'
+# type = 'tetra'
 nucl_files = list.files(data_dir, pattern=paste0("*", type, ".txt"))
+nucl_files = grep("427-2018", nucl_files, value=TRUE)
+nucl_files = nucl_files[- grep("666|668", nucl_files)]
 
 nucl_data_all = data.frame()
 first_file = 1
+sample_names = c("BSF", "BSF-PCF","PCF","BSF shuffled", "BSF-PCF shuffled","PCF shuffled")
+sample_names_ordered = c("BSF", "BSF-PCF","PCF","BSF shuffled", "BSF-PCF shuffled","PCF shuffled")
 
-
-
+sample_count = 0
 for (nucl_file in nucl_files) {
-  
+  sample_count = sample_count + 1  
   nucl_data = read.table(nucl_file, header=FALSE)
   
   
@@ -26,8 +29,11 @@ for (nucl_file in nucl_files) {
   ## separate column
   sample_data = unlist(strsplit(nucl_file, split="_"))[1:3]
   sample_name= paste0(sample_data[1], "_", sample_data[2], "_", sample_data[3])
+  
+  sample_name = sample_names[sample_count]
   print(sample_name)
   nucl_data$sample = sample_name
+  
   
   ## do for specific 
   
@@ -72,8 +78,14 @@ for (nucl_file in nucl_files) {
 # cov_data_all = cov_data_all[cov_data_all$sample == 'merged_BSF-b_ORIs',]
 
 
-ggplot(data=cov_data_all, aes(x=pos, y=cov_smoothed)) + 
-  geom_line(aes(color=pattern)) + 
+p = ggplot(data=cov_data_all, aes(x=pos, y=cov_smoothed)) + 
+  geom_line(aes(group=pattern)) + 
   coord_cartesian(xlim=c(300,4700), ylim=c(0, 0.50)) +
   theme_bw() + 
   facet_wrap(~ sample, scales = "free_y") 
+p 
+
+
+output_file = paste0(data_dir, 'poly_nucleotide.nucleotide_frequency.tiff')
+ggsave(file = output_file, plot=p_overall, dpi=300, width=9, height=12)
+

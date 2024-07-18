@@ -1,6 +1,7 @@
 library(ggplot2)
 library(zoo)
 library(reshape)
+library(patchwork)
 
 ## get all the coverage files for the normal ORI files
 data_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/'
@@ -11,20 +12,26 @@ setwd(data_dir)
 # type = 'mono'
 # type = 'tetra'
 
-poly = 8
-poly = 4
+poly_max = 8
+poly_min = 4
 
-for (poly in 4:8) {
+poly_max = 1
+poly_min = 1
+
+
+for (poly in poly_min:poly_max) {
   window=2000
   nucl_files = list.files(data_dir, pattern=paste0("*.window",window,".poly_", poly, ".csv"))
-  nucl_files = nucl_files[-grep("667", nucl_files)]
+  nucl_files = nucl_files[-grep("666", nucl_files)]
   nucl_files = nucl_files[-grep("668", nucl_files)]
-  nucl_files = grep("^merged|^shuffeled", nucl_files, value=TRUE)
+
+  # nucl_files = grep("^merged|^shuffeled", nucl_files, value=TRUE)
+  nucl_files = grep("427-2018", nucl_files, value=TRUE)
   
   nucl_data_all = data.frame()
   first_file = 1
   
-  sample_names = c("BSF ORIs", "PCF ORIs", "shuffled control BSF", "shuffled control PCF")
+  sample_names = c("BSF ORIs", "BSF-PCF ORIs", "PCF ORIs", "shuffled control BSF", "shuffled control BSF-PCF", "shuffled control PCF")
   sample_count = 0
   
   for (nucl_file in nucl_files) {
@@ -79,6 +86,9 @@ for (poly in 4:8) {
   
   
   # cov_data_all = cov_data_all[cov_data_all$sample == 'merged_BSF-b_ORIs',]
+  sample_names_ordered = c("BSF ORIs","PCF ORIs", "BSF-PCF ORIs", "shuffled control BSF", "shuffled control PCF", "shuffled control BSF-PCF")
+  cov_data_all$sample = factor(cov_data_all$sample, levels = sample_names_ordered)
+  
   
   
   ## define the colors
@@ -94,14 +104,14 @@ for (poly in 4:8) {
     ) + 
     theme_bw() + 
     facet_wrap(~ sample) + 
-    scale_color_manual(values = colors) + 
+    # scale_color_manual(values = colors) + 
     theme(panel.spacing = unit(0.5, "cm"),
           legend.title=element_blank(),
           text=element_text(size=10))
   
-  # p
+  p
   
-  if (poly == 4) {
+  if (poly == 4 || poly == 1) {
     p_overall = p
   }else{
     p_overall = p_overall / p
@@ -110,11 +120,19 @@ for (poly in 4:8) {
 }
 
 p_overall
-# output_file = paste0(data_dir, 'poly_nucleotide.poly', poly, '.png')
+
+
+## for specific poly level
+output_file = paste0(data_dir, 'poly_nucleotide.poly', poly, '.png')
+ggsave(file = output_file, plot=p_overall, width=9, height=6)
+output_file = paste0(data_dir, 'poly_nucleotide.poly', poly, '.tiff')
+ggsave(file = output_file, plot=p_overall, dpi=300, width=9, height=6)
+
+
+## for range of polynucleotides
 output_file = paste0(data_dir, 'poly_nucleotide.poly_all.png')
 ggsave(file = output_file, plot=p_overall, width=9, height=12)
-
-output_file = paste0(data_dir, 'poly_nucleotide.poly', poly, '.tiff')
+output_file = paste0(data_dir, 'poly_nucleotide.poly_all.tiff')
 ggsave(file = output_file, plot=p_overall, dpi=300, width=9, height=12)
 
 
