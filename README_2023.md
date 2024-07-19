@@ -115,6 +115,14 @@
 * SuppFigure 8 : polynucleotide_inhouse_plot.R
 * SuppFigure 10 / SuppFigure 11A in version2: G4Hunter_position_vs_ori_plotting.R
 
+## overview of the different pictures redone for review
+•	Fig3 main manuscript and Supplementary Figure 9 -> poly_nucleotide.poly_all.tiff:  [polynucleotide_inhouse_plot.R](polynucleotide_inhouse_plot.R) (both for mono (min and max = 1) as poly (min = 4 and max = 8))
+•	Supplementary Figure 11A -> G4hunter_versus_ori.tiff [G4Hunter_position_vs_ori_plotting.R](G4Hunter_position_vs_ori_plotting.R)
+•	Figure 5A -> Tb927_G4_with_polyA.variant.tiff [polynucleotide_G4Hunter_combined_fig3D.R](polynucleotide_G4Hunter_combined_fig3D.R)
+•	Figure 5B and Supplementary Figure 11B -> Tb427_window25_score1.85_4562hits_with_polyA.variant.tiff , Tb427_window25_score1.8_6283hits_with_polyA.variant.tiff, Tb427_window25_score1.57_13409hits_with_polyA.variant.tiff, Tb427_window25_score1.56_30476hits_with_polyA.variant.tiff [polynucleotide_G4Hunter_combined_fig3E.R](polynucleotide_G4Hunter_combined_fig3E.R)
+•	Figure 5C  still need to think about this one. This would give 4 plots (BSF + BSF, BSF + BSF-PCF, PCF + BSF-PCF and PCF-PCF), correct? 
+•	Figure 5D -> Tb427_2018_with_polyA.variant.dual_axes.tiff [polynucleotide_G4Hunter_combined_427_2018.R](polynucleotide_G4Hunter_combined_427_2018.R)
+
 
 
 ## New analysis - paper revision

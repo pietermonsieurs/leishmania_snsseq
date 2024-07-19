@@ -23,10 +23,13 @@ import pandas as pd
 ## for the 427 genome
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/427/
 # for overlap_file in 427_G4*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
+# for overlap_file in merged*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427.py --input $PWD/$overlap_file; done
 
 ## for the 427 MNase-seq data, run manually. Takes long time so don't 
 ## run for random seeds 667 and 668 which are not used. E.g. 
 # ./G4Hunter_position_vs_ori_parsing_427.py --input /Users/pmonsieurs/programming/leishmania_snsseq/results/427/427_PCF_Amt_WT_rep1_T_brucei_427.427_merged_PCF.bed
+# for overlap_file in 427*rep*.bed; do echo $overlap_file; done
+
 
 my_debug = 0
 

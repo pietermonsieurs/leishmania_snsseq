@@ -23,7 +23,8 @@ for bw_file in ${dripseq_dir}/*.bw; do
 done
 drip_files=($(find $dripseq_dir -maxdepth 1  -name "*.bed"))
 snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/427_2018/
-snsseq_files=($(find $snsseq_dir \( -name "shuffeled*" -o -name "merged*" \)))
+# snsseq_files=($(find $snsseq_dir \( -name "shuffeled*" -o -name "merged*" \)))
+snsseq_files=($(find $snsseq_dir \( -name "shuffeled*" -o -name "BSF*" -o -name "PCF*" \)))
 
 
 ## print the file lists
@@ -45,7 +46,10 @@ for drip_file in ${drip_files[@]}; do
         ## do substitution depending on the type of file
         # snsseq_file_short=${snsseq_file_short/-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed/}
         # snsseq_file_short=${snsseq_file_short/_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed/}
-        snsseq_file_short=${snsseq_file_short/_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed/}
+        # snsseq_file_short=${snsseq_file_short/_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed/}
+        snsseq_file_short=${snsseq_file_short/_ORIs_RNASE_CDS-exclu.extended_2000nt.bed/}
+        snsseq_file_short=${snsseq_file_short/_ORIs_RNASE_427-2018.extended_2000nt.bed/}
+        
         echo " --> snsseq_file_short ${snsseq_file_short}"     
         output_file=${snsseq_dir}/${drip_file_short}.${snsseq_file_short}.bed
         echo " --> output_file ${output_file}"
