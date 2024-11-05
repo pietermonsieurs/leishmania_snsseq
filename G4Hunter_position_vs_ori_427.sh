@@ -1,7 +1,7 @@
 ## define the bedtools binary
 #bedtools_bin=/Users/pmonsieurs/programming/software/bedtools2-master/bin/bedtools
 bedtools_bin=/Users/pmonsieurs/programming/software/bedtools2/bin/bedtools
-
+bedtools_bin=/Users/pmonsieurs/programming/software/bedtools2-master_archive/bin/bedtools
 ## first run the python script to extend the ORI bed file. For the 
 ## overlap this was only set to 500. Now, set to 2000bp in line with 
 ## the publication of Comoglio 2015 Cell Reports - Figure 2A
@@ -16,7 +16,7 @@ bedtools_bin=/Users/pmonsieurs/programming/software/bedtools2/bin/bedtools
 # g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_G4hunter_predictions_bed/
 g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data_set2/427_G4hunter_predictions_bed
 snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/427/
-g4_files=($(find $g4_dir -maxdepth 1  -name "427*.bed"))
+g4_files=($(find $g4_dir -maxdepth 1  -name "Tb427*.bed"))
 snsseq_files=($(find $snsseq_dir -name "merged_*.extended_2000nt.bed"))
 
 ## set intersect between different shuffled SNS-seq data of Bridlin, but now
@@ -53,6 +53,8 @@ for g4_file in ${g4_files[@]}; do
         output_file=${snsseq_dir}/${g4_file_short}.${snsseq_file_short}.bed
         echo " --> output_file ${output_file}"
         echo " --> g4_file ${g4_file}"
+
+        # rm ${output_file}
         # overlap=$(${bedtools_bin} intersect -a $snsseq_file -b $g4_file 2>/dev/null | wc | awk '{print $1}')
         ${bedtools_bin} intersect -wb -a $g4_file -b $snsseq_file > ${output_file}
         
@@ -64,6 +66,7 @@ done
 
 ## get the MNase-seq data and convert bigwig to bed
 # mnase_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_Mnase-seq_bw/
+snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/427/
 mnase_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data_set2/427_Mnase-seq_bw/
 bigwig2bed=/Users/pmonsieurs/programming/software/bigWigToBedGraph/bigWigToBedGraph
 for bw_file in ${mnase_dir}/*.bigwig; do

@@ -27,8 +27,14 @@ import pandas as pd
 
 ## for the 427 MNase-seq data, run manually. Takes long time so don't 
 ## run for random seeds 667 and 668 which are not used. E.g. 
-# ./G4Hunter_position_vs_ori_parsing_427.py --input /Users/pmonsieurs/programming/leishmania_snsseq/results/427/427_PCF_Amt_WT_rep1_T_brucei_427.427_merged_PCF.bed
+# ./G4Hunter_position_vs_ori_parsing_427.py --input /Users/pmonsieurs/programming/leishmania_snsseq/results/427/427_PCF_Amt_WT_rep1_T_brucei_427.merged_BSF-PCF.bed
 # for overlap_file in 427*rep*.bed; do echo $overlap_file; done
+
+## for the 427 MNase-seq data
+# ../../bin/G4Hunter_position_vs_ori_parsing_427.py --input ${PWD}/427_PCF_Amt_WT_rep1_T_brucei_427.merged_PCF.bed
+# ../../bin/G4Hunter_position_vs_ori_parsing_427.py --input ${PWD}/427_BSF_YT3_rep2_T_brucei_427.merged_BSF.bed
+# ../../bin/G4Hunter_position_vs_ori_parsing_427.py --input ${PWD}/427_BSF_YT3_rep2_T_brucei_427.shuffeled_427_seed666_BSF.bed
+# ../../bin/G4Hunter_position_vs_ori_parsing_427.py --input ${PWD}/427_PCF_Amt_WT_rep1_T_brucei_427.shuffeled_427_seed666_PCF.bed
 
 
 my_debug = 0
@@ -76,7 +82,9 @@ if __name__ == '__main__':
     ## the Mnase-seq data, where oris have been rem
     # ori_file = f"{ori_dir}/{ori_info}-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
     # ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
-    ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed"
+    # ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed"
+    # ori_file = f"{ori_dir}/{ori_info}_ORIs_RNASE_427.extended_2000nt.bed"
+    ori_file = f"{ori_dir}/{ori_info}_ORIs_RNASE_CDS-exclu.extended_2000nt.bed"
 
     ## setting for the randomly shuffled ORI:
     # shuffeled_seed668_PCF_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed

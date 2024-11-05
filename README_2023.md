@@ -68,7 +68,7 @@
         * use G4 data as stored in 927_G4_experimental_Marsico [G4Hunter_extend_ori.py](G4Hunter_extend_ori.py)
         * calculate overlap between G4 and predicted ORIs: [G4Hunter_position_vs_ori.sh](G4Hunter_position_vs_ori.sh)
         * do the parsing of the files: [G4Hunter_position_vs_ori_parsing.py](G4Hunter_position_vs_ori_parsing.py)
-    * * Figure 3D: combination of polyA with G4Marisco in 927 background [polynucleotide_G4Hunter_combined_fig3D.R](polynucleotide_G4Hunter_combined_fig3D.R)
+    * Figure 3D: combination of polyA with G4Marisco in 927 background [polynucleotide_G4Hunter_combined_fig3D.R](polynucleotide_G4Hunter_combined_fig3D.R)
 
 * repeat the analysis but now for the Tb427 reference genome instaed of the Tb427_2018 ref genome, with plotting G4 hunter + MNaseSeq data relative to the ORI. (This is "second plot" in mail Bridlin 09/01/24)
     * new reference genome, so polyA tail should be created again
@@ -133,3 +133,24 @@
 
 ### PolyA polyT (4 nt to 8 nt) centered around the origins - 427-2018 genomic background
 * run the python script [polynucleotide_get_sequences.py](polynucleotide_get_sequences.py) to retrieve the sequences around the ORI or around the shuffled ORI for each dataset. 
+
+## update Figure 5D, which used to be Figure 3D
+* For the figure 5D, is comparable to the file Tb927_G4_with_polyA.variant.tiff that I sent: done with script [polynucleotide_G4Hunter_combined_fig3D.R](polynucleotide_G4Hunter_combined_fig3D.R). 
+    * mail from september 30/09/2024: redo with 927_G4_MinusK.bw and 927_G4_PlusK.bw instead of 927_G4_Minus_PDS.bw and 927_G4_Minus_PDS.bw
+    * file merged_BSF-PCF_ORIs_RNASE_927.bed is same file as previously
+    * redo G4 extend ori process
+        * convert G4 bigwig (bw) to .bed files: [bigwig_bw_to_bed.sh](bigwig_bw_to_bed.sh)
+        * file containing ORI's (merged_BSF-PCF_ORIs_RNASE_927.bed) is not changed and is already extended 
+        * [G4Hunter_position_vs_ori.sh][G4Hunter_position_vs_ori.sh] (contains also bigwig to bed file commands)
+        * [G4Hunter_position_vs_ori_parsing.py](G4Hunter_position_vs_ori_parsing.py)
+    * Figure 3D --> now becomes figure 5D: combination of polyA with G4Marisco in 927 background, but now with other G4 predictions: 
+        * [polynucleotide_G4Hunter_combined_fig3D.R](polynucleotide_G4Hunter_combined_fig3D.R)
+        * make sure to only select those bed files with "_K" in it
+
+* Figure 6C - backgrond 427 - original name was (427_with_polyA.variant.dual_axes.tiff)
+    * 
+
+* For Figure 7D, script to use is [polynucleotide_G4Hunter_combined_427_2018.R] but replace only the G4 files with grep on 1.56 to grep on 1.57
+    * output file name is Tb427_2018_with_polyA.variant.dual_axes.tiff
+    * stored in ~/results/Tb427_2018
+
