@@ -15,16 +15,16 @@ import os
 # snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data/927_ORIs_bed/'
 # snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data/927_shuffledORIs-bed/'
 # snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data_set2/927_ORIs_bed/'
-snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data_set2/927_shuffledORIs-bed/'
-out_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/927/'
+# snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data_set2/927_shuffledORIs-bed/'
+# out_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/927/'
 
 ## settings for the data related to strain 427 - normal, with normal and
 ## shuffled ORI dir (i.e. snsseq_dir) 
 # snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_ORIs_bed/'
 # snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_shuffledORIs-bed/'
 # snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data_set2/427_ORIs_set2_bed/'
-# snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data_set2/427_shuffledORIs_set2_bed/'
-# out_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/427/'
+snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data_set2/427_shuffledORIs_set2_bed/'
+out_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/results/427/'
 
 ## settings for the data related to strain 427_2018 
 # snsseq_dir = '/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427-2018_data_set2/427-2018_ORIs_set2_bed/'

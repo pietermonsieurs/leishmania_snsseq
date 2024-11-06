@@ -21,6 +21,11 @@ import pandas as pd
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/927/
 # for overlap_file in 927_G4*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
 
+## for the 927 genome, but only for new data (add *_K* in pattern)
+# cd /Users/pmonsieurs/programming/leishmania_snsseq/results/927/
+# for overlap_file in 927_G4*_K*.bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
+
+
 ## for the 427 genome
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/427/
 # for overlap_file in 427_G4*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done

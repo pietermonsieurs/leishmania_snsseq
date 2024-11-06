@@ -56,12 +56,15 @@ g4_files=($(find $g4_dir -maxdepth 1  -name "Tb427*.bed"))
 ## bigwig to bed
 bigwig2bed=/Users/pmonsieurs/programming/software/bigWigToBedGraph/bigWigToBedGraph
 # g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data/927_G4_experimental_Marsico/
-g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data_set2/927_G4_experimental_Marsico/
+# g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data_set2/927_G4_experimental_Marsico/
+g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_927_data_set3/927_G4_experimental_Marsico/
 for bw_file in ${g4_dir}/*.bw; do
     bed_file=${bw_file/.bw/.bed}
     $bigwig2bed $bw_file $bed_file
 done
-g4_files=($(find $g4_dir -maxdepth 1  -name "*G4*.bed"))
+
+# g4_files=($(find $g4_dir -maxdepth 1  -name "*G4*.bed"))
+g4_files=($(find $g4_dir -maxdepth 1  -name "*G4*_K.bed"))
 snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/927/
 snsseq_files=($(find $snsseq_dir -name "*ORI*extended*.bed"))
 

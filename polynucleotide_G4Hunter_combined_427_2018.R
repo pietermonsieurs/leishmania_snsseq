@@ -23,7 +23,9 @@ parameter_setting = '_ORIs_RNASE_427-2018'
 cov_files_sns = list.files(data_dir_ori, pattern="*.cov")
 cov_files_sns = cov_files_sns[grep(parameter_setting, cov_files_sns)]
 cov_files_sns = cov_files_sns[grep("Tb427", cov_files_sns)]
-cov_files_sns = cov_files_sns[grep("Tb427_window25_score1.56", cov_files_sns)]
+
+# cov_files_sns = cov_files_sns[grep("Tb427_window25_score1.56", cov_files_sns)]
+cov_files_sns = cov_files_sns[grep("Tb427_window25_score1.57", cov_files_sns)]
 
 
 cov_files_shuffled = list.files(data_dir_ori_shuffled, pattern="*.cov")
@@ -36,7 +38,7 @@ cov_files_shuffled
 ## get the DRIP-seq data
 drip_files =  list.files(data_dir_ori, pattern="*.cov")
 drip_files = drip_files[grep("427-2018_DRIP", drip_files)]
-## remove the seeds 666 and 668
+drip_files = drip_files[-grep("666|668", drip_files)]
 drip_files
 
 

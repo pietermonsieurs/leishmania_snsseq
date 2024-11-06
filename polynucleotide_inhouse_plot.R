@@ -104,7 +104,7 @@ for (poly in poly_min:poly_max) {
     ) + 
     theme_bw() + 
     facet_wrap(~ sample) + 
-    # scale_color_manual(values = colors) + 
+    scale_color_manual(values = colors) + 
     theme(panel.spacing = unit(0.5, "cm"),
           legend.title=element_blank(),
           text=element_text(size=10))

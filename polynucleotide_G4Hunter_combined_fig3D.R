@@ -28,13 +28,16 @@ polyA_files
 # parameter_setting = 'Tb427_window25_score1.85_4562hits'
 # parameter_setting = 'Tb427_window25_score1.8_6283hits'
 
+# cov_files_all = list.files(data_dir_ori, pattern="*.cov")
 cov_files_all = list.files(data_dir_ori, pattern="*.cov")
 cov_files_sns = cov_files_all[grep("927_G4", cov_files_all)]
+cov_files_sns = cov_files_sns[grep("_K", cov_files_sns)]
 cov_files_sns = cov_files_sns[grep("merged", cov_files_sns)]
 cov_files_sns
 
 cov_files_shuffled = cov_files_all[grep("927_G4", cov_files_all)]
 cov_files_shuffled = cov_files_shuffled[grep("seed666", cov_files_shuffled)]
+cov_files_shuffled = cov_files_shuffled[grep("_K", cov_files_shuffled)]
 cov_files_shuffled
 
 

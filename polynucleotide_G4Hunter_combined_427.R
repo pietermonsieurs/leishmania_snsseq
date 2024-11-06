@@ -11,7 +11,8 @@ window = 2000
 poly = 4
 polyA_files = list.files(data_dir_polyA) #, pattern=paste0("927*.window",window,".poly_", poly, ".csv"))
 polyA_files = polyA_files[grep(paste0("window",window,".poly_", poly, ".csv"), polyA_files)]
-polyA_files = polyA_files[grep("427_", polyA_files)]
+polyA_files = polyA_files[grep("_427", polyA_files)]
+polyA_files = polyA_files[-grep("2018", polyA_files)]
 polyA_files = polyA_files[-grep("667", polyA_files)]
 polyA_files = polyA_files[-grep("668", polyA_files)]
 polyA_files
@@ -19,8 +20,9 @@ polyA_files
 ## get files for the G4 hunter predictions
 parameter_setting = 'merged'
 cov_files_sns = list.files(data_dir_ori, pattern="*.cov")
-cov_files_sns = cov_files_sns[grep(parameter_setting, cov_files_sns)]
-cov_files_sns = cov_files_sns[grep("427_G4", cov_files_sns)]
+# cov_files_sns = cov_files_sns[grep(parameter_setting, cov_files_sns)]
+# cov_files_sns = cov_files_sns[grep("427_G4", cov_files_sns)]
+cov_files_sns = cov_files_sns[grep("merged", cov_files_sns)]
 
 cov_files_shuffled = list.files(data_dir_ori_shuffled, pattern="*.cov")
 cov_files_shuffled = cov_files_shuffled[grep("seed666", cov_files_shuffled)]
@@ -61,8 +63,8 @@ for (cov_file in cov_files_sns) {
   
   ## create sample name by excluding the plus and min
   ## information from the strand
-  sample = unlist(strsplit(cov_file, split="\\."))[3]
-  sample = unlist(strsplit(sample, split="_"))[3]
+  sample = unlist(strsplit(cov_file, split="\\."))[2]
+  # sample = unlist(strsplit(sample, split="_"))[3]
   # sample = gsub("merged_", "", sample)
   sample
   
