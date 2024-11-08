@@ -26,7 +26,7 @@ import pandas as pd
 # for overlap_file in 927_G4*_K*.bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
 
 
-## for the 427 genome
+## for the 427 ORIs and G4
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/427/
 
 ## for the original ORIs (non-shuffled). put peak = data[8] at line 131
@@ -36,9 +36,6 @@ import pandas as pd
 ## for the shuffled data
 ## update ~ line 94: ori_file = f"{ori_dir}/{ori_info}_ORIs_RNASE_CDS-exclu.extended_2000nt.bed"
 # for overlap_file in 427_G4*shuffeled*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
-
-## for the 427 MNase-seq data
-# for overlap_file in 427_*_T_brucei*bed; do echo $overlap_file; /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
 
 
 my_debug = 0

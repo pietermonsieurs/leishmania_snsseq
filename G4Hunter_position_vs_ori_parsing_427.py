@@ -21,16 +21,13 @@ import sys
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/927/
 # for overlap_file in 927_G4*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
 
-## for the 427 genome
-# cd /Users/pmonsieurs/programming/leishmania_snsseq/results/427/
-## for the real ORIs 
-# for overlap_file in 427*merged*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427.py --input $PWD/$overlap_file; done
+## for the 427 genome G4 with ORI--> run via the general G4Hunter_position_vs_ori_parsing.py
 
-## for the 427 MNase-seq data, run manually. Takes long time so don't 
-## run for random seeds 667 and 668 which are not used. 
-## for the normal origins
+## for the 427 MNase-seq data. Takes long time so don't 
+## run for random seeds 667 and 668 which are not used. And for the meaningless combinations 
+## for the normal origins --> adapt the creation of ori file around line 86
 # for overlap_file in 427*merged*.bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427.py --input $PWD/$overlap_file; done
-## for the shuffled origins
+## for the shuffled origins --> adapt the creation of ori file around line 86
 # for overlap_file in 427*brucei*shuffeled*seed666*.bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427.py --input $PWD/$overlap_file; done
 
 ## for the 427 MNase-seq data
@@ -89,8 +86,9 @@ if __name__ == '__main__':
     # ori_file = f"{ori_dir}/{ori_info}-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
     # ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
     # ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed"
-    # ori_file = f"{ori_dir}/{ori_info}_ORIs_RNASE_427.extended_2000nt.bed"
-    ori_file = f"{ori_dir}/{ori_info}_ORIs_RNASE_CDS-exclu.extended_2000nt.bed"
+
+    # ori_file = f"{ori_dir}/{ori_info}_ORIs_RNASE_427.extended_2000nt.bed" ## for the real ORIs
+    ori_file = f"{ori_dir}/{ori_info}_ORIs_RNASE_CDS-exclu.extended_2000nt.bed" ## for shuffled
 
     ## setting for the randomly shuffled ORI:
     # shuffeled_seed668_PCF_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed

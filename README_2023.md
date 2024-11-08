@@ -77,6 +77,9 @@
             * output contains fasta sequences 2000nt up and downstream of those ORIs, and can be used to calculate the polyA/T/C/G in the neighborhood of those sequences
             * those fasta sequences are stored in the directory .../results/polynucleotide/
         * calculate the polyA sequences up and downstream of the ORI: [polynucleotide_inhouse.py](polynucleotide_inhouse.py)
+    * when running all those scripts below, the automatic pipeline sometimes makes useless comparision, e.g. combining ori BSF with MNAse PCF, or with the combined ones. The combined ones can be ignored (BSF-PCF) as there are no MNase seq data for this combined dataset. 
+        * you could move all meaningless combinations to archive
+        * if you keep the meaningess combination, the MNase seq line will be very thick, as you wil have two measurement per position
     * repeat steps from previous analysis: 
         * extend the ORI: [G4Hunter_extend_ori.py](G4Hunter_extend_ori.py). The resulting bed files is stored in the .../results/427/ directory
         * calculate overlap between G4 and predicted ORIs: [G4Hunter_position_vs_ori_427.sh](G4Hunter_position_vs_ori_427.sh)
@@ -86,6 +89,7 @@
             * run for normal and shuffled
         * run again the variant python script [G4Hunter_position_vs_ori_parsing_427.py](G4Hunter_position_vs_ori_parsing_427.py) but now using as input file the bed file of the MNase seq data instead of the G4Hunter data
         * visualisation using [polynucleotide_G4Hunter_combined_427.R](polynucleotide_G4Hunter_combined_427.R)
+    
 
 
 
