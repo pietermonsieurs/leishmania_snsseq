@@ -16,12 +16,12 @@ bedtools_bin=/Users/pmonsieurs/programming/software/bedtools2-master_archive/bin
 # g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_G4hunter_predictions_bed/
 g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data_set2/427_G4hunter_predictions_bed
 snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/427/
-g4_files=($(find $g4_dir -maxdepth 1  -name "Tb427*.bed"))
+g4_files=($(find $g4_dir -maxdepth 1  -name "427*.bed"))
 snsseq_files=($(find $snsseq_dir -name "merged_*.extended_2000nt.bed"))
 
 ## set intersect between different shuffled SNS-seq data of Bridlin, but now
 ## with the shuffled ORI sequences
-g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data/427_G4hunter_predictions_bed/
+g4_dir=/Users/pmonsieurs/programming/leishmania_snsseq/data/for-Pieter_427_data_set2/427_G4hunter_predictions_bed/
 snsseq_dir=/Users/pmonsieurs/programming/leishmania_snsseq/results/427/
 g4_files=($(find $g4_dir -maxdepth 1  -name "427*.bed"))
 snsseq_files=($(find $snsseq_dir -name "shuffeled_427*.extended_2000nt.bed"))

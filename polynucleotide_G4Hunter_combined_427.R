@@ -1,5 +1,6 @@
 library(ggplot2)
 library(zoo)
+library(reshape)
 
 ## input parameters
 data_dir_polyA = '/Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/'
@@ -20,8 +21,13 @@ polyA_files
 ## get files for the G4 hunter predictions
 parameter_setting = 'merged'
 cov_files_sns = list.files(data_dir_ori, pattern="*.cov")
+<<<<<<< HEAD
 # cov_files_sns = cov_files_sns[grep(parameter_setting, cov_files_sns)]
 # cov_files_sns = cov_files_sns[grep("427_G4", cov_files_sns)]
+=======
+cov_files_sns = cov_files_sns[grep(parameter_setting, cov_files_sns)]
+cov_files_sns = cov_files_sns[grep("427_G4", cov_files_sns)]
+>>>>>>> cd36b61 (updated Tb427 script)
 cov_files_sns = cov_files_sns[grep("merged", cov_files_sns)]
 
 cov_files_shuffled = list.files(data_dir_ori_shuffled, pattern="*.cov")

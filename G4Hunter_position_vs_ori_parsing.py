@@ -28,7 +28,14 @@ import pandas as pd
 
 ## for the 427 genome
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/427/
-# for overlap_file in 427_G4*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
+
+## for the original ORIs (non-shuffled). put peak = data[8] at line 131
+## and make ~ line 93: ori_file = f"{ori_dir}/{ori_info}_ORIs_RNASE_427.extended_2000nt.bed"
+# for overlap_file in 427_G4*merged*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
+
+## for the shuffled data
+## update ~ line 94: ori_file = f"{ori_dir}/{ori_info}_ORIs_RNASE_CDS-exclu.extended_2000nt.bed"
+# for overlap_file in 427_G4*shuffeled*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
 
 ## for the 427 MNase-seq data
 # for overlap_file in 427_*_T_brucei*bed; do echo $overlap_file; /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
@@ -79,10 +86,12 @@ if __name__ == '__main__':
     ## the Mnase-seq data, where oris have been rem
     print(f"ori-dir  => {ori_dir}")
     print(f"ori-info => {ori_info}")
-    ori_file = f"{ori_dir}/{ori_info}.extended_2000nt.bed"
+    # ori_file = f"{ori_dir}/{ori_info}.extended_2000nt.bed"
     # ori_file = f"{ori_dir}/{ori_info}-b_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
     # ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed"
     # ori_file = f"{ori_dir}/{ori_info}_ORIs_alone_union500_nonoverlap50_woStrand.extended_2000nt.bed"
+    # ori_file = f"{ori_dir}/{ori_info}_ORIs_RNASE_427.extended_2000nt.bed"
+    ori_file = f"{ori_dir}/{ori_info}_ORIs_RNASE_CDS-exclu.extended_2000nt.bed"
 
     ## setting for the randomly shuffled ORI:
     # shuffeled_seed668_PCF_ORIs_alone_union500_nonoverlap50.extended_2000nt.bed
@@ -125,8 +134,8 @@ if __name__ == '__main__':
 
         ## number 6 for original data, number 8 for mnaseq data, 7 for experimental g4 (marisco)
         # peak = data[6]
-        # peak = data[8]
-        peak = data[7]
+        peak = data[8]
+        # peak = data[7]
 
         my_debug and print(f"peak --> {peak}")
         ori_peak = get_ori_position(ori_data, peak, g4_chrom)
