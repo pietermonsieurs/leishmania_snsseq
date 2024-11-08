@@ -3,6 +3,7 @@
 import argparse
 import os
 import pandas as pd
+import sys
 
 
 
@@ -22,13 +23,17 @@ import pandas as pd
 
 ## for the 427 genome
 # cd /Users/pmonsieurs/programming/leishmania_snsseq/results/427/
-# for overlap_file in 427_G4*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing.py --input $PWD/$overlap_file; done
-# for overlap_file in merged*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427.py --input $PWD/$overlap_file; done
+## for the real ORIs 
+# for overlap_file in 427*merged*bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427.py --input $PWD/$overlap_file; done
 
 ## for the 427 MNase-seq data, run manually. Takes long time so don't 
-## run for random seeds 667 and 668 which are not used. E.g. 
-# ./G4Hunter_position_vs_ori_parsing_427.py --input /Users/pmonsieurs/programming/leishmania_snsseq/results/427/427_PCF_Amt_WT_rep1_T_brucei_427.merged_BSF-PCF.bed
-# for overlap_file in 427*rep*.bed; do echo $overlap_file; done
+## run for random seeds 667 and 668 which are not used. 
+## for the normal origins
+# for overlap_file in 427*merged*.bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427.py --input $PWD/$overlap_file; done
+## for the shuffled origins
+# for overlap_file in 427*brucei*shuffeled*seed666*.bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427.py --input $PWD/$overlap_file; done
+
+## for the 427 MNase-seq data
 
 ## for the 427 MNase-seq data
 # ../../bin/G4Hunter_position_vs_ori_parsing_427.py --input ${PWD}/427_PCF_Amt_WT_rep1_T_brucei_427.merged_PCF.bed
@@ -76,7 +81,8 @@ if __name__ == '__main__':
     ## setting for the default ORI: 
     ori_dir = os.path.dirname(input_file)
     ori_info = input_file.split(".")[-2]
-    print(ori_info)
+    print(f"ori_info => {ori_info}")
+    # sys.exit()
     
     ## first line for the ori file of the original data, the second line for
     ## the Mnase-seq data, where oris have been rem
