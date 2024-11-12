@@ -2,6 +2,14 @@ library(ggplot2)
 library(zoo)
 library(reshape)
 
+
+###### first do clean up of the files as there are some files automatically 
+## gneerated which are meaninglist e.g. BSF combined with PCF, or the 
+## combination BSF-PCF
+# mv  *BSF*PCF* archive/
+# mv  *BSF*PCF* archive/
+# mv *BSF-PCF* archive/ ## mnaseq only exists for either BSF or PCF
+
 ## input parameters
 data_dir_polyA = '/Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/'
 data_dir_ori = '/Users/pmonsieurs/programming/leishmania_snsseq/results/427/'
@@ -16,18 +24,14 @@ polyA_files = polyA_files[grep("_427", polyA_files)]
 polyA_files = polyA_files[-grep("2018", polyA_files)]
 polyA_files = polyA_files[-grep("667", polyA_files)]
 polyA_files = polyA_files[-grep("668", polyA_files)]
+polyA_files = polyA_files[-grep("BSF-PCF", polyA_files)]
 polyA_files
 
 ## get files for the G4 hunter predictions
 parameter_setting = 'merged'
 cov_files_sns = list.files(data_dir_ori, pattern="*.cov")
-<<<<<<< HEAD
-# cov_files_sns = cov_files_sns[grep(parameter_setting, cov_files_sns)]
-# cov_files_sns = cov_files_sns[grep("427_G4", cov_files_sns)]
-=======
 cov_files_sns = cov_files_sns[grep(parameter_setting, cov_files_sns)]
 cov_files_sns = cov_files_sns[grep("427_G4", cov_files_sns)]
->>>>>>> cd36b61 (updated Tb427 script)
 cov_files_sns = cov_files_sns[grep("merged", cov_files_sns)]
 
 cov_files_shuffled = list.files(data_dir_ori_shuffled, pattern="*.cov")
@@ -69,9 +73,9 @@ for (cov_file in cov_files_sns) {
   
   ## create sample name by excluding the plus and min
   ## information from the strand
-  sample = unlist(strsplit(cov_file, split="\\."))[2]
+  sample = unlist(strsplit(cov_file, split="\\."))[3]
   # sample = unlist(strsplit(sample, split="_"))[3]
-  # sample = gsub("merged_", "", sample)
+  sample = gsub("merged_", "", sample)
   sample
   
   # sample
@@ -162,8 +166,8 @@ for (nucl_file in polyA_files) {
     sample_data = unlist(strsplit(nucl_file, split="_"))[4]
     sample = paste0("shuffled control ", sample_data)
   }else{
-    sample_data = unlist(strsplit(nucl_file, split="_"))[3]
-    sample = gsub("merged_", "", sample_data)
+    sample = unlist(strsplit(nucl_file, split="_"))[2]
+    # sample = gsub("merged_", "", sample_data)
     sample    
   }
 
@@ -248,9 +252,10 @@ for (mnase_file in mnase_files) {
     sample = unlist(strsplit(sample, split="_"))[4]
     sample = paste0("shuffled control ", sample)
   }else{
-    sample = unlist(strsplit(sample, split="_"))[3]
+    # sample = unlist(strsplit(sample, split="_"))[3]
+    # keep sample as splitted
   }
-  # sample = gsub("merged_", "", sample)
+  sample = gsub("merged_", "", sample)
   sample
   
   # sample
@@ -390,12 +395,14 @@ for (i in 1:dim(cov_data_merged)[1]) {
     cov_data_merged[i,]$MNase = mmnase_value
   }
   
-  # if (i > 1000) {break}
+  #if (i > 1000) {break}
   
 }
 
 cov_data_merged$MNase_color = "MNase-Seq"
 
+
+# cov_data_merged[which(cov_data_merged$pos == pos & cov_data_merged$sample == "BSF"),]
 ## save cov_data_merged to the output diretory
 # cov_data_file = paste0(data_dir_ori, 'cov_data_427.rds')
 # saveRDS(cov_data, cov_data_file)
