@@ -9,6 +9,16 @@ library(reshape)
 # mv  *BSF*PCF* archive/
 # mv  *BSF*PCF* archive/
 # mv *BSF-PCF* archive/ ## mnaseq only exists for either BSF or PCF
+## one time: add artifially MNase BSF-PCF data by making symbolic link to the 
+## BSF data - request of Slavica. so in that case you can make a merged BSF-PCF
+## plot. also copy G4 hunter data again
+# ln -s 427_BSF_YT3_rep2_T_brucei_427.merged_BSF.cov 427_BSF_YT3_rep2_T_brucei_427.merged_BSF-PCF.cov
+# ln -s 427_BSF_YT3_rep2_T_brucei_427.shuffeled_427_seed666_BSF.cov 427_BSF_YT3_rep2_T_brucei_427.shuffeled_427_seed666_BSF-PCF.cov
+# cd archive
+# cp 427_G4_w25-score1.57_427_MINUS.merged_BSF-PCF.cov ../
+# cp 427_G4_w25-score1.57_427_PLUS.merged_BSF-PCF.cov ../
+# cp 427_G4_w25-score1.57_427_MINUS.shuffeled_427_seed666_BSF-PCF.cov ../
+# cp 427_G4_w25-score1.57_427_PLUS.shuffeled_427_seed666_BSF-PCF.cov ../
 
 ## input parameters
 data_dir_polyA = '/Users/pmonsieurs/programming/leishmania_snsseq/results/polynucleotide/'
@@ -24,7 +34,7 @@ polyA_files = polyA_files[grep("_427", polyA_files)]
 polyA_files = polyA_files[-grep("2018", polyA_files)]
 polyA_files = polyA_files[-grep("667", polyA_files)]
 polyA_files = polyA_files[-grep("668", polyA_files)]
-polyA_files = polyA_files[-grep("BSF-PCF", polyA_files)]
+# polyA_files = polyA_files[-grep("BSF-PCF", polyA_files)]
 polyA_files
 
 ## get files for the G4 hunter predictions
@@ -406,6 +416,7 @@ cov_data_merged$MNase_color = "MNase-Seq"
 ## save cov_data_merged to the output diretory
 # cov_data_file = paste0(data_dir_ori, 'cov_data_427.rds')
 # saveRDS(cov_data, cov_data_file)
+#  cov_data_merged_copy = cov_data_merged
 
 p = ggplot(data=cov_data_merged, aes(x=pos, y=cov_smoothed)) + 
   geom_line(aes(color=pattern2, y=cov_smoothed, linetype="G4"), linewidth=0.80) + 
@@ -431,6 +442,70 @@ p
 
 output_file = paste0(data_dir_ori, "427_with_polyA.variant.dual_axes.tiff")
 ggsave(output_file, p, width=10, height=6, dpi=300)
+
+
+
+
+## picture without smoohthing: redo the construction of the dataframe 
+## containing the cov_data_merged without smoothed values. 
+
+head(cov_data_all_sub)
+cov_data_merged = cov_data_all_sub
+cov_data_merged$polyA = 0
+cov_data_merged$MNase = 0
+
+for (i in 1:dim(cov_data_merged)[1]) {
+  if (i%%100 == 0) {print(i)}
+  sample = cov_data_merged[i,]$sample
+  pos = cov_data_merged[i,]$pos
+  strand = cov_data_merged[i,]$strand
+  
+  ## add additional polyA column to the cov_data_merged data frame
+  matches = sum(cov_data_polyA_all_sub$pos == pos & cov_data_polyA_all_sub$sample == sample & cov_data_polyA_all_sub$strand == strand)
+  # print(matches)
+  polyA_value =  cov_data_polyA_all_sub[cov_data_polyA_all_sub$pos == pos & cov_data_polyA_all_sub$sample == sample & cov_data_polyA_all_sub$strand == strand,]$cov
+  if (is.numeric(polyA_value) && length(polyA_value) > 0) {
+    # print(polyA_value)
+    cov_data_merged[i,]$polyA = polyA_value
+  }
+  
+  ## add additional MNAse column to the cov_data_merged data frame
+  matches = sum(cov_data_nmase_all_sub$pos == pos & cov_data_nmase_all_sub$sample == sample)
+  # print(matches)
+  mmnase_value =  cov_data_nmase_all_sub[cov_data_nmase_all_sub$pos == pos & cov_data_nmase_all_sub$sample == sample,]$cov
+  if (is.numeric(mmnase_value) && length(mmnase_value) > 0) {
+    # print(polyA_value)
+    cov_data_merged[i,]$MNase = mmnase_value
+  }
+  
+  #if (i > 1000) {break}
+  
+}
+
+cov_data_merged$MNase_color = "MNase-Seq"
+
+p = ggplot(data=cov_data_merged, aes(x=pos, y=cov)) + 
+  geom_line(aes(color=pattern2, y=cov_smoothed, linetype="G4"), linewidth=0.80) + 
+  # geom_line(aes(x=pos,y=polyA*0.30), linewidth=0.80, color = "#FFA500") + 
+  # geom_line(aes(x=pos,y=polyA*2, linetype = pattern2), linewidth=0.80, color = "#FFA500") + 
+  geom_line(aes(x=pos,y=polyA, color = pattern2, linetype="polyA"), linewidth=0.80) + 
+  geom_line(aes(x=pos,y=MNase*0.075, color=MNase_color, linetype="MNase-Seq"), linewidth=0.80) +
+  facet_wrap(~ sample) + 
+  scale_y_continuous(name = "G4 and polyA", sec.axis = sec_axis(~./0.075, name = "MNase-Seq")) + 
+  xlab("") +
+  scale_x_continuous(
+    breaks = c(-1850, 0, window-150),
+    labels = c("-2kb", "center", "+2kb")) +
+  theme_bw() + 
+  # scale_color_manual(values = colors) + 
+  theme(panel.spacing = unit(0.5, "cm"),
+        legend.title=element_blank(),
+        legend.key.width = unit(1.5, "cm")) #+ 
+# guides(linetype = guide_legend(override.aes = list(linetype = c("G4" = "solid", "polyA" = "dashed"))))
+scale_linetype_manual(values = c("G4" = "solid", "polyA" = "dashed", "MNase-Seq" = "dotted"))
+
+p
+
 
 
 ## find the maximum hight of the peak of the MNA-seq data verus 

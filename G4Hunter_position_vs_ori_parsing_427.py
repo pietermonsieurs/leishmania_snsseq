@@ -25,9 +25,9 @@ import sys
 
 ## for the 427 MNase-seq data. Takes long time so don't 
 ## run for random seeds 667 and 668 which are not used. And for the meaningless combinations 
-## for the normal origins --> adapt the creation of ori file around line 86
-# for overlap_file in 427*merged*.bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427.py --input $PWD/$overlap_file; done
-## for the shuffled origins --> adapt the creation of ori file around line 86
+## for the normal origins --> adapt the creation of ori file around line 90
+# for overlap_file in 427*brucei*merged*.bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427.py --input $PWD/$overlap_file; done
+## for the shuffled origins --> adapt the creation of ori file around line 91
 # for overlap_file in 427*brucei*shuffeled*seed666*.bed; do /Users/pmonsieurs/programming/leishmania_snsseq/bin/G4Hunter_position_vs_ori_parsing_427.py --input $PWD/$overlap_file; done
 
 ## for the 427 MNase-seq data
